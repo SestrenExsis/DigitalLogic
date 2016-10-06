@@ -1,0 +1,32 @@
+{
+    "spriteSheets" :
+    {
+        "Sprites.png" :
+        {
+            "frames" :
+            {
+                "Background" :
+                {
+                    "x" : 0,
+                    "y" : 0,
+                    "width" : 16,
+                    "height" : 16
+                },
+                "Node - Off" :
+                {
+                    "x" : 0,
+                    "y" : 80,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Node - On" :
+                {
+                    "x" : 72,
+                    "y" : 80,
+                    "width" : 8,
+                    "height" : 8
+                }
+            }
+        }
+    }
+}
