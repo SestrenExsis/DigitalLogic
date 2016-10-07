@@ -1,6 +1,7 @@
 package entities
 {
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	public class Entity
@@ -16,9 +17,27 @@ package entities
 			_currentFrameKey = FrameKey;
 		}
 		
-		public function destroy():void
+		protected function get position():Point
 		{
-			_boundingBox = null;
+			return _boundingBox.topLeft;
+		}
+		
+		protected function setPosition(X:Number, Y:Number):void
+		{
+			_boundingBox.x = X;
+			_boundingBox.y = Y;
+		}
+		
+		protected function get width():Number
+		{
+			var Width:Number = _boundingBox.width;
+			return Width;
+		}
+		
+		protected function get height():Number
+		{
+			var Height:Number = _boundingBox.height;
+			return Height;
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void

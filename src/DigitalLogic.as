@@ -7,6 +7,7 @@ package
 	import flash.display.PixelSnapping;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="#555555")]
@@ -14,9 +15,10 @@ package
 	public class DigitalLogic extends Sprite
 	{
 		private static var _spriteSheet:SpriteSheet;
+		
 		private var _buffer:Bitmap;
+		private var _workbench:TiledEntity;
 		private var _entities:Array;
-		private var _entity:Entity;
 		
 		public function DigitalLogic()
 		{
@@ -28,36 +30,40 @@ package
 			
 			SpriteSheetKey.init();
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
-			_entities = new Array();
+			
 			var BoundingBox:Rectangle = new Rectangle(0, 0, 16, 16);
-			for (var y:uint = 0; y < 15; y++)
-			{
-				for (var x:uint = 0; x < 20; x++)
-				{
-					BoundingBox.x = 16 * x;
-					BoundingBox.y = 16 * y;
-					_entity = new Entity(_spriteSheet, BoundingBox, "Background");
-					_entities.push(_entity);
-				}
-			}
+			var EntityA:Entity = new Entity(_spriteSheet, BoundingBox, "Background");
+			_workbench = new TiledEntity(_spriteSheet, BoundingBox, "Background");
+			_entities = new Array();
 			
 			BoundingBox.setTo(8, 8, 8, 8);
-			_entity = new Entity(_spriteSheet, BoundingBox, "Node - Off");
-			_entities.push(_entity);
+			EntityA = new Entity(_spriteSheet, BoundingBox, "Node - Off");
+			_entities.push(EntityA);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 		}
 		
 		private function onEnterFrame(e:Event):void
 		{
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
 			
+			_workbench.drawOntoBuffer(_buffer.bitmapData);
 			for (var i:int = 0; i < _entities.length; i++)
 			{
 				var EntityA:Entity = _entities[i];
 				if (EntityA)
 					EntityA.drawOntoBuffer(_buffer.bitmapData);
 			}
+		}
+		
+		private function onMouseClick(e:MouseEvent):void 
+		{
+			var MouseX:Number = 0.5 * stage.mouseX;
+			var MouseY:Number = 0.5 * stage.mouseY;
+			var BoundingBox:Rectangle = new Rectangle(MouseX, MouseY, 8, 8);
+			var EntityA:Entity = new Entity(_spriteSheet, BoundingBox, "Node - Off");
+			_entities.push(EntityA);
 		}
 	}
 }
