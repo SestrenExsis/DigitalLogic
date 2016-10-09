@@ -8,7 +8,7 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Rectangle;
+	import flash.geom.Point;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="#555555")]
 	
@@ -31,13 +31,12 @@ package
 			SpriteSheetKey.init();
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
-			var BoundingBox:Rectangle = new Rectangle(0, 0, 16, 16);
-			var EntityA:Entity = new Entity(_spriteSheet, BoundingBox, "Background");
-			_workbench = new TiledEntity(_spriteSheet, BoundingBox, "Background");
+			var TopLeft:Point = new Point(0, 0);
+			_workbench = new TiledEntity(_spriteSheet, TopLeft, "Background");
 			_entities = new Array();
 			
-			BoundingBox.setTo(8, 8, 8, 8);
-			EntityA = new Entity(_spriteSheet, BoundingBox, "Node - Off");
+			TopLeft.setTo(8, 8);
+			var EntityA:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
 			_entities.push(EntityA);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -61,8 +60,8 @@ package
 		{
 			var MouseX:Number = 0.5 * stage.mouseX;
 			var MouseY:Number = 0.5 * stage.mouseY;
-			var BoundingBox:Rectangle = new Rectangle(MouseX, MouseY, 8, 8);
-			var EntityA:Entity = new Entity(_spriteSheet, BoundingBox, "Node - Off");
+			var TopLeft:Point = new Point(MouseX, MouseY);
+			var EntityA:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
 			_entities.push(EntityA);
 		}
 	}

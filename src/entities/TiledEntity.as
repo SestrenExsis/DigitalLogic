@@ -6,15 +6,9 @@ package entities
 	
 	public class TiledEntity extends Entity
 	{
-		private var _widthInTiles:uint;
-		private var _heightInTiles:uint;
-		
-		public function TiledEntity(SpriteSheetA:SpriteSheet, BoundingBox:Rectangle, FrameKey:String, WidthInTiles:uint = 20, HeightInTiles:uint = 15)
+		public function TiledEntity(SpriteSheetA:SpriteSheet, TopLeft:Point, FrameKey:String, WidthInTiles:uint = 20, HeightInTiles:uint = 15)
 		{
-			super(SpriteSheetA, BoundingBox, FrameKey);
-			
-			_widthInTiles = WidthInTiles;
-			_heightInTiles = HeightInTiles;
+			super(SpriteSheetA, TopLeft, FrameKey, WidthInTiles, HeightInTiles);
 		}
 		
 		override public function drawOntoBuffer(Buffer:BitmapData):void
@@ -22,12 +16,15 @@ package entities
 			var Position:Point = position;
 			var InitialX:Number = Position.x;
 			var InitialY:Number = Position.y;
-			for (var y:uint = 0; y < _heightInTiles; y++)
+			var FrameRect:Rectangle = frameRect;
+			var FrameWidth:Number = FrameRect.width;
+			var FrameHeight:Number = FrameRect.height;
+			for (var y:uint = 0; y < heightInTiles; y++)
 			{
-				for (var x:uint = 0; x < _widthInTiles; x++)
+				for (var x:uint = 0; x < widthInTiles; x++)
 				{
-					var TileX:Number = InitialX + width * x;
-					var TileY:Number = InitialY + height * y;
+					var TileX:Number = InitialX + FrameWidth * x;
+					var TileY:Number = InitialY + FrameHeight * y;
 					setPosition(TileX, TileY);
 					super.drawOntoBuffer(Buffer);
 				}
