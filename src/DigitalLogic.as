@@ -17,8 +17,7 @@ package
 		private static var _spriteSheet:SpriteSheet;
 		
 		private var _buffer:Bitmap;
-		private var _workbench:TiledEntity;
-		private var _entities:Array;
+		private var _workbench:Grid;
 		
 		public function DigitalLogic()
 		{
@@ -32,12 +31,12 @@ package
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
 			var TopLeft:Point = new Point(0, 0);
-			_workbench = new TiledEntity(_spriteSheet, TopLeft, "Background");
-			_entities = new Array();
+			var BackgroundTile:Entity = new Entity(_spriteSheet, TopLeft, "Background", 2, 2);
+			_workbench = new Grid(BackgroundTile, 40, 30);
 			
 			TopLeft.setTo(8, 8);
-			var EntityA:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
-			_entities.push(EntityA);
+			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
+			_workbench.addEntity(NewEntity);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
@@ -46,14 +45,7 @@ package
 		private function onEnterFrame(e:Event):void
 		{
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
-			
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
-			for (var i:int = 0; i < _entities.length; i++)
-			{
-				var EntityA:Entity = _entities[i];
-				if (EntityA)
-					EntityA.drawOntoBuffer(_buffer.bitmapData);
-			}
 		}
 		
 		private function onMouseClick(e:MouseEvent):void 
@@ -61,8 +53,8 @@ package
 			var MouseX:Number = 0.5 * stage.mouseX;
 			var MouseY:Number = 0.5 * stage.mouseY;
 			var TopLeft:Point = new Point(MouseX, MouseY);
-			var EntityA:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
-			_entities.push(EntityA);
+			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
+			_workbench.addEntity(NewEntity, MouseX, MouseY);
 		}
 	}
 }
