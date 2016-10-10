@@ -35,6 +35,23 @@ package
 			}
 		}
 		
+		private function removeEntity(EntityToRemove:Entity):void
+		{
+			for (var y:uint = 0; y < _gridHeightInTiles; y++)
+			{
+				for (var x:uint = 0; x < _gridWidthInTiles; x++)
+				{
+					var EntityAtTile:Entity = _grid[y][x];
+					if (EntityAtTile === EntityToRemove)
+						_grid[y][x] = null;
+				}
+			}
+			
+			var IndexOfEntity:int = _entities.indexOf(EntityToRemove);
+			if (IndexOfEntity >= 0)
+				_entities.splice(IndexOfEntity, 1);
+		}
+		
 		public function addEntity(NewEntity:Entity, X:Number = 0, Y:Number = 0):void
 		{
 			var FrameRect:Rectangle = _tiledEntity.frameRect;
@@ -61,7 +78,7 @@ package
 					var EntityAtTile:Entity = _grid[GridY + y][GridX + x];
 					if (EntityAtTile)
 					{
-						trace("No entity added - Another entity is in the way");
+						removeEntity(EntityAtTile);
 						return;
 					}
 				}
