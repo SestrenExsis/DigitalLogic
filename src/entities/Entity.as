@@ -47,6 +47,11 @@ package entities
 			_topLeft.y = Y;
 		}
 		
+		public function setFrameKey(FrameKey:String):void
+		{
+			_currentFrameKey = FrameKey;
+		}
+		
 		public function get widthInTiles():uint
 		{
 			return _widthInTiles;

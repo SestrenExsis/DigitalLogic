@@ -103,6 +103,10 @@ package
 			// If we have transitioned to a cell diagonal to the last cell, break the chain.
 			if ((GridX != CurrentX) && (GridY != CurrentY))
 			{
+				_previousTouch.setTo(CurrentX, CurrentY);
+				_currentTouch.setTo(GridX, GridY);
+				_dragBuffer.unshift(_currentTouch.clone());
+				
 				var EntityAtTile:Entity = getEntityAtTile(CurrentX, CurrentY);
 				if (EntityAtTile)
 					removeEntity(EntityAtTile);
@@ -111,9 +115,60 @@ package
 			
 			_previousTouch.setTo(CurrentX, CurrentY);
 			_currentTouch.setTo(GridX, GridY);
-			_dragBuffer.push(_currentTouch.clone());
+			_dragBuffer.unshift(_currentTouch.clone());
 			
 			var TopLeft:Point = new Point(X, Y);
+			var FrameKey:String = "Wire";
+			if (_dragBuffer.length < 3)
+			{
+				if (_currentTouch.x == _previousTouch.x)
+					FrameKey += " - Vertical";
+				else if (_currentTouch.y == _previousTouch.y)
+					FrameKey += " - Horizontal";
+			}
+			else
+			{
+				var BufferedX:uint = _dragBuffer[2].x;
+				var BufferedY:uint = _dragBuffer[2].y;
+				var PreviousX:uint = _previousTouch.x;
+				var PreviousY:uint = _previousTouch.y;
+				CurrentX = _currentTouch.x;
+				CurrentY = _currentTouch.y;
+				
+				if ((CurrentX == PreviousX) && (CurrentX == BufferedX))
+					FrameKey += " - Vertical";
+				else if ((CurrentY == PreviousY) && (CurrentY == BufferedY))
+					FrameKey += " - Horizontal";
+				else
+				{
+					// Is north cell attached?
+					if (((CurrentX == PreviousX) && (CurrentY < PreviousY)) ||
+						((BufferedX == PreviousX) && (BufferedY < PreviousY)))
+					{
+						// Is west cell attached?
+						if (((CurrentX < PreviousX) && (CurrentY == PreviousY)) ||
+							((BufferedX < PreviousX) && (BufferedY == PreviousY)))
+							FrameKey += " - J Bend";
+						else
+							FrameKey += " - L Bend";
+					}
+					else
+					{
+						// Is west cell attached?
+						if (((CurrentX < PreviousX) && (CurrentY == PreviousY)) ||
+							((BufferedX < PreviousX) && (BufferedY == PreviousY)))
+							FrameKey += " - 7 Bend";
+						else
+							FrameKey += " - r Bend";
+					}
+				}
+			}
+			
+			EntityAtTile = getEntityAtTile(_previousTouch.x, _previousTouch.y);
+			if (EntityAtTile)
+				EntityAtTile.setFrameKey(FrameKey);
+			
+			// Add the current wire, always set to the default initially
 			var NewEntity:Entity = new Entity(_baseEntity.spriteSheet, TopLeft, "Wire");
 			addEntity(NewEntity, X, Y);
 		}
