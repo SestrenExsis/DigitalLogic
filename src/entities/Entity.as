@@ -25,6 +25,11 @@ package entities
 			_heightInTiles = HeightInTiles;
 		}
 		
+		public function get spriteSheet():SpriteSheet
+		{
+			return _spriteSheet;
+		}
+		
 		/**
 		 * Gets the top-left corner of the Entity.
 		 */

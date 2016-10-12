@@ -35,11 +35,13 @@ package
 			_workbench = new Grid(BackgroundTile, 40, 30);
 			
 			TopLeft.setTo(8, 8);
-			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
+			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Wire");
 			_workbench.addEntity(NewEntity);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 		}
 		
 		private function onEnterFrame(e:Event):void
@@ -48,13 +50,27 @@ package
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
 		}
 		
-		private function onMouseClick(e:MouseEvent):void 
+		private function onMouseDown(e:MouseEvent):void 
 		{
 			var MouseX:Number = 0.5 * stage.mouseX;
 			var MouseY:Number = 0.5 * stage.mouseY;
-			var TopLeft:Point = new Point(MouseX, MouseY);
-			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Node - Off");
-			_workbench.addEntity(NewEntity, MouseX, MouseY);
+			_workbench.onTouch(MouseX, MouseY);
+		}
+		
+		private function onMouseUp(e:MouseEvent):void 
+		{
+			var MouseX:Number = 0.5 * stage.mouseX;
+			var MouseY:Number = 0.5 * stage.mouseY;
+			_workbench.onRelease(MouseX, MouseY);
+		}
+		
+		private function onMouseMove(e:MouseEvent):void 
+		{
+			var MouseX:Number = 0.5 * stage.mouseX;
+			var MouseY:Number = 0.5 * stage.mouseY;
+			var IsButtonDown:Boolean = e.buttonDown;
+			if (IsButtonDown)
+				_workbench.onDrag(MouseX, MouseY);
 		}
 	}
 }

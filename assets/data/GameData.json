@@ -12,17 +12,52 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Node - Off" :
+                "Wire" :
                 {
-                    "x" : 0,
-                    "y" : 80,
+                    "x" : 16,
+                    "y" : 0,
                     "width" : 8,
                     "height" : 8
                 },
-                "Node - On" :
+                "Wire - Horizontal" :
                 {
-                    "x" : 72,
-                    "y" : 80,
+                    "x" : 24,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - Vertical" :
+                {
+                    "x" : 16,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - T Bend" :
+                {
+                    "x" : 32,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - 7 Bend" :
+                {
+                    "x" : 40,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - L Bend" :
+                {
+                    "x" : 32,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - J Bend" :
+                {
+                    "x" : 40,
+                    "y" : 8,
                     "width" : 8,
                     "height" : 8
                 }
