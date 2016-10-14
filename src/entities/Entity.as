@@ -47,7 +47,7 @@ package entities
 			_topLeft.y = Y;
 		}
 		
-		public function setFrameKey(FrameKey:String):void
+		protected function setFrameKey(FrameKey:String):void
 		{
 			_currentFrameKey = FrameKey;
 		}

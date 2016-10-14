@@ -1,6 +1,7 @@
 package
 {
 	import entities.Entity;
+	import entities.Wire;
 	
 	import flash.display.BitmapData;
 	import flash.events.MouseEvent;
@@ -16,11 +17,9 @@ package
 		private var _gridHeightInTiles:uint;
 		private var _entities:Vector.<Entity>;
 		private var _grid:Array;
-		
 		private var _tempPoint:Point;
-		private var _previousTouch:Point;
+		private var _currentEntity:Entity;
 		private var _currentTouch:Point;
-		private var _dragBuffer:Vector.<Point>;
 		
 		public function Grid(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -41,12 +40,10 @@ package
 			}
 			
 			_tempPoint = new Point();
-			_previousTouch = new Point(-1.0, -1.0);
 			_currentTouch = new Point(-1.0, -1.0);
-			_dragBuffer = new Vector.<Point>;
 		}
 		
-		private function getGridCoordinate(X:Number, Y:Number):Point
+		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
 		{
 			var FrameRect:Rectangle = _baseEntity.frameRect;
 			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
@@ -62,7 +59,14 @@ package
 				return null;
 			}
 			
-			_tempPoint.setTo(GridX, GridY);
+			if (Units == "tiles")
+				_tempPoint.setTo(GridX, GridY);
+			else if (Units == "pixels")
+			{
+				var PixelX:Number = TileWidth * GridX;
+				var PixelY:Number = TileHeight * GridY;
+				_tempPoint.setTo(PixelX, PixelY);
+			}
 			return _tempPoint;
 		}
 		
@@ -74,19 +78,18 @@ package
 			
 			var GridX:uint = GridCoordinate.x;
 			var GridY:uint = GridCoordinate.y;
-			
-			_previousTouch.setTo(-1.0, -1.0);
 			_currentTouch.setTo(GridX, GridY);
-			_dragBuffer.splice(0, _dragBuffer.length);
-			_dragBuffer.push(_currentTouch.clone());
 			
 			var EntityAtTile:Entity = getEntityAtTile(GridX, GridY);
 			if (EntityAtTile)
-				removeEntity(EntityAtTile);
-			
-			var TopLeft:Point = new Point(X, Y);
-			var NewEntity:Entity = new Entity(_baseEntity.spriteSheet, TopLeft, "Wire");
-			addEntity(NewEntity, X, Y);
+				_currentEntity = EntityAtTile;
+			else
+			{
+				GridCoordinate = getGridCoordinate(X, Y, "pixels");
+				var NewEntity:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate);
+				addEntity(NewEntity, X, Y);
+				_currentEntity = NewEntity;
+			}
 		}
 		
 		public function onDrag(X:Number, Y:Number):void
@@ -95,100 +98,43 @@ package
 			if (!GridCoordinate || GridCoordinate.equals(_currentTouch))
 				return;
 			
-			var GridX:uint = GridCoordinate.x;
-			var GridY:uint = GridCoordinate.y;
-			var CurrentX:uint = _currentTouch.x;
-			var CurrentY:uint = _currentTouch.y;
+			var GridX:int = GridCoordinate.x;
+			var GridY:int = GridCoordinate.y;
+			var CurrentX:int = _currentTouch.x;
+			var CurrentY:int = _currentTouch.y;
+			_currentTouch.setTo(GridX, GridY);
 			
 			// If we have transitioned to a cell diagonal to the last cell, break the chain.
 			if ((GridX != CurrentX) && (GridY != CurrentY))
 			{
-				_previousTouch.setTo(CurrentX, CurrentY);
-				_currentTouch.setTo(GridX, GridY);
-				_dragBuffer.unshift(_currentTouch.clone());
-				
-				var EntityAtTile:Entity = getEntityAtTile(CurrentX, CurrentY);
-				if (EntityAtTile)
-					removeEntity(EntityAtTile);
+				_currentEntity = null;
 				return;
 			}
 			
-			_previousTouch.setTo(CurrentX, CurrentY);
-			_currentTouch.setTo(GridX, GridY);
-			_dragBuffer.unshift(_currentTouch.clone());
-			
-			var TopLeft:Point = new Point(X, Y);
-			var FrameKey:String = "Wire";
-			if (_dragBuffer.length < 3)
+			// If an entity already exists, link it with the previous one, otherwise create a new one
+			var PreviousEntity:Entity = _currentEntity;
+			_currentEntity = getEntityAtTile(GridX, GridY);
+			if (_currentEntity)
 			{
-				if (_currentTouch.x == _previousTouch.x)
-					FrameKey += " - Vertical";
-				else if (_currentTouch.y == _previousTouch.y)
-					FrameKey += " - Horizontal";
+				(_currentEntity as Wire).setInput((PreviousEntity as Wire));
+				if (PreviousEntity)
+					(PreviousEntity as Wire).setOutput((_currentEntity as Wire));
 			}
 			else
 			{
-				var BufferedX:uint = _dragBuffer[2].x;
-				var BufferedY:uint = _dragBuffer[2].y;
-				var PreviousX:uint = _previousTouch.x;
-				var PreviousY:uint = _previousTouch.y;
-				CurrentX = _currentTouch.x;
-				CurrentY = _currentTouch.y;
-				
-				if ((CurrentX == PreviousX) && (CurrentX == BufferedX))
-					FrameKey += " - Vertical";
-				else if ((CurrentY == PreviousY) && (CurrentY == BufferedY))
-					FrameKey += " - Horizontal";
-				else
-				{
-					// Is north cell attached?
-					if (((CurrentX == PreviousX) && (CurrentY < PreviousY)) ||
-						((BufferedX == PreviousX) && (BufferedY < PreviousY)))
-					{
-						// Is west cell attached?
-						if (((CurrentX < PreviousX) && (CurrentY == PreviousY)) ||
-							((BufferedX < PreviousX) && (BufferedY == PreviousY)))
-							FrameKey += " - J Bend";
-						else
-							FrameKey += " - L Bend";
-					}
-					else
-					{
-						// Is west cell attached?
-						if (((CurrentX < PreviousX) && (CurrentY == PreviousY)) ||
-							((BufferedX < PreviousX) && (BufferedY == PreviousY)))
-							FrameKey += " - 7 Bend";
-						else
-							FrameKey += " - r Bend";
-					}
-				}
+				GridCoordinate = getGridCoordinate(X, Y, "pixels");
+				var NewEntity:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate, (PreviousEntity as Wire));
+				addEntity(NewEntity, X, Y);
+				_currentEntity = NewEntity;
+				if (PreviousEntity)
+					(PreviousEntity as Wire).setOutput((_currentEntity as Wire));
 			}
-			
-			EntityAtTile = getEntityAtTile(_previousTouch.x, _previousTouch.y);
-			if (EntityAtTile)
-				EntityAtTile.setFrameKey(FrameKey);
-			
-			// Add the current wire, always set to the default initially
-			var NewEntity:Entity = new Entity(_baseEntity.spriteSheet, TopLeft, "Wire");
-			addEntity(NewEntity, X, Y);
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
 		{
-			var GridCoordinate:Point = getGridCoordinate(X, Y);
-			if (!GridCoordinate)
-				return;
-			
-			var GridX:uint = GridCoordinate.x;
-			var GridY:uint = GridCoordinate.y;
-			
-			var EntityAtTile:Entity = getEntityAtTile(GridX, GridY);
-			if (EntityAtTile)
-				removeEntity(EntityAtTile);
-			
-			_previousTouch.setTo(-1.0, -1.0);
+			_currentEntity = null;
 			_currentTouch.setTo(-1.0, -1.0);
-			_dragBuffer.splice(0, _dragBuffer.length);
 		}
 		
 		private function getEntityAtTile(X:uint, Y:uint):Entity
