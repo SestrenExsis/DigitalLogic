@@ -1,10 +1,10 @@
 package entities
 {
-	import interfaces.IGameEntity;
-	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import interfaces.IGameEntity;
 	
 	public class Entity implements IGameEntity
 	{
@@ -33,7 +33,7 @@ package entities
 		/**
 		 * Gets the top-left corner of the Entity.
 		 */
-		protected function get position():Point
+		public function get position():Point
 		{
 			return _topLeft;
 		}

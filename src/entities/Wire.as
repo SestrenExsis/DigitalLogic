@@ -1,57 +1,56 @@
 package entities
 {
-	import flash.display.BitmapData;
 	import flash.geom.Point;
-	
-	public class Wire extends Entity
+
+	public class Wire extends DigitalComponent
 	{
-		private var _input:Wire = null;
-		private var _output:Wire = null;
-		
-		public function Wire(SpriteSheetA:SpriteSheet, TopLeft:Point, InputWire:Wire = null)
+		public function Wire(SpriteSheetA:SpriteSheet, TopLeft:Point, Input:DigitalComponent = null)
 		{
-			super(SpriteSheetA, TopLeft, "Wire", 1, 1);
+			super(SpriteSheetA, TopLeft);
 			
-			_input = InputWire;
+			if (Input)
+				setInput(Input);
+			
 			refresh();
 		}
 		
-		public function refresh():void
+		override public function refresh():void
 		{
 			var X:int = position.x;
 			var Y:int = position.y;
-			var PreviousX:int = -1;
-			var PreviousY:int = -1;
-			var NextX:int = -1;
-			var NextY:int = -1;
-			
-			if (_input)
+			var InputX:int = -1;
+			var InputY:int = -1;
+			if (input)
 			{
-				PreviousX = _input.position.x;
-				PreviousY = _input.position.y;
+				var InputPos:Point = input.position;
+				InputX = InputPos.x;
+				InputY = InputPos.y;
 			}
-			if (_output)
+			var OutputX:int = -1;
+			var OutputY:int = -1;
+			if (output)
 			{
-				NextX = _output.position.x;
-				NextY = _output.position.y;
+				var OutputPos:Point = output.position;
+				OutputX = OutputPos.x;
+				OutputY = OutputPos.y;
 			}
 			
-			var FrameKey:String = "Wire";
-			if (_input && _output)
+			var FrameKey:String = "Wire - " + ((powered) ? "On" : "Off");
+			if (input && output)
 			{
-				if ((NextX == PreviousX) && (NextX == PreviousX))
+				if ((OutputX == InputX) && (OutputX == InputX))
 					FrameKey += " - Vertical";
-				else if ((NextY == PreviousY) && (NextY == PreviousY))
+				else if ((OutputY == InputY) && (OutputY == InputY))
 					FrameKey += " - Horizontal";
 				else
 				{
 					// Is north cell attached?
-					if (((NextX == X) && (NextY < Y)) ||
-						((PreviousX == X) && (PreviousY < Y)))
+					if (((OutputX == X) && (OutputY < Y)) ||
+						((InputX == X) && (InputY < Y)))
 					{
 						// Is west cell attached?
-						if (((NextX < X) && (NextY == Y)) ||
-							((PreviousX < X) && (PreviousY == Y)))
+						if (((OutputX < X) && (OutputY == Y)) ||
+							((InputX < X) && (InputY == Y)))
 							FrameKey += " - J Bend";
 						else
 							FrameKey += " - L Bend";
@@ -59,41 +58,29 @@ package entities
 					else
 					{
 						// Is west cell attached?
-						if (((NextX < X) && (NextY == Y)) ||
-							((PreviousX < X) && (PreviousY == Y)))
+						if (((OutputX < X) && (OutputY == Y)) ||
+							((InputX < X) && (InputY == Y)))
 							FrameKey += " - 7 Bend";
 						else
 							FrameKey += " - r Bend";
 					}
 				}
 			}
-			else if (_input)
+			else if (input)
 			{
-				if (PreviousX == X)
+				if (InputX == X)
 					FrameKey += " - Vertical";
-				else if (PreviousY == Y)
+				else if (InputY == Y)
 					FrameKey += " - Horizontal";
 			}
-			else if (_output)
+			else if (output)
 			{
-				if (NextX == X)
+				if (OutputX == X)
 					FrameKey += " - Vertical";
-				else if (NextY == Y)
+				else if (OutputY == Y)
 					FrameKey += " - Horizontal";
 			}
 			setFrameKey(FrameKey);
-		}
-		
-		public function setInput(InputWire:Wire):void
-		{
-			_input = InputWire;
-			refresh();
-		}
-		
-		public function setOutput(OutputWire:Wire):void
-		{
-			_output = OutputWire;
-			refresh();
 		}
 	}
 }

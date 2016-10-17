@@ -1,5 +1,6 @@
 package
 {
+	import entities.DigitalComponent
 	import entities.Entity;
 	import entities.Wire;
 	
@@ -15,10 +16,10 @@ package
 		private var _baseEntity:Entity;
 		private var _gridWidthInTiles:uint;
 		private var _gridHeightInTiles:uint;
-		private var _entities:Vector.<Entity>;
+		private var _components:Vector.<DigitalComponent>;
 		private var _grid:Array;
 		private var _tempPoint:Point;
-		private var _currentEntity:Entity;
+		private var _currentComponent:DigitalComponent;
 		private var _currentTouch:Point;
 		
 		public function Grid(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
@@ -32,7 +33,7 @@ package
 			
 			_gridWidthInTiles = GridWidthInTiles * TiledEntityWidthInTiles;
 			_gridHeightInTiles = GridHeightInTiles * TiledEntityHeightInTiles;
-			_entities = new Vector.<Entity>();
+			_components = new Vector.<DigitalComponent>();
 			_grid = new Array(_gridHeightInTiles);
 			for (var i:uint = 0; i < _grid.length; i++)
 			{
@@ -80,15 +81,15 @@ package
 			var GridY:uint = GridCoordinate.y;
 			_currentTouch.setTo(GridX, GridY);
 			
-			var EntityAtTile:Entity = getEntityAtTile(GridX, GridY);
-			if (EntityAtTile)
-				_currentEntity = EntityAtTile;
+			var ComponentAtTile:DigitalComponent = getComponentAtTile(GridX, GridY);
+			if (ComponentAtTile)
+				_currentComponent = ComponentAtTile;
 			else
 			{
 				GridCoordinate = getGridCoordinate(X, Y, "pixels");
 				var NewEntity:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate);
-				addEntity(NewEntity, X, Y);
-				_currentEntity = NewEntity;
+				addComponent(NewEntity, X, Y);
+				_currentComponent = NewEntity;
 			}
 		}
 		
@@ -107,60 +108,60 @@ package
 			// If we have transitioned to a cell diagonal to the last cell, break the chain.
 			if ((GridX != CurrentX) && (GridY != CurrentY))
 			{
-				_currentEntity = null;
+				_currentComponent = null;
 				return;
 			}
 			
 			// If an entity already exists, link it with the previous one, otherwise create a new one
-			var PreviousEntity:Entity = _currentEntity;
-			_currentEntity = getEntityAtTile(GridX, GridY);
-			if (_currentEntity)
+			var PreviousComponent:DigitalComponent = _currentComponent;
+			_currentComponent = getComponentAtTile(GridX, GridY);
+			if (_currentComponent)
 			{
-				(_currentEntity as Wire).setInput((PreviousEntity as Wire));
-				if (PreviousEntity)
-					(PreviousEntity as Wire).setOutput((_currentEntity as Wire));
+				_currentComponent.setInput(PreviousComponent);
+				if (PreviousComponent)
+					PreviousComponent.setOutput(_currentComponent);
 			}
 			else
 			{
 				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var NewEntity:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate, (PreviousEntity as Wire));
-				addEntity(NewEntity, X, Y);
-				_currentEntity = NewEntity;
-				if (PreviousEntity)
-					(PreviousEntity as Wire).setOutput((_currentEntity as Wire));
+				var NewWire:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate, PreviousComponent);
+				addComponent(NewWire, X, Y);
+				_currentComponent = NewWire;
+				if (PreviousComponent)
+					PreviousComponent.setOutput(_currentComponent);
 			}
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
 		{
-			_currentEntity = null;
+			_currentComponent = null;
 			_currentTouch.setTo(-1.0, -1.0);
 		}
 		
-		private function getEntityAtTile(X:uint, Y:uint):Entity
+		private function getComponentAtTile(X:uint, Y:uint):DigitalComponent
 		{
-			var EntityAtTile:Entity = _grid[Y][X];
-			return EntityAtTile;
+			var ComponentAtTile:DigitalComponent = _grid[Y][X];
+			return ComponentAtTile;
 		}
 		
-		private function removeEntity(EntityToRemove:Entity):void
+		private function removeComponent(ComponentToRemove:DigitalComponent):void
 		{
 			for (var y:uint = 0; y < _gridHeightInTiles; y++)
 			{
 				for (var x:uint = 0; x < _gridWidthInTiles; x++)
 				{
-					var EntityAtTile:Entity = _grid[y][x];
-					if (EntityAtTile === EntityToRemove)
+					var ComponentAtTile:DigitalComponent = _grid[y][x];
+					if (ComponentAtTile === ComponentToRemove)
 						_grid[y][x] = null;
 				}
 			}
 			
-			var IndexOfEntity:int = _entities.indexOf(EntityToRemove);
+			var IndexOfEntity:int = _components.indexOf(ComponentToRemove);
 			if (IndexOfEntity >= 0)
-				_entities.splice(IndexOfEntity, 1);
+				_components.splice(IndexOfEntity, 1);
 		}
 		
-		public function addEntity(NewEntity:Entity, X:Number = 0, Y:Number = 0):void
+		public function addComponent(NewComponent:DigitalComponent, X:Number = 0, Y:Number = 0):void
 		{
 			var FrameRect:Rectangle = _baseEntity.frameRect;
 			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
@@ -177,42 +178,42 @@ package
 			}
 			
 			// Check that there are no entities already on the grid in the space the new entity needs to occupy.
-			var HeightInTiles:uint = NewEntity.heightInTiles;
-			var WidthInTiles:uint = NewEntity.widthInTiles;
+			var HeightInTiles:uint = NewComponent.heightInTiles;
+			var WidthInTiles:uint = NewComponent.widthInTiles;
 			for (var y:uint = 0; y < HeightInTiles; y++)
 			{
 				for (var x:uint = 0; x < WidthInTiles; x++)
 				{
-					var EntityAtTile:Entity = _grid[GridY + y][GridX + x];
-					if (EntityAtTile)
+					var ComponentAtTile:Entity = _grid[GridY + y][GridX + x];
+					if (ComponentAtTile)
 						return;
 				}
 			}
 			
 			// Add the new entity to the list, and set the grid references to refer to the new entity.
-			_entities.push(NewEntity);
+			_components.push(NewComponent);
 			for (y = 0; y < HeightInTiles; y++)
 			{
 				for (x = 0; x < WidthInTiles; x++)
 				{
-					_grid[GridY + y][GridX + x] = NewEntity;
+					_grid[GridY + y][GridX + x] = NewComponent;
 				}
 			}
 			
 			// Align the new entity's position with the grid.
 			var X:Number = GridX * TileWidth;
 			var Y:Number = GridY * TileHeight;
-			NewEntity.setPosition(X, Y);
+			NewComponent.setPosition(X, Y);
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
 			_baseEntity.drawOntoBuffer(Buffer);
 			
-			for (var i:uint = 0; i < _entities.length; i++)
+			for (var i:uint = 0; i < _components.length; i++)
 			{
-				var EntityA:Entity = _entities[i];
-				EntityA.drawOntoBuffer(Buffer);
+				var Component:DigitalComponent = _components[i];
+				Component.drawOntoBuffer(Buffer);
 			}
 		}
 	}

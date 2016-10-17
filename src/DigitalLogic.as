@@ -18,6 +18,8 @@ package
 		
 		private var _buffer:Bitmap;
 		private var _workbench:Grid;
+		private var _powerSourceOn:DigitalComponent;
+		private var _powerSourceOff:DigitalComponent;
 		
 		public function DigitalLogic()
 		{
@@ -35,8 +37,13 @@ package
 			_workbench = new Grid(BackgroundTile, 40, 30);
 			
 			TopLeft.setTo(8, 8);
-			var NewEntity:Entity = new Entity(_spriteSheet, TopLeft, "Wire");
-			_workbench.addEntity(NewEntity);
+			_powerSourceOn = new DigitalComponent(_spriteSheet, TopLeft);
+			_powerSourceOn.setPowered(true);
+			_workbench.addComponent(_powerSourceOn);
+			
+			_powerSourceOff = new DigitalComponent(_spriteSheet, TopLeft);
+			_powerSourceOff.setPowered(false);
+			_workbench.addComponent(_powerSourceOff, 16, 16);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
@@ -46,6 +53,9 @@ package
 		
 		private function onEnterFrame(e:Event):void
 		{
+			_powerSourceOn.pulse();
+			_powerSourceOff.pulse();
+			
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
 		}

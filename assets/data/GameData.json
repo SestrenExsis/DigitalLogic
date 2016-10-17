@@ -12,52 +12,115 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Wire" :
+                "Wire - Off" :
                 {
                     "x" : 16,
                     "y" : 0,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - Horizontal" :
+                "Wire - Off - Horizontal" :
                 {
                     "x" : 24,
                     "y" : 0,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - Vertical" :
+                "Wire - Off - Vertical" :
                 {
                     "x" : 16,
                     "y" : 8,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - r Bend" :
+                "Wire - Off - r Bend" :
                 {
                     "x" : 32,
                     "y" : 0,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - 7 Bend" :
+                "Wire - Off - 7 Bend" :
                 {
                     "x" : 40,
                     "y" : 0,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - L Bend" :
+                "Wire - Off - L Bend" :
                 {
                     "x" : 32,
                     "y" : 8,
                     "width" : 8,
                     "height" : 8
                 },
-                "Wire - J Bend" :
+                "Wire - Off - J Bend" :
                 {
                     "x" : 40,
                     "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On" :
+                {
+                    "x" : 48,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - Horizontal" :
+                {
+                    "x" : 56,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - Vertical" :
+                {
+                    "x" : 48,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - r Bend" :
+                {
+                    "x" : 64,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - 7 Bend" :
+                {
+                    "x" : 72,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - L Bend" :
+                {
+                    "x" : 64,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Wire - On - J Bend" :
+                {
+                    "x" : 72,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Constant - Off" :
+                {
+                    "x" : 80,
+                    "y" : 0,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Constant - On" :
+                {
+                    "x" : 88,
+                    "y" : 0,
                     "width" : 8,
                     "height" : 8
                 }
