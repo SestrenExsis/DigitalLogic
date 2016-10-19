@@ -18,8 +18,7 @@ package
 		
 		private var _buffer:Bitmap;
 		private var _workbench:Grid;
-		private var _powerSourceOn:DigitalComponent;
-		private var _powerSourceOff:DigitalComponent;
+		private var _toolkit:Vector.<DigitalComponent>;
 		
 		public function DigitalLogic()
 		{
@@ -36,14 +35,21 @@ package
 			var BackgroundTile:Entity = new Entity(_spriteSheet, TopLeft, "Background", 2, 2);
 			_workbench = new Grid(BackgroundTile, 40, 30);
 			
-			TopLeft.setTo(8, 8);
-			_powerSourceOn = new DigitalComponent(_spriteSheet, TopLeft);
-			_powerSourceOn.setPowered(true);
-			_workbench.addComponent(_powerSourceOn);
+			// Add the starting toolkit: A wire, two constants (off and on), and a NOT gate
+			_toolkit = new Vector.<DigitalComponent>();
+			var Tool:DigitalComponent = new Wire(_spriteSheet, TopLeft);
+			_workbench.addComponent(Tool);
 			
-			_powerSourceOff = new DigitalComponent(_spriteSheet, TopLeft);
-			_powerSourceOff.setPowered(false);
-			_workbench.addComponent(_powerSourceOff, 16, 16);
+			Tool = new DigitalComponent(_spriteSheet, TopLeft);
+			Tool.setPowered(false);
+			_workbench.addComponent(Tool, 0, 8);
+			
+			Tool = new DigitalComponent(_spriteSheet, TopLeft);
+			Tool.setPowered(true);
+			_workbench.addComponent(Tool, 0, 16);
+			
+			Tool = new LogicGate(_spriteSheet, TopLeft);
+			_workbench.addComponent(Tool, 0, 24);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);

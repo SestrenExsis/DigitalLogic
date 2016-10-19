@@ -19,6 +19,7 @@ package
 		private var _components:Vector.<DigitalComponent>;
 		private var _grid:Array;
 		private var _tempPoint:Point;
+		private var _latestComponent:DigitalComponent;
 		private var _currentComponent:DigitalComponent;
 		private var _currentTouch:Point;
 		
@@ -83,13 +84,21 @@ package
 			
 			var ComponentAtTile:DigitalComponent = getComponentAtTile(GridX, GridY);
 			if (ComponentAtTile)
+			{
 				_currentComponent = ComponentAtTile;
+				_latestComponent = ComponentAtTile;
+			}
 			else
 			{
 				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var NewEntity:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate);
-				addComponent(NewEntity, X, Y);
-				_currentComponent = NewEntity;
+				var NewComponent:DigitalComponent;
+				if (_latestComponent)
+					NewComponent = _latestComponent.clone();
+				else
+					NewComponent = new Wire(_baseEntity.spriteSheet, GridCoordinate);
+				addComponent(NewComponent, X, Y);
+				_currentComponent = NewComponent;
+				_latestComponent = NewComponent;
 			}
 		}
 		

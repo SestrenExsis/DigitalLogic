@@ -14,6 +14,12 @@ package entities
 			refresh();
 		}
 		
+		override public function clone():DigitalComponent
+		{
+			var Clone:Wire = new Wire(spriteSheet, position);
+			return Clone;
+		}
+		
 		override public function refresh():void
 		{
 			var X:int = position.x;

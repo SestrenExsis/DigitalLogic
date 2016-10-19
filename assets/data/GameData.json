@@ -123,6 +123,13 @@
                     "y" : 0,
                     "width" : 8,
                     "height" : 8
+                },
+                "Gate - NOT" :
+                {
+                    "x" : 80,
+                    "y" : 8,
+                    "width" : 8,
+                    "height" : 8
                 }
             }
         }

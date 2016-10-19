@@ -14,6 +14,13 @@ package entities
 			super(SpriteSheetA, TopLeft, FrameKey, 1, 1);
 		}
 		
+		public function clone():DigitalComponent
+		{
+			var Clone:DigitalComponent = new DigitalComponent(spriteSheet, position);
+			Clone.setPowered(powered);
+			return Clone;
+		}
+		
 		public function get powered():Boolean
 		{
 			return _powered;
