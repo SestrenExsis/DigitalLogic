@@ -34,7 +34,14 @@ package entities
 		
 		public function setInput(Input:DigitalComponent):void
 		{
+			if ((_input === Input) || (Input === _output))
+				return;
+			
+			if (_input)
+				_input._output = null;
 			_input = Input;
+			if (_input)
+				_input.setOutput(this);
 			refresh();
 		}
 		
@@ -45,8 +52,22 @@ package entities
 		
 		public function setOutput(Output:DigitalComponent):void
 		{
+			if ((_output === Output) || (Output === _input))
+				return;
+			
+			if (_output)
+				_output._input = null;
 			_output = Output;
+			if (_output)
+				_output.setInput(this);
 			refresh();
+		}
+		
+		public function switchDirection():void
+		{
+			var Temp:DigitalComponent = _input;
+			_input = _output;
+			_output = Temp;
 		}
 		
 		public function pulse():void

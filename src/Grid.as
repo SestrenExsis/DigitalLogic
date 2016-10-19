@@ -105,8 +105,10 @@ package
 			var CurrentY:int = _currentTouch.y;
 			_currentTouch.setTo(GridX, GridY);
 			
-			// If we have transitioned to a cell diagonal to the last cell, break the chain.
-			if ((GridX != CurrentX) && (GridY != CurrentY))
+			// If new cell is diagonal or more than one square away, break the chain.
+			if (((GridX != CurrentX) && (GridY != CurrentY)) || 
+				Math.abs(GridX - CurrentX) > 1 || 
+				Math.abs(GridY - CurrentY) > 1)
 			{
 				_currentComponent = null;
 				return;
@@ -118,8 +120,6 @@ package
 			if (_currentComponent)
 			{
 				_currentComponent.setInput(PreviousComponent);
-				if (PreviousComponent)
-					PreviousComponent.setOutput(_currentComponent);
 			}
 			else
 			{
@@ -127,8 +127,6 @@ package
 				var NewWire:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate, PreviousComponent);
 				addComponent(NewWire, X, Y);
 				_currentComponent = NewWire;
-				if (PreviousComponent)
-					PreviousComponent.setOutput(_currentComponent);
 			}
 		}
 		
@@ -204,6 +202,16 @@ package
 			var X:Number = GridX * TileWidth;
 			var Y:Number = GridY * TileHeight;
 			NewComponent.setPosition(X, Y);
+		}
+		
+		public function update():void
+		{
+			for (var i:uint = 0; i < _components.length; i++)
+			{
+				var Component:DigitalComponent = _components[i];
+				if (!Component.input)
+					Component.pulse();
+			}
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void

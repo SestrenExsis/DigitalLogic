@@ -53,9 +53,7 @@ package
 		
 		private function onEnterFrame(e:Event):void
 		{
-			_powerSourceOn.pulse();
-			_powerSourceOff.pulse();
-			
+			_workbench.update();
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
 		}

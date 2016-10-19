@@ -82,5 +82,13 @@ package entities
 			}
 			setFrameKey(FrameKey);
 		}
+		
+		override public function pulse():void
+		{
+			if (!input)
+				setPowered(false);
+			
+			super.pulse();
+		}
 	}
 }
