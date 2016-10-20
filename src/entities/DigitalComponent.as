@@ -70,13 +70,6 @@ package entities
 			refresh();
 		}
 		
-		public function switchDirection():void
-		{
-			var Temp:DigitalComponent = _input;
-			_input = _output;
-			_output = Temp;
-		}
-		
 		public function pulse():void
 		{
 			if (output)

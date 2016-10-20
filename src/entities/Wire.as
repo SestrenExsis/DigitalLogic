@@ -72,19 +72,28 @@ package entities
 					}
 				}
 			}
-			else if (input)
+			else if (input || output)
 			{
-				if (InputX == X)
-					FrameKey += " - Vertical";
-				else if (InputY == Y)
-					FrameKey += " - Horizontal";
-			}
-			else if (output)
-			{
-				if (OutputX == X)
-					FrameKey += " - Vertical";
-				else if (OutputY == Y)
-					FrameKey += " - Horizontal";
+				var ConnectorX:int = -1;
+				var ConnectorY:int = -1;
+				if (input)
+				{
+					ConnectorX = InputX;
+					ConnectorY = InputY;
+				}
+				else if (output)
+				{
+					ConnectorX = OutputX;
+					ConnectorY = OutputY;
+				}
+				if (ConnectorX < X)
+					FrameKey += " - West";
+				else if (ConnectorX > X)
+					FrameKey += " - East";
+				else if (ConnectorY < Y)
+					FrameKey += " - North";
+				else if (ConnectorY > Y)
+					FrameKey += " - South";
 			}
 			setFrameKey(FrameKey);
 		}
