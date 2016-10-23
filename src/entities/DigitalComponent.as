@@ -8,10 +8,10 @@ package entities
 		private var _input:DigitalComponent;
 		private var _output:DigitalComponent;
 		
-		public function DigitalComponent(SpriteSheetA:SpriteSheet, TopLeft:Point)
+		public function DigitalComponent(SpriteSheetA:SpriteSheet, TopLeft:Point, Width:uint = 1, Height:uint = 1)
 		{
 			var FrameKey:String = "Constant - Off";
-			super(SpriteSheetA, TopLeft, FrameKey, 1, 1);
+			super(SpriteSheetA, TopLeft, FrameKey, Width, Height);
 		}
 		
 		public function clone():DigitalComponent
