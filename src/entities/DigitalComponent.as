@@ -45,7 +45,10 @@ package entities
 				return;
 			
 			if (_input)
+			{
 				_input._output = null;
+				_input.refresh();
+			}
 			_input = Input;
 			if (_input)
 				_input.setOutput(this);
@@ -63,7 +66,10 @@ package entities
 				return;
 			
 			if (_output)
+			{
 				_output._input = null;
+				_output.refresh();
+			}
 			_output = Output;
 			if (_output)
 				_output.setInput(this);
