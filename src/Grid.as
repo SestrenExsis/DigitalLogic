@@ -123,72 +123,112 @@ package
 			}
 		}
 		
-		private function addPowerSource(X:Number, Y:Number, Powered:Boolean):Device
+		private function addPowerSource(X:Number, Y:Number, Powered:Boolean):Entity
 		{
 			var PowerSource:Device = new Device(Powered);
 			var NodeOut:Node = PowerSource.addOutput();
-			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, PowerSource);
-			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
-			_entities.push(EntityA);
-			_entities.push(EntityB);
+			var PowerSourceEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, PowerSource);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			NodeOutEntity.addNeighbor(PowerSourceEntity);
+			_entities.push(PowerSourceEntity);
+			_entities.push(NodeOutEntity);
 			
-			return PowerSource;
+			return PowerSourceEntity;
 		}
 		
-		private function addLamp(X:Number, Y:Number):Device
+		private function addLamp(X:Number, Y:Number):Entity
 		{
 			var Lamp:Device = new Device(false);
 			var NodeIn:Node = Lamp.addInput();
-			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, Lamp);
-			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
-			_entities.push(EntityA);
-			_entities.push(EntityB);
+			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, Lamp);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			NodeInEntity.addNeighbor(LampEntity);
+			_entities.push(LampEntity);
+			_entities.push(NodeInEntity);
 			
-			return Lamp;
+			return LampEntity;
 		}
 		
-		private function addNotGate(X:Number, Y:Number):Device
+		private function addNotGate(X:Number, Y:Number):Entity
 		{
 			var NotGate:Device = new Device(true);
 			var NodeIn:Node = NotGate.addInput();
 			var NodeOut:Node = NotGate.addOutput();
-			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NotGate);
-			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
-			var EntityC:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
-			_entities.push(EntityA);
-			_entities.push(EntityB);
-			_entities.push(EntityC);
+			var NotGateEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NotGate);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			NodeInEntity.addNeighbor(NotGateEntity);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			NodeOutEntity.addNeighbor(NotGateEntity);
+			_entities.push(NotGateEntity);
+			_entities.push(NodeInEntity);
+			_entities.push(NodeOutEntity);
 			
-			return NotGate;
+			return NotGateEntity;
 		}
 		
-		private function addWire(X:Number, Y:Number, Input:Connector):Wire
+		private function addWire(X:Number, Y:Number, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
-			var NewWire:Wire = new Wire(Input);
-			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NewWire);
-			_entities.push(EntityA);
+			var NewWire:Wire = new Wire();
+			var WireEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NewWire);
+			if (EntityA)
+				connect(WireEntity, EntityA);
+			if (EntityB)
+				connect(WireEntity, EntityB);
+			_entities.push(WireEntity);
 			
-			return NewWire;
+			return WireEntity;
+		}
+		
+		private function connect(WireEntity:Entity, ConnectorEntity:Entity):void
+		{
+			var BaseComponent:DigitalComponent = WireEntity.component;
+			var ConnectingComponent:DigitalComponent = ConnectorEntity.component;
+			if ((BaseComponent is Wire) && (ConnectingComponent is Connector))
+			{
+				(BaseComponent as Wire).connect(ConnectingComponent as Connector);
+				WireEntity.addNeighbor(ConnectorEntity);
+				if (ConnectingComponent is Wire)
+					ConnectorEntity.addNeighbor(WireEntity);
+			}
 		}
 		
 		public function testBasicCircuit(X:Number, Y:Number):void
 		{
-			var PowerSource:Device = addPowerSource(X, Y, true);
-			var NotGateA:Device = addNotGate(X + 16, Y + 8);
-			var NotGateB:Device = addNotGate(X + 32, Y + 8);
-			var Lamp:Device = addLamp(X + 48, Y + 24);
+			var PowerSource:Entity = addPowerSource(X, Y, true);
+			var PowerSourceOut:Entity = _entities[_entities.length - 1];
 			
-			var WireA:Wire = addWire(X + 8, Y, PowerSource.output);
-			var WireB:Wire = addWire(X + 8, Y + 8, WireA);
-			WireB.connect(NotGateA.input);
-			var WireC:Wire = addWire(X + 24, Y + 8, NotGateA.output);
-			WireC.connect(NotGateB.input);
-			var WireD:Wire = addWire(X + 40, Y + 8, NotGateB.output);
-			var WireE:Wire = addWire(X + 48, Y + 8, WireD);
-			var WireF:Wire = addWire(X + 48, Y + 16, WireE);
-			WireF.connect(Lamp.input);
+			var NotGateA:Entity = addNotGate(X + 16, Y + 8);
+			var NotGateAIn:Entity = _entities[_entities.length - 2];
+			var NotGateAOut:Entity = _entities[_entities.length - 1];
 			
-			_powerSource = PowerSource;
+			var NotGateB:Entity = addNotGate(X + 32, Y + 8);
+			var NotGateBIn:Entity = _entities[_entities.length - 2];
+			var NotGateBOut:Entity = _entities[_entities.length - 1];
+			
+			var Lamp:Entity = addLamp(X + 48, Y + 24);
+			var LampIn:Entity = _entities[_entities.length - 1];
+			LampIn.setPosition(LampIn.position.x + 8, LampIn.position.y - 8);
+			
+			var WireEntityA:Entity = addWire(X + 8, Y, PowerSourceOut);
+			var WireEntityB:Entity = addWire(X + 8, Y + 8, WireEntityA, NotGateAIn);
+			var WireEntityC:Entity = addWire(X + 24, Y + 8, NotGateAOut, NotGateBIn);
+			var WireEntityD:Entity = addWire(X + 40, Y + 8, NotGateBOut);
+			var WireEntityE:Entity = addWire(X + 48, Y + 8, WireEntityD);
+			var WireEntityF:Entity = addWire(X + 48, Y + 16, WireEntityE, LampIn);
+			
+			_powerSource = (PowerSource.component as Device);
+			
+			_entities.sort(sortEntitiesByDrawingLayer);
+		}
+		
+		private function sortEntitiesByDrawingLayer(EntityA:Entity, EntityB:Entity):Number
+		{
+			if (EntityA.drawingLayer < EntityB.drawingLayer)
+				return -1;
+			else if (EntityA.drawingLayer > EntityB.drawingLayer)
+				return 1;
+			else
+				return 0;
 		}
 	}
 }

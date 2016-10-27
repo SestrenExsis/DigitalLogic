@@ -208,7 +208,7 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Node - West" :
+                "Node - North" :
                 {
                     "x" : 88,
                     "y" : 16,
@@ -218,6 +218,20 @@
                 "Node - East" :
                 {
                     "x" : 96,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Node - South" :
+                {
+                    "x" : 104,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Node - West" :
+                {
+                    "x" : 112,
                     "y" : 16,
                     "width" : 8,
                     "height" : 8

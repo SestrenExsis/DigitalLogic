@@ -19,6 +19,9 @@ package circuits
 			if (_a === ConnectorToConnect || _b === ConnectorToConnect)
 				return;
 			
+			if (_a && _b)
+				return;
+			
 			if (_a)
 				_b = ConnectorToConnect;
 			else

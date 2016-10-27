@@ -1,5 +1,6 @@
 package entities
 {
+	import circuits.Connector;
 	import circuits.Device;
 	import circuits.DigitalComponent;
 	import circuits.Node;
@@ -16,16 +17,19 @@ package entities
 		private var _spriteSheet:SpriteSheet;
 		private var _topLeft:Point;
 		private var _currentFrameKey:String;
+		private var _drawingLayer:int = 0;
 		private var _widthInTiles:uint;
 		private var _heightInTiles:uint;
 		private var _drawRepeatX:uint = 1;
 		private var _drawRepeatY:uint = 1;
+		private var _neighbors:Vector.<Entity>;
 		private var _component:DigitalComponent;
 		
 		public function Entity(SpriteSheetA:SpriteSheet, X:Number, Y:Number, Component:DigitalComponent = null)
 		{
 			_spriteSheet = SpriteSheetA;
 			_topLeft = new Point(X, Y);
+			_neighbors = new Vector.<Entity>();
 			_component = Component;
 			
 			var FrameKey:String = "Background";
@@ -37,11 +41,13 @@ package entities
 				FrameKey = _component.type;
 				if (FrameKey == DigitalComponent.DEVICE_LAMP)
 				{
+					_drawingLayer = 1;
 					WidthInTiles = 2;
 					HeightInTiles = 2;
 				}
 				else
 				{
+					_drawingLayer = ((FrameKey == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
 					WidthInTiles = 1;
 					HeightInTiles = 1;
 				}
@@ -79,6 +85,11 @@ package entities
 			_currentFrameKey = FrameKey;
 		}
 		
+		public function get drawingLayer():int
+		{
+			return _drawingLayer;
+		}
+		
 		public function get widthInTiles():uint
 		{
 			return _widthInTiles;
@@ -87,6 +98,11 @@ package entities
 		public function get heightInTiles():uint
 		{
 			return _heightInTiles;
+		}
+		
+		public function get component():DigitalComponent
+		{
+			return _component;
 		}
 		
 		public function setDrawRepeat(X:uint, Y:uint):void
@@ -104,6 +120,71 @@ package entities
 			return FrameRect;
 		}
 		
+		public function addNeighbor(NeighboringEntity:Entity):void
+		{
+			if (_neighbors.indexOf(NeighboringEntity) == -1)
+				_neighbors.push(NeighboringEntity);
+		}
+		
+		protected function getNeighborString():String
+		{
+			var NeighborString:String = "";
+			for each (var Neighbor:Entity in _neighbors)
+			{
+				var NeighborComponent:DigitalComponent = Neighbor.component;
+				if (NeighborComponent is Node)
+					NeighborString += Neighbor.getNeighborString();
+				
+				var NeighborPos:Point = Neighbor.position;
+				var NeighborX:Number = NeighborPos.x;
+				var NeighborY:Number = NeighborPos.y;
+				if (NeighborX == position.x)
+				{
+					if (NeighborY < position.y)
+						NeighborString += "North";
+					else if (NeighborY > position.y)
+						NeighborString += "South";
+				}
+				else if (NeighborY == position.y)
+				{
+					if (NeighborX < position.x)
+						NeighborString += "West";
+					else if (NeighborX > position.x)
+						NeighborString += "East";
+				}
+			}
+			
+			switch (NeighborString)
+			{
+				case "NorthSouth":
+				case "SouthNorth":
+					NeighborString = "Vertical";
+					break;
+				case "EastWest":
+				case "WestEast":
+					NeighborString = "Horizontal";
+					break;
+				case "NorthEast":
+				case "EastNorth":
+					NeighborString = "L Bend";
+					break;
+				case "NorthWest":
+				case "WestNorth":
+					NeighborString = "J Bend";
+					break;
+				case "SouthEast":
+				case "EastSouth":
+					NeighborString = "r Bend";
+					break;
+				case "SouthWest":
+				case "WestSouth":
+					NeighborString = "7 Bend";
+					break;
+			}
+			
+			return NeighborString;
+		}
+		
 		public function update():void
 		{
 			var FrameKey:String = "Default";
@@ -114,13 +195,15 @@ package entities
 				{
 					var WireA:Wire = (_component as Wire);
 					FrameKey += ((WireA.powered) ? " - On" : " - Off");
-					
-					//TODO : Select the proper Wire connection frame
+					var NeighborString:String = getNeighborString();
+					if (NeighborString != "")
+						FrameKey += " - " + NeighborString;
 				}
 				else if (_component is Node)
 				{
-					//TODO : Select the proper Node connection frame
-					FrameKey += " - East";
+					NeighborString = getNeighborString();
+					if (NeighborString != "")
+						FrameKey += " - " + NeighborString;
 				}
 				else if (FrameKey == DigitalComponent.DEVICE_CONSTANT)
 				{
