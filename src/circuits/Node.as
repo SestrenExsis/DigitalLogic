@@ -1,4 +1,4 @@
-package entities
+package circuits
 {
 	/**
 	 * A type of connector that sits between a Wire and a Device, controlling the flow of inputs and outputs.

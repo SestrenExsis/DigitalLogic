@@ -1,9 +1,14 @@
 package
 {
-	import entities.*;
+	import circuits.Connector;
+	import circuits.Device;
+	import circuits.DigitalComponent;
+	import circuits.Node;
+	import circuits.Wire;
+	
+	import entities.Entity;
 	
 	import flash.display.BitmapData;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	

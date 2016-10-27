@@ -1,4 +1,4 @@
-package entities
+package circuits
 {
 	/**
 	 * A type of connector that sits between other types of connectors, allowing signals to pass through.

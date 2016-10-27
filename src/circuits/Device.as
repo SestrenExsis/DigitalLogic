@@ -1,4 +1,4 @@
-package entities
+package circuits
 {
 	/**
 	 * The basic component that functions as constants, gates, display outputs, etc.

@@ -1,5 +1,10 @@
 package entities
 {
+	import circuits.Device;
+	import circuits.DigitalComponent;
+	import circuits.Node;
+	import circuits.Wire;
+	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;

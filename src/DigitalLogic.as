@@ -1,6 +1,6 @@
 package
 {
-	import entities.*;
+	import entities.Entity;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -8,7 +8,6 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="#555555")]
 	
