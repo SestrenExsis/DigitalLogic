@@ -1,109 +1,46 @@
 package entities
 {
-	import flash.geom.Point;
-
-	public class Wire extends DigitalComponent
+	/**
+	 * A type of connector that sits between other types of connectors, allowing signals to pass through.
+	 */
+	public class Wire extends Connector
 	{
-		public function Wire(SpriteSheetA:SpriteSheet, TopLeft:Point, Input:DigitalComponent = null)
+		private var _a:Connector;
+		private var _b:Connector;
+		
+		public function Wire(Input:Connector = null)
 		{
-			super(SpriteSheetA, TopLeft);
-			
-			if (Input)
-				setInput(Input);
-			
-			refresh();
+			_type = CONNECTOR_WIRE;
+			connect(Input);
 		}
 		
-		override public function clone():DigitalComponent
+		override public function connect(ConnectorToConnect:Connector):void
 		{
-			var Clone:Wire = new Wire(spriteSheet, position);
-			return Clone;
+			if (_a === ConnectorToConnect || _b === ConnectorToConnect)
+				return;
+			
+			if (_a)
+				_b = ConnectorToConnect;
+			else
+				_a = ConnectorToConnect;
+			
+			ConnectorToConnect.connect(this);
 		}
 		
-		override public function refresh():void
+		override public function propagate(Powered:Boolean, Propagator:DigitalComponent):void
 		{
-			var X:int = position.x;
-			var Y:int = position.y;
-			var InputX:int = -1;
-			var InputY:int = -1;
-			if (input)
-			{
-				var InputPos:Point = input.position;
-				InputX = InputPos.x;
-				InputY = InputPos.y;
-			}
-			var OutputX:int = -1;
-			var OutputY:int = -1;
-			if (output)
-			{
-				var OutputPos:Point = output.position;
-				OutputX = OutputPos.x;
-				OutputY = OutputPos.y;
-			}
+			super.propagate(Powered, Propagator);
 			
-			var FrameKey:String = "Wire - " + ((powered) ? "On" : "Off");
-			if (input && output)
+			if (Propagator === _a)
 			{
-				if ((OutputX == InputX) && (OutputX == InputX))
-					FrameKey += " - Vertical";
-				else if ((OutputY == InputY) && (OutputY == InputY))
-					FrameKey += " - Horizontal";
-				else
-				{
-					// Is north cell attached?
-					if (((OutputX == X) && (OutputY < Y)) ||
-						((InputX == X) && (InputY < Y)))
-					{
-						// Is west cell attached?
-						if (((OutputX < X) && (OutputY == Y)) ||
-							((InputX < X) && (InputY == Y)))
-							FrameKey += " - J Bend";
-						else
-							FrameKey += " - L Bend";
-					}
-					else
-					{
-						// Is west cell attached?
-						if (((OutputX < X) && (OutputY == Y)) ||
-							((InputX < X) && (InputY == Y)))
-							FrameKey += " - 7 Bend";
-						else
-							FrameKey += " - r Bend";
-					}
-				}
+				if (_b)
+					_b.propagate(Powered, this);
 			}
-			else if (input || output)
+			else if (Propagator === _b)
 			{
-				var ConnectorX:int = -1;
-				var ConnectorY:int = -1;
-				if (input)
-				{
-					ConnectorX = InputX;
-					ConnectorY = InputY;
-				}
-				else if (output)
-				{
-					ConnectorX = OutputX;
-					ConnectorY = OutputY;
-				}
-				if (ConnectorX < X)
-					FrameKey += " - West";
-				else if (ConnectorX > X)
-					FrameKey += " - East";
-				else if (ConnectorY < Y)
-					FrameKey += " - North";
-				else if (ConnectorY > Y)
-					FrameKey += " - South";
+				if (_a)
+					_a.propagate(Powered, this);
 			}
-			setFrameKey(FrameKey);
-		}
-		
-		override public function pulse():void
-		{
-			if (!input)
-				setPowered(false);
-			
-			super.pulse();
 		}
 	}
 }

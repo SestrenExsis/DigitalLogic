@@ -15,11 +15,33 @@ package entities
 		private var _heightInTiles:uint;
 		private var _drawRepeatX:uint = 1;
 		private var _drawRepeatY:uint = 1;
+		private var _component:DigitalComponent;
 		
-		public function Entity(SpriteSheetA:SpriteSheet, TopLeft:Point, FrameKey:String, WidthInTiles:uint = 1, HeightInTiles:uint = 1)
+		public function Entity(SpriteSheetA:SpriteSheet, X:Number, Y:Number, Component:DigitalComponent = null)
 		{
 			_spriteSheet = SpriteSheetA;
-			_topLeft = TopLeft.clone();
+			_topLeft = new Point(X, Y);
+			_component = Component;
+			
+			var FrameKey:String = "Background";
+			var WidthInTiles:uint = 2;
+			var HeightInTiles:uint = 2;
+			
+			if (_component)
+			{
+				FrameKey = _component.type;
+				if (FrameKey == DigitalComponent.DEVICE_LAMP)
+				{
+					WidthInTiles = 2;
+					HeightInTiles = 2;
+				}
+				else
+				{
+					WidthInTiles = 1;
+					HeightInTiles = 1;
+				}
+			}
+			
 			_currentFrameKey = FrameKey;
 			_widthInTiles = WidthInTiles;
 			_heightInTiles = HeightInTiles;
@@ -75,6 +97,42 @@ package entities
 		{
 			var FrameRect:Rectangle = _spriteSheet.getFrame(_currentFrameKey);
 			return FrameRect;
+		}
+		
+		public function update():void
+		{
+			var FrameKey:String = "Default";
+			if (_component)
+			{
+				FrameKey = _component.type;
+				if (_component is Wire)
+				{
+					var WireA:Wire = (_component as Wire);
+					FrameKey += ((WireA.powered) ? " - On" : " - Off");
+					
+					//TODO : Select the proper Wire connection frame
+				}
+				else if (_component is Node)
+				{
+					//TODO : Select the proper Node connection frame
+					FrameKey += " - East";
+				}
+				else if (FrameKey == DigitalComponent.DEVICE_CONSTANT)
+				{
+					var ConstantA:Device = (_component as Device);
+					FrameKey += ((ConstantA.invertOutput) ? " - On" : " - Off");
+				}
+				else if (FrameKey == DigitalComponent.DEVICE_LAMP)
+				{
+					var LampA:Device = (_component as Device);
+					var Input:Node = LampA.input;
+					if (Input)
+						FrameKey += ((Input.powered) ? " - On" : " - Off");
+					else
+						FrameKey += " - Off";
+				}
+			}
+			setFrameKey(FrameKey);
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void

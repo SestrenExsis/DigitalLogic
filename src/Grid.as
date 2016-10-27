@@ -1,8 +1,6 @@
 package
 {
-	import entities.DigitalComponent
-	import entities.Entity;
-	import entities.Wire;
+	import entities.*;
 	
 	import flash.display.BitmapData;
 	import flash.events.MouseEvent;
@@ -16,12 +14,12 @@ package
 		private var _baseEntity:Entity;
 		private var _gridWidthInTiles:uint;
 		private var _gridHeightInTiles:uint;
-		private var _components:Vector.<DigitalComponent>;
-		private var _grid:Array;
+		private var _entities:Vector.<Entity>;
 		private var _tempPoint:Point;
 		private var _latestComponent:DigitalComponent;
 		private var _currentComponent:DigitalComponent;
 		private var _currentTouch:Point;
+		private var _powerSource:Device;
 		
 		public function Grid(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -34,12 +32,7 @@ package
 			
 			_gridWidthInTiles = GridWidthInTiles * TiledEntityWidthInTiles;
 			_gridHeightInTiles = GridHeightInTiles * TiledEntityHeightInTiles;
-			_components = new Vector.<DigitalComponent>();
-			_grid = new Array(_gridHeightInTiles);
-			for (var i:uint = 0; i < _grid.length; i++)
-			{
-				_grid[i] = new Array(_gridWidthInTiles);
-			}
+			_entities = new Vector.<Entity>();
 			
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
@@ -81,25 +74,6 @@ package
 			var GridX:uint = GridCoordinate.x;
 			var GridY:uint = GridCoordinate.y;
 			_currentTouch.setTo(GridX, GridY);
-			
-			var ComponentAtTile:DigitalComponent = getComponentAtTile(GridX, GridY);
-			if (ComponentAtTile)
-			{
-				_currentComponent = ComponentAtTile;
-				_latestComponent = ComponentAtTile;
-			}
-			else
-			{
-				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var NewComponent:DigitalComponent;
-				if (_latestComponent)
-					NewComponent = _latestComponent.clone();
-				else
-					NewComponent = new Wire(_baseEntity.spriteSheet, GridCoordinate);
-				addComponent(NewComponent, X, Y);
-				_currentComponent = NewComponent;
-				_latestComponent = NewComponent;
-			}
 		}
 		
 		public function onDrag(X:Number, Y:Number):void
@@ -113,30 +87,6 @@ package
 			var CurrentX:int = _currentTouch.x;
 			var CurrentY:int = _currentTouch.y;
 			_currentTouch.setTo(GridX, GridY);
-			
-			// If new cell is diagonal or more than one square away, break the chain.
-			if (((GridX != CurrentX) && (GridY != CurrentY)) || 
-				Math.abs(GridX - CurrentX) > 1 || 
-				Math.abs(GridY - CurrentY) > 1)
-			{
-				_currentComponent = null;
-				return;
-			}
-			
-			// If an entity already exists, link it with the previous one, otherwise create a new one
-			var PreviousComponent:DigitalComponent = _currentComponent;
-			_currentComponent = getComponentAtTile(GridX, GridY);
-			if (_currentComponent)
-			{
-				_currentComponent.setInput(PreviousComponent);
-			}
-			else
-			{
-				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var NewWire:Wire = new Wire(_baseEntity.spriteSheet, GridCoordinate, PreviousComponent);
-				addComponent(NewWire, X, Y);
-				_currentComponent = NewWire;
-			}
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
@@ -145,93 +95,95 @@ package
 			_currentTouch.setTo(-1.0, -1.0);
 		}
 		
-		private function getComponentAtTile(X:uint, Y:uint):DigitalComponent
-		{
-			var ComponentAtTile:DigitalComponent = _grid[Y][X];
-			return ComponentAtTile;
-		}
-		
-		private function removeComponent(ComponentToRemove:DigitalComponent):void
-		{
-			for (var y:uint = 0; y < _gridHeightInTiles; y++)
-			{
-				for (var x:uint = 0; x < _gridWidthInTiles; x++)
-				{
-					var ComponentAtTile:DigitalComponent = _grid[y][x];
-					if (ComponentAtTile === ComponentToRemove)
-						_grid[y][x] = null;
-				}
-			}
-			
-			var IndexOfEntity:int = _components.indexOf(ComponentToRemove);
-			if (IndexOfEntity >= 0)
-				_components.splice(IndexOfEntity, 1);
-		}
-		
-		public function addComponent(NewComponent:DigitalComponent, X:Number = 0, Y:Number = 0):void
-		{
-			var FrameRect:Rectangle = _baseEntity.frameRect;
-			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
-			var TileHeight:uint = FrameRect.width / _baseEntity.heightInTiles;
-			var GridX:int = Math.floor(X / TileWidth);
-			var GridY:int = Math.floor(Y / TileHeight);
-			
-			// Check that the new entity would fit on the grid
-			if (GridX < 0 || GridX >= _gridWidthInTiles ||
-				GridY < 0 || GridY >= _gridHeightInTiles)
-			{
-				trace("No entity added - The entity would fall off the grid");
-				return;
-			}
-			
-			// Check that there are no entities already on the grid in the space the new entity needs to occupy.
-			var HeightInTiles:uint = NewComponent.heightInTiles;
-			var WidthInTiles:uint = NewComponent.widthInTiles;
-			for (var y:uint = 0; y < HeightInTiles; y++)
-			{
-				for (var x:uint = 0; x < WidthInTiles; x++)
-				{
-					var ComponentAtTile:Entity = _grid[GridY + y][GridX + x];
-					if (ComponentAtTile)
-						return;
-				}
-			}
-			
-			// Add the new entity to the list, and set the grid references to refer to the new entity.
-			_components.push(NewComponent);
-			for (y = 0; y < HeightInTiles; y++)
-			{
-				for (x = 0; x < WidthInTiles; x++)
-				{
-					_grid[GridY + y][GridX + x] = NewComponent;
-				}
-			}
-			
-			// Align the new entity's position with the grid.
-			var X:Number = GridX * TileWidth;
-			var Y:Number = GridY * TileHeight;
-			NewComponent.setPosition(X, Y);
-		}
-		
 		public function update():void
 		{
-			for (var i:uint = 0; i < _components.length; i++)
+			for (var i:uint = 0; i < _entities.length; i++)
 			{
-				var Component:DigitalComponent = _components[i];
-				if (!Component.input)
-					Component.pulse();
+				var EntityToUpdate:Entity = _entities[i];
+				EntityToUpdate.update();
 			}
+			
+			if (_powerSource)
+				_powerSource.pulse();
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
 			_baseEntity.drawOntoBuffer(Buffer);
 			
-			for (var i:uint = 0; i < _components.length; i++)
+			for (var i:uint = 0; i < _entities.length; i++)
 			{
-				var Component:DigitalComponent = _components[i];
-				Component.drawOntoBuffer(Buffer);
+				var EntityToDraw:Entity = _entities[i];
+				EntityToDraw.drawOntoBuffer(Buffer);
 			}
+		}
+		
+		private function addPowerSource(X:Number, Y:Number, Powered:Boolean):Device
+		{
+			var PowerSource:Device = new Device(Powered);
+			var NodeOut:Node = PowerSource.addOutput();
+			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, PowerSource);
+			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			_entities.push(EntityA);
+			_entities.push(EntityB);
+			
+			return PowerSource;
+		}
+		
+		private function addLamp(X:Number, Y:Number):Device
+		{
+			var Lamp:Device = new Device(false);
+			var NodeIn:Node = Lamp.addInput();
+			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, Lamp);
+			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			_entities.push(EntityA);
+			_entities.push(EntityB);
+			
+			return Lamp;
+		}
+		
+		private function addNotGate(X:Number, Y:Number):Device
+		{
+			var NotGate:Device = new Device(true);
+			var NodeIn:Node = NotGate.addInput();
+			var NodeOut:Node = NotGate.addOutput();
+			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NotGate);
+			var EntityB:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			var EntityC:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			_entities.push(EntityA);
+			_entities.push(EntityB);
+			_entities.push(EntityC);
+			
+			return NotGate;
+		}
+		
+		private function addWire(X:Number, Y:Number, Input:Connector):Wire
+		{
+			var NewWire:Wire = new Wire(Input);
+			var EntityA:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NewWire);
+			_entities.push(EntityA);
+			
+			return NewWire;
+		}
+		
+		public function testBasicCircuit(X:Number, Y:Number):void
+		{
+			var PowerSource:Device = addPowerSource(X, Y, true);
+			var NotGateA:Device = addNotGate(X + 16, Y + 8);
+			var NotGateB:Device = addNotGate(X + 32, Y + 8);
+			var Lamp:Device = addLamp(X + 48, Y + 24);
+			
+			var WireA:Wire = addWire(X + 8, Y, PowerSource.output);
+			var WireB:Wire = addWire(X + 8, Y + 8, WireA);
+			WireB.connect(NotGateA.input);
+			var WireC:Wire = addWire(X + 24, Y + 8, NotGateA.output);
+			WireC.connect(NotGateB.input);
+			var WireD:Wire = addWire(X + 40, Y + 8, NotGateB.output);
+			var WireE:Wire = addWire(X + 48, Y + 8, WireD);
+			var WireF:Wire = addWire(X + 48, Y + 16, WireE);
+			WireF.connect(Lamp.input);
+			
+			_powerSource = PowerSource;
 		}
 	}
 }

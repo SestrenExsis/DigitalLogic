@@ -1,94 +1,23 @@
 package entities
 {
-	import flash.geom.Point;
-	
-	public class DigitalComponent extends Entity
+	public class DigitalComponent
 	{
-		private var _powered:Boolean = false;
-		private var _input:DigitalComponent;
-		private var _output:DigitalComponent;
+		public static const DEVICE_CONSTANT:String = "Constant";
+		public static const DEVICE_GATE_NOT:String = "Gate - NOT";
+		public static const DEVICE_LAMP:String = "Lamp";
+		public static const CONNECTOR_WIRE:String = "Wire";
+		public static const CONNECTOR_NODE:String = "Node";
 		
-		public function DigitalComponent(SpriteSheetA:SpriteSheet, TopLeft:Point, Width:uint = 1, Height:uint = 1)
-		{
-			var FrameKey:String = "Constant - Off";
-			super(SpriteSheetA, TopLeft, FrameKey, Width, Height);
-		}
+		protected var _type:String = "Default";
 		
-		public function clone():DigitalComponent
+		public function DigitalComponent()
 		{
-			var Clone:DigitalComponent = new DigitalComponent(spriteSheet, position);
-			Clone.setPowered(powered);
-			return Clone;
-		}
-		
-		public function get powered():Boolean
-		{
-			return _powered;
-		}
-		
-		public function setPowered(Powered:Boolean):void
-		{
-			var OriginalPower:Boolean = _powered;
-			_powered = Powered;
-			if (_powered != OriginalPower)
-				refresh();
-		}
-		
-		public function get input():DigitalComponent
-		{
-			return _input;
-		}
-		
-		public function setInput(Input:DigitalComponent):void
-		{
-			if ((_input === Input) || (Input === _output))
-				return;
 			
-			if (_input)
-			{
-				_input._output = null;
-				_input.refresh();
-			}
-			_input = Input;
-			if (_input)
-				_input.setOutput(this);
-			refresh();
 		}
 		
-		public function get output():DigitalComponent
+		public function get type():String
 		{
-			return _output;
-		}
-		
-		public function setOutput(Output:DigitalComponent):void
-		{
-			if ((_output === Output) || (Output === _input))
-				return;
-			
-			if (_output)
-			{
-				_output._input = null;
-				_output.refresh();
-			}
-			_output = Output;
-			if (_output)
-				_output.setInput(this);
-			refresh();
-		}
-		
-		public function pulse():void
-		{
-			if (output)
-			{
-				output.setPowered(powered);
-				output.pulse();
-			}
-		}
-		
-		public function refresh():void
-		{
-			var FrameKey:String = "Constant - " + ((powered) ? "On" : "Off");
-			setFrameKey(FrameKey);
+			return _type;
 		}
 	}
 }

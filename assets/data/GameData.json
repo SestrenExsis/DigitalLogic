@@ -12,6 +12,13 @@
                     "width" : 16,
                     "height" : 16
                 },
+                "Default" :
+                {
+                    "x" : 0,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
+                },
                 "Wire - Off - r Bend" :
                 {
                     "x" : 16,
@@ -200,6 +207,20 @@
                     "y" : 0,
                     "width" : 16,
                     "height" : 16
+                },
+                "Node - West" :
+                {
+                    "x" : 88,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Node - East" :
+                {
+                    "x" : 96,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
                 }
             }
         }

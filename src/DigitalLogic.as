@@ -30,27 +30,9 @@ package
 			SpriteSheetKey.init();
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
-			var TopLeft:Point = new Point(0, 0);
-			var BackgroundTile:Entity = new Entity(_spriteSheet, TopLeft, "Background", 2, 2);
+			var BackgroundTile:Entity = new Entity(_spriteSheet, 0, 0);
 			_workbench = new Grid(BackgroundTile, 40, 30);
-			
-			// Add the starting toolkit: A wire, two constants (off and on), and a NOT gate
-			var Tool:DigitalComponent = new Wire(_spriteSheet, TopLeft);
-			_workbench.addComponent(Tool);
-			
-			Tool = new DigitalComponent(_spriteSheet, TopLeft);
-			Tool.setPowered(false);
-			_workbench.addComponent(Tool, 0, 8);
-			
-			Tool = new DigitalComponent(_spriteSheet, TopLeft);
-			Tool.setPowered(true);
-			_workbench.addComponent(Tool, 0, 16);
-			
-			Tool = new LogicGate(_spriteSheet, TopLeft);
-			_workbench.addComponent(Tool, 0, 24);
-			
-			Tool = new OutputLamp(_spriteSheet, TopLeft);
-			_workbench.addComponent(Tool, 0, 32);
+			_workbench.testBasicCircuit(16, 16);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);

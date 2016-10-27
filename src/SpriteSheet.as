@@ -1,4 +1,4 @@
-package entities
+package 
 {
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
