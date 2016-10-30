@@ -24,6 +24,7 @@ package entities
 		private var _drawRepeatY:uint = 1;
 		private var _neighbors:Vector.<Entity>;
 		private var _component:DigitalComponent;
+		private var _dirty:Boolean = true;
 		
 		public function Entity(SpriteSheetA:SpriteSheet, X:Number, Y:Number, Component:DigitalComponent = null)
 		{
@@ -32,14 +33,12 @@ package entities
 			_neighbors = new Vector.<Entity>();
 			_component = Component;
 			
-			var FrameKey:String = "Background";
 			var WidthInTiles:uint = 2;
 			var HeightInTiles:uint = 2;
 			
 			if (_component)
 			{
-				FrameKey = _component.type;
-				if (FrameKey == DigitalComponent.DEVICE_LAMP)
+				if (_component.type == DigitalComponent.DEVICE_LAMP)
 				{
 					_drawingLayer = 1;
 					WidthInTiles = 2;
@@ -47,13 +46,12 @@ package entities
 				}
 				else
 				{
-					_drawingLayer = ((FrameKey == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
+					_drawingLayer = ((_component.type == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
 					WidthInTiles = 1;
 					HeightInTiles = 1;
 				}
 			}
 			
-			_currentFrameKey = FrameKey;
 			_widthInTiles = WidthInTiles;
 			_heightInTiles = HeightInTiles;
 		}
@@ -80,9 +78,10 @@ package entities
 			_topLeft.y = Y;
 		}
 		
-		protected function setFrameKey(FrameKey:String):void
+		public function setFrameKey(FrameKey:String):void
 		{
 			_currentFrameKey = FrameKey;
+			_dirty = false;
 		}
 		
 		public function get drawingLayer():int
@@ -124,6 +123,7 @@ package entities
 		{
 			if (_neighbors.indexOf(NeighboringEntity) == -1)
 				_neighbors.push(NeighboringEntity);
+			_dirty = true;
 		}
 		
 		protected function getNeighborString():String
@@ -185,7 +185,7 @@ package entities
 			return NeighborString;
 		}
 		
-		public function update():void
+		private function update():void
 		{
 			var FrameKey:String = "Default";
 			if (_component)
@@ -205,12 +205,12 @@ package entities
 					if (NeighborString != "")
 						FrameKey += " - " + NeighborString;
 				}
-				else if (FrameKey == DigitalComponent.DEVICE_CONSTANT)
+				else if (component.type == DigitalComponent.DEVICE_CONSTANT)
 				{
 					var ConstantA:Device = (_component as Device);
 					FrameKey += ((ConstantA.invertOutput) ? " - On" : " - Off");
 				}
-				else if (FrameKey == DigitalComponent.DEVICE_LAMP)
+				else if (component.type == DigitalComponent.DEVICE_LAMP)
 				{
 					var LampA:Device = (_component as Device);
 					var Input:Node = LampA.input;
@@ -221,10 +221,14 @@ package entities
 				}
 			}
 			setFrameKey(FrameKey);
+			_dirty = false;
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
+			if (_dirty)
+				update();
+			
 			var Position:Point = position;
 			var InitialX:Number = Position.x;
 			var InitialY:Number = Position.y;

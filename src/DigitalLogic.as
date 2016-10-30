@@ -30,6 +30,7 @@ package
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
 			var BackgroundTile:Entity = new Entity(_spriteSheet, 0, 0);
+			BackgroundTile.setFrameKey("Background");
 			_workbench = new Grid(BackgroundTile, 40, 30);
 			_workbench.testBasicCircuit(16, 16);
 			

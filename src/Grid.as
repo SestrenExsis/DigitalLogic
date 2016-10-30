@@ -21,10 +21,11 @@ package
 		private var _gridHeightInTiles:uint;
 		private var _entities:Vector.<Entity>;
 		private var _tempPoint:Point;
-		private var _latestComponent:DigitalComponent;
-		private var _currentComponent:DigitalComponent;
+		private var _latestEntity:Entity;
+		private var _currentEntity:Entity;
 		private var _currentTouch:Point;
 		private var _powerSource:Device;
+		private var _mouseDown:Boolean = false;
 		
 		public function Grid(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -70,8 +71,36 @@ package
 			return _tempPoint;
 		}
 		
+		private function getEntityAtPoint(X:Number, Y:Number, IgnoreComponentType:String = ""):Entity
+		{
+			var FrameRect:Rectangle = new Rectangle();
+			for each (var CurrentEntity:Entity in _entities)
+			{
+				if (CurrentEntity.frameRect)
+				{
+					FrameRect.copyFrom(CurrentEntity.frameRect);
+					var Pos:Point = CurrentEntity.position;
+					FrameRect.x = Pos.x;
+					FrameRect.y = Pos.y;
+					if (FrameRect.contains(X, Y))
+					{
+						if (IgnoreComponentType == "")
+							return CurrentEntity;
+						else if (CurrentEntity.component.type != IgnoreComponentType)
+							return CurrentEntity;
+					}
+				}
+			}
+			
+			return null;
+		}
+		
 		public function onTouch(X:Number, Y:Number):void
 		{
+			if (_mouseDown)
+				return;
+			
+			_mouseDown = true;
 			var GridCoordinate:Point = getGridCoordinate(X, Y);
 			if (!GridCoordinate)
 				return;
@@ -79,11 +108,27 @@ package
 			var GridX:uint = GridCoordinate.x;
 			var GridY:uint = GridCoordinate.y;
 			_currentTouch.setTo(GridX, GridY);
+			
+			var EntityAtPoint:Entity = getEntityAtPoint(X, Y, DigitalComponent.CONNECTOR_NODE);
+			if (EntityAtPoint)
+			{
+				_currentEntity = EntityAtPoint;
+				_latestEntity = EntityAtPoint;
+			}
+			else
+			{
+				GridCoordinate = getGridCoordinate(X, Y, "pixels");
+				var SnappedX:Number = GridCoordinate.x;
+				var SnappedY:Number = GridCoordinate.y;
+				var NewEntity:Entity = addWire(SnappedX, SnappedY, _currentEntity);
+				_currentEntity = NewEntity;
+				_latestEntity = NewEntity;
+			}
 		}
 		
 		public function onDrag(X:Number, Y:Number):void
 		{
-			var GridCoordinate:Point = getGridCoordinate(X, Y);
+			var GridCoordinate:Point = getGridCoordinate(X, Y, "tiles");
 			if (!GridCoordinate || GridCoordinate.equals(_currentTouch))
 				return;
 			
@@ -92,22 +137,48 @@ package
 			var CurrentX:int = _currentTouch.x;
 			var CurrentY:int = _currentTouch.y;
 			_currentTouch.setTo(GridX, GridY);
+			
+			// If new cell is diagonal or more than one square away, break the chain.
+			if (((GridX != CurrentX) && (GridY != CurrentY)) || 
+				Math.abs(GridX - CurrentX) > 1 || 
+				Math.abs(GridY - CurrentY) > 1)
+			{
+				_currentEntity = null;
+				return;
+			}
+			
+			// If an entity already exists, link it with the previous one, otherwise create a new one
+			var PreviousEntity:Entity = _currentEntity;
+			_currentEntity = getEntityAtPoint(X, Y);
+			if (_currentEntity)
+			{
+				var CurrentComponent:DigitalComponent = _currentEntity.component
+				var PreviousComponent:DigitalComponent = PreviousEntity.component
+				if ((CurrentComponent is Connector) && (PreviousComponent is Connector))
+					(CurrentComponent as Connector).connect(PreviousComponent as Connector);
+			}
+			else
+			{
+				GridCoordinate = getGridCoordinate(X, Y, "pixels");
+				var SnappedX:Number = GridCoordinate.x;
+				var SnappedY:Number = GridCoordinate.y;
+				var NewEntity:Entity = addWire(SnappedX, SnappedY, PreviousEntity);
+				_currentEntity = NewEntity;
+			}
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
 		{
-			_currentComponent = null;
+			if (!_mouseDown)
+				return;
+			
+			_mouseDown = false;
+			_currentEntity = null;
 			_currentTouch.setTo(-1.0, -1.0);
 		}
 		
 		public function update():void
 		{
-			for (var i:uint = 0; i < _entities.length; i++)
-			{
-				var EntityToUpdate:Entity = _entities[i];
-				EntityToUpdate.update();
-			}
-			
 			if (_powerSource)
 				_powerSource.pulse();
 		}
@@ -116,9 +187,8 @@ package
 		{
 			_baseEntity.drawOntoBuffer(Buffer);
 			
-			for (var i:uint = 0; i < _entities.length; i++)
+			for each (var EntityToDraw:Entity in _entities)
 			{
-				var EntityToDraw:Entity = _entities[i];
 				EntityToDraw.drawOntoBuffer(Buffer);
 			}
 		}
