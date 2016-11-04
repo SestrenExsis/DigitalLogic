@@ -14,6 +14,11 @@ package circuits
 			return _powered;
 		}
 		
+		public function reset():void
+		{
+			_powered = false;
+		}
+		
 		public function connect(ConnectorToConnect:Connector):void
 		{
 			

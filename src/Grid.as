@@ -1,5 +1,6 @@
 package
 {
+	import circuits.Board;
 	import circuits.Connector;
 	import circuits.Device;
 	import circuits.DigitalComponent;
@@ -25,6 +26,7 @@ package
 		private var _currentEntity:Entity;
 		private var _currentTouch:Point;
 		private var _powerSource:Device;
+		private var _board:Board;
 		private var _mouseDown:Boolean = false;
 		
 		public function Grid(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
@@ -42,6 +44,7 @@ package
 			
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
+			_board = new Board();
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
@@ -150,21 +153,30 @@ package
 			// If an entity already exists, link it with the previous one, otherwise create a new one
 			var PreviousEntity:Entity = _currentEntity;
 			_currentEntity = getEntityAtPoint(X, Y);
+			GridCoordinate = getGridCoordinate(X, Y, "pixels");
+			var SnappedX:Number = GridCoordinate.x;
+			var SnappedY:Number = GridCoordinate.y;
+			var NewEntity:Entity
 			if (_currentEntity)
 			{
-				var CurrentComponent:DigitalComponent = _currentEntity.component
-				var PreviousComponent:DigitalComponent = PreviousEntity.component
-				if ((CurrentComponent is Connector) && (PreviousComponent is Connector))
-					(CurrentComponent as Connector).connect(PreviousComponent as Connector);
+				var CurrentComponent:DigitalComponent = _currentEntity.component;
+				var PreviousComponent:DigitalComponent = PreviousEntity.component;
+				if (((CurrentComponent is Node) && (PreviousComponent is Wire)) ||
+				((CurrentComponent is Wire) && (PreviousComponent is Node)))
+				{
+					NewEntity = addWire(SnappedX, SnappedY, PreviousEntity, _currentEntity);
+					_currentEntity = NewEntity;
+				}
+					
+				//if ((CurrentComponent is Connector) && (PreviousComponent is Connector))
+				//	(CurrentComponent as Connector).connect(PreviousComponent as Connector);
 			}
 			else
 			{
-				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var SnappedX:Number = GridCoordinate.x;
-				var SnappedY:Number = GridCoordinate.y;
-				var NewEntity:Entity = addWire(SnappedX, SnappedY, PreviousEntity);
+				NewEntity = addWire(SnappedX, SnappedY, PreviousEntity);
 				_currentEntity = NewEntity;
 			}
+			_entities.sort(sortEntitiesByDrawingLayer);
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
@@ -179,8 +191,7 @@ package
 		
 		public function update():void
 		{
-			if (_powerSource)
-				_powerSource.pulse();
+			_board.tick();
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
@@ -195,10 +206,9 @@ package
 		
 		private function addPowerSource(X:Number, Y:Number, Powered:Boolean):Entity
 		{
-			var PowerSource:Device = new Device(Powered);
-			var NodeOut:Node = PowerSource.addOutput();
+			var PowerSource:Device = _board.addConstant(Powered);
 			var PowerSourceEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, PowerSource);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, PowerSource.output);
 			NodeOutEntity.addNeighbor(PowerSourceEntity);
 			_entities.push(PowerSourceEntity);
 			_entities.push(NodeOutEntity);
@@ -208,10 +218,9 @@ package
 		
 		private function addLamp(X:Number, Y:Number):Entity
 		{
-			var Lamp:Device = new Device(false);
-			var NodeIn:Node = Lamp.addInput();
+			var Lamp:Device = _board.addLamp();
 			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, Lamp);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, Lamp.input);
 			NodeInEntity.addNeighbor(LampEntity);
 			_entities.push(LampEntity);
 			_entities.push(NodeInEntity);
@@ -221,13 +230,11 @@ package
 		
 		private function addNotGate(X:Number, Y:Number):Entity
 		{
-			var NotGate:Device = new Device(true);
-			var NodeIn:Node = NotGate.addInput();
-			var NodeOut:Node = NotGate.addOutput();
+			var NotGate:Device = _board.addGate();
 			var NotGateEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NotGate);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NodeIn);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, X - 8, Y, NotGate.input);
 			NodeInEntity.addNeighbor(NotGateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NodeOut);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, X + 8, Y, NotGate.output);
 			NodeOutEntity.addNeighbor(NotGateEntity);
 			_entities.push(NotGateEntity);
 			_entities.push(NodeInEntity);
@@ -238,7 +245,7 @@ package
 		
 		private function addWire(X:Number, Y:Number, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
-			var NewWire:Wire = new Wire();
+			var NewWire:Wire = _board.addWire();
 			var WireEntity:Entity = new Entity(_baseEntity.spriteSheet, X, Y, NewWire);
 			if (EntityA)
 				connect(WireEntity, EntityA);
@@ -285,8 +292,6 @@ package
 			var WireEntityD:Entity = addWire(X + 40, Y + 8, NotGateBOut);
 			var WireEntityE:Entity = addWire(X + 48, Y + 8, WireEntityD);
 			var WireEntityF:Entity = addWire(X + 48, Y + 16, WireEntityE, LampIn);
-			
-			_powerSource = (PowerSource.component as Device);
 			
 			_entities.sort(sortEntitiesByDrawingLayer);
 		}
