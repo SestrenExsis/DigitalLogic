@@ -16,7 +16,7 @@ package
 		private static var _spriteSheet:SpriteSheet;
 		
 		private var _buffer:Bitmap;
-		private var _workbench:Grid;
+		private var _workbench:Workbench;
 		
 		public function DigitalLogic()
 		{
@@ -29,10 +29,10 @@ package
 			SpriteSheetKey.init();
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
-			var BackgroundTile:Entity = new Entity(_spriteSheet, 0, 0);
+			var BackgroundTile:Entity = new Entity(_spriteSheet);
 			BackgroundTile.setFrameKey("Background");
-			_workbench = new Grid(BackgroundTile, 40, 30);
-			_workbench.testBasicCircuit(16, 16);
+			_workbench = new Workbench(BackgroundTile, 40, 30);
+			_workbench.testBasicCircuit(2, 2);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);

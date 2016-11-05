@@ -18,18 +18,23 @@ package entities
 		private var _topLeft:Point;
 		private var _currentFrameKey:String;
 		private var _drawingLayer:int = 0;
-		private var _widthInTiles:uint;
-		private var _heightInTiles:uint;
+		
 		private var _drawRepeatX:uint = 1;
 		private var _drawRepeatY:uint = 1;
 		private var _neighbors:Vector.<Entity>;
 		private var _component:DigitalComponent;
 		private var _dirty:Boolean = true;
 		
-		public function Entity(SpriteSheetA:SpriteSheet, X:Number, Y:Number, Component:DigitalComponent = null)
+		private var _widthInTiles:uint;
+		private var _heightInTiles:uint;
+		
+		public var gridX:uint = 0;
+		public var gridY:uint = 0;
+		
+		public function Entity(SpriteSheetA:SpriteSheet, Component:DigitalComponent = null)
 		{
 			_spriteSheet = SpriteSheetA;
-			_topLeft = new Point(X, Y);
+			_topLeft = new Point();
 			_neighbors = new Vector.<Entity>();
 			_component = Component;
 			
@@ -59,23 +64,6 @@ package entities
 		public function get spriteSheet():SpriteSheet
 		{
 			return _spriteSheet;
-		}
-		
-		/**
-		 * Gets the top-left corner of the Entity.
-		 */
-		public function get position():Point
-		{
-			return _topLeft;
-		}
-		
-		/**
-		 * Sets the top-left corner of the Entity.
-		 */
-		public function setPosition(X:Number, Y:Number):void
-		{
-			_topLeft.x = X;
-			_topLeft.y = Y;
 		}
 		
 		public function setFrameKey(FrameKey:String):void
@@ -135,21 +123,20 @@ package entities
 				if (NeighborComponent is Node)
 					NeighborString += Neighbor.getNeighborString();
 				
-				var NeighborPos:Point = Neighbor.position;
-				var NeighborX:Number = NeighborPos.x;
-				var NeighborY:Number = NeighborPos.y;
-				if (NeighborX == position.x)
+				var NeighborX:Number = Neighbor.gridX;
+				var NeighborY:Number = Neighbor.gridY;
+				if (NeighborX == gridX)
 				{
-					if (NeighborY < position.y)
+					if (NeighborY < gridY)
 						NeighborString += "North";
-					else if (NeighborY > position.y)
+					else if (NeighborY > gridY)
 						NeighborString += "South";
 				}
-				else if (NeighborY == position.y)
+				else if (NeighborY == gridY)
 				{
-					if (NeighborX < position.x)
+					if (NeighborX < gridX)
 						NeighborString += "West";
-					else if (NeighborX > position.x)
+					else if (NeighborX > gridX)
 						NeighborString += "East";
 				}
 			}
@@ -229,10 +216,11 @@ package entities
 			if (_dirty)
 				update();
 			
-			var Position:Point = position;
-			var InitialX:Number = Position.x;
-			var InitialY:Number = Position.y;
 			var FrameRect:Rectangle = frameRect;
+			var TileWidth:uint = FrameRect.width / _widthInTiles;
+			var TileHeight:uint = FrameRect.width / _heightInTiles;
+			var InitialX:Number = gridX * TileWidth;
+			var InitialY:Number = gridY * TileHeight;
 			var FrameWidth:Number = FrameRect.width;
 			var FrameHeight:Number = FrameRect.height;
 			for (var y:uint = 0; y < _drawRepeatY; y++)
@@ -241,11 +229,10 @@ package entities
 				{
 					var TileX:Number = InitialX + FrameWidth * x;
 					var TileY:Number = InitialY + FrameHeight * y;
-					setPosition(TileX, TileY);
+					_topLeft.setTo(TileX, TileY);
 					Buffer.copyPixels(_spriteSheet.bitmapData, FrameRect, _topLeft, null, null, true);
 				}
 			}
-			setPosition(InitialX, InitialY);
 		}
 	}
 }
