@@ -112,10 +112,7 @@ package
 			}
 			else
 			{
-				GridCoordinate = getGridCoordinate(X, Y, "pixels");
-				var SnappedX:Number = GridCoordinate.x;
-				var SnappedY:Number = GridCoordinate.y;
-				var NewEntity:Entity = addWire(SnappedX, SnappedY, _currentEntity);
+				var NewEntity:Entity = addWire(GridX, GridY, _currentEntity);
 				_currentEntity = NewEntity;
 				_latestEntity = NewEntity;
 			}
@@ -133,14 +130,31 @@ package
 			var CurrentY:int = _currentTouch.y;
 			_currentTouch.setTo(GridX, GridY);
 			
-			// If new cell is diagonal or more than one square away, break the chain.
-			if (((GridX != CurrentX) && (GridY != CurrentY)) || 
-				Math.abs(GridX - CurrentX) > 1 || 
-				Math.abs(GridY - CurrentY) > 1)
+			var FrameRect:Rectangle = _baseEntity.frameRect;
+			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
+			var TileHeight:uint = FrameRect.width / _baseEntity.heightInTiles;
+			while ((Math.abs(GridX - CurrentX) + Math.abs(GridY - CurrentY)) > 1)
 			{
-				_currentEntity = null;
-				return;
+				if (CurrentX < GridX)
+					CurrentX++;
+				else if (CurrentX > GridX)
+					CurrentX--;
+				else if (CurrentY < GridY)
+					CurrentY++;
+				else if (CurrentY > GridY)
+					CurrentY--;
+				placeEntity(CurrentX * TileWidth, CurrentY * TileHeight);
 			}
+			
+			placeEntity(X, Y);
+			_grid.sortEntities();
+		}
+		
+		private function placeEntity(X:Number, Y:Number):void
+		{
+			var GridCoordinate:Point = getGridCoordinate(X, Y, "tiles");
+			var GridX:int = GridCoordinate.x;
+			var GridY:int = GridCoordinate.y;
 			
 			// If an entity already exists, link it with the previous one, otherwise create a new one
 			var PreviousEntity:Entity = _currentEntity;
@@ -151,7 +165,7 @@ package
 				var CurrentComponent:DigitalComponent = _currentEntity.component;
 				var PreviousComponent:DigitalComponent = PreviousEntity.component;
 				if (((CurrentComponent is Node) && (PreviousComponent is Wire)) ||
-				((CurrentComponent is Wire) && (PreviousComponent is Node)))
+					((CurrentComponent is Wire) && (PreviousComponent is Node)))
 				{
 					NewEntity = addWire(GridX, GridY, PreviousEntity, _currentEntity);
 					_currentEntity = NewEntity;
@@ -162,7 +176,6 @@ package
 				NewEntity = addWire(GridX, GridY, PreviousEntity);
 				_currentEntity = NewEntity;
 			}
-			_grid.sortEntities();
 		}
 		
 		public function onRelease(X:Number, Y:Number):void
