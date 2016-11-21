@@ -28,8 +28,8 @@ package entities
 				var Top:uint = CurrentEntity.gridY;
 				var Right:uint = Left + CurrentEntity.widthInTiles - 1;
 				var Bottom:uint = Top + CurrentEntity.heightInTiles - 1;
-				if (Right >= SelectLeft && Left <= SelectRight &&
-					Top >= SelectBottom && Bottom <= SelectTop)
+				if (SelectLeft <= Right && SelectRight >= Left &&
+					SelectTop <= Bottom && SelectBottom >= Top)
 					SelectedEntities.push(CurrentEntity);
 			}
 			

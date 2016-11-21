@@ -87,6 +87,11 @@ package circuits
 			_devices.push(NewGate);
 			_components.push(NodeIn);
 			_components.push(NodeOut);
+			if (GateType == "AND")
+			{
+				var NodeIn2:Node = NewGate.addInput();
+				_components.push(NodeIn2);
+			}
 			
 			return NewGate;
 		}

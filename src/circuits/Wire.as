@@ -14,6 +14,15 @@ package circuits
 			connect(Input);
 		}
 		
+		override public function get open():Boolean
+		{
+			var Open:Boolean = true;
+			if (_a && _b)
+				Open = false;
+			
+			return Open;
+		}
+		
 		override public function connect(ConnectorToConnect:Connector):void
 		{
 			if (_a === ConnectorToConnect || _b === ConnectorToConnect)

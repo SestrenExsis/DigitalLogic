@@ -6,6 +6,7 @@ package circuits
 	public class Device extends DigitalComponent
 	{
 		private var _input:Node;
+		private var _input2:Node;
 		private var _output:Node;
 		private var _invertOutput:Boolean = false;
 		
@@ -21,7 +22,9 @@ package circuits
 				return;
 			
 			var Powered:Boolean;
-			if (_input)
+			if (_input && _input2)
+				Powered = _input.powered && _input2.powered;
+			else if (_input)
 				Powered = ((_invertOutput) ? !_input.powered : _input.powered);
 			else
 				Powered = _invertOutput;
@@ -33,6 +36,11 @@ package circuits
 		public function get input():Node
 		{
 			return _input;
+		}
+		
+		public function get input2():Node
+		{
+			return _input2;
 		}
 		
 		public function get output():Node
@@ -47,34 +55,41 @@ package circuits
 		
 		public function addInput():Node
 		{
-			var Input:Node = new Node(this);
-			_input = Input;
+			if (_input && _input2)
+				return null;
 			
-			if (_output)
-			{
-				if (_invertOutput)
-					_type = DEVICE_GATE_NOT;
-			}
+			var Input:Node = new Node(this);
+			if (_input)
+				_input2 = Input;
 			else
-				_type = DEVICE_LAMP;
+				_input = Input;
+			updateType();
 			
 			return _input;
 		}
 		
 		public function addOutput():Node
 		{
+			if (_output)
+				return null;
+			
 			var Output:Node = new Node(this);
 			_output = Output;
-			
-			if (_input)
-			{
-				if (_invertOutput)
-					_type = DEVICE_GATE_NOT;
-			}
-			else
-				_type = DEVICE_CONSTANT;
+			updateType();
 			
 			return _output;
+		}
+		
+		private function updateType():void
+		{
+			if (_input && _input2 && _output)
+				_type = DEVICE_GATE_AND;
+			else if (_input && _output && _invertOutput)
+				_type = DEVICE_GATE_NOT;
+			else if (_input)
+				_type = DEVICE_LAMP;
+			else if (_output)
+				_type = DEVICE_CONSTANT;
 		}
 	}
 }

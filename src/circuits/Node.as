@@ -14,6 +14,15 @@ package circuits
 			_device = AttachedDevice;
 		}
 		
+		override public function get open():Boolean
+		{
+			var Open:Boolean = true;
+			if (_wire)
+				Open = false;
+			
+			return Open;
+		}
+		
 		override public function connect(ConnectorToConnect:Connector):void
 		{
 			if (ConnectorToConnect === _wire)

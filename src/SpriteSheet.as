@@ -52,6 +52,8 @@ package
 			var FrameRect:Rectangle = null;
 			if (_frames.hasOwnProperty(FrameKey))
 				FrameRect = _frames[FrameKey];
+			else if (_frames.hasOwnProperty("Default"))
+				FrameRect = _frames["Default"];
 			return FrameRect;
 		}
 	}

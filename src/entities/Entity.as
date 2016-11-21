@@ -43,17 +43,19 @@ package entities
 			
 			if (_component)
 			{
-				if (_component.type == DigitalComponent.DEVICE_LAMP)
+				switch (_component.type)
 				{
-					_drawingLayer = 1;
-					WidthInTiles = 2;
-					HeightInTiles = 2;
-				}
-				else
-				{
-					_drawingLayer = ((_component.type == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
-					WidthInTiles = 1;
-					HeightInTiles = 1;
+					case DigitalComponent.DEVICE_LAMP:
+					case DigitalComponent.DEVICE_GATE_AND:
+						_drawingLayer = 1;
+						WidthInTiles = 2;
+						HeightInTiles = 2;
+						break;
+					default:
+						_drawingLayer = ((_component.type == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
+						WidthInTiles = 1;
+						HeightInTiles = 1;
+						break;
 				}
 			}
 			
@@ -116,6 +118,10 @@ package entities
 		
 		protected function getNeighborString():String
 		{
+			var Left:uint = gridX;
+			var Right:uint = Left + widthInTiles - 1;
+			var Top:uint = gridY;
+			var Bottom:uint = Top + heightInTiles - 1;
 			var NeighborString:String = "";
 			for each (var Neighbor:Entity in _neighbors)
 			{
@@ -123,22 +129,19 @@ package entities
 				if (NeighborComponent is Node)
 					NeighborString += Neighbor.getNeighborString();
 				
-				var NeighborX:Number = Neighbor.gridX;
-				var NeighborY:Number = Neighbor.gridY;
-				if (NeighborX == gridX)
-				{
-					if (NeighborY < gridY)
-						NeighborString += "North";
-					else if (NeighborY > gridY)
-						NeighborString += "South";
-				}
-				else if (NeighborY == gridY)
-				{
-					if (NeighborX < gridX)
-						NeighborString += "West";
-					else if (NeighborX > gridX)
-						NeighborString += "East";
-				}
+				var NeighborLeft:uint = Neighbor.gridX;
+				var NeighborRight:uint = NeighborLeft + Neighbor.widthInTiles - 1;
+				var NeighborTop:uint = Neighbor.gridY;
+				var NeighborBottom:uint = NeighborTop + Neighbor.heightInTiles - 1;
+				
+				if (NeighborTop > Bottom)
+					NeighborString += "South";
+				else if (NeighborBottom < Top)
+					NeighborString += "North";
+				else if (NeighborLeft > Right)
+					NeighborString += "East";
+				else if (NeighborRight < Left)
+					NeighborString += "West";
 			}
 			
 			switch (NeighborString)
@@ -213,12 +216,29 @@ package entities
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
+			if (component)
+			{
+				if (component is Device)
+				{
+					var DeviceComponent:Device = component as Device;
+					if (DeviceComponent.input && DeviceComponent.input.edge != 0)
+						_dirty = true;
+					if (DeviceComponent.input2 && DeviceComponent.input2.edge != 0)
+						_dirty = true;
+				}
+				else if (component is Connector)
+				{
+					var ConnectorComponent:Connector = component as Connector;
+					if (ConnectorComponent.edge != 0)
+						_dirty = true;
+				}
+			}
 			if (_dirty)
 				update();
 			
 			var FrameRect:Rectangle = frameRect;
 			var TileWidth:uint = FrameRect.width / _widthInTiles;
-			var TileHeight:uint = FrameRect.width / _heightInTiles;
+			var TileHeight:uint = FrameRect.height / _heightInTiles;
 			var InitialX:Number = gridX * TileWidth;
 			var InitialY:Number = gridY * TileHeight;
 			var FrameWidth:Number = FrameRect.width;

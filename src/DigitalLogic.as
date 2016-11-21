@@ -32,7 +32,8 @@ package
 			var BackgroundTile:Entity = new Entity(_spriteSheet);
 			BackgroundTile.setFrameKey("Background");
 			_workbench = new Workbench(BackgroundTile, 40, 30);
-			_workbench.testBasicCircuit(2, 2);
+			_workbench.addToolkit(1, 0);
+			_workbench.testBasicCircuit(5, 5);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);

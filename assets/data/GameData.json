@@ -194,6 +194,13 @@
                     "width" : 8,
                     "height" : 8
                 },
+                "Gate - AND" :
+                {
+                    "x" : 120,
+                    "y" : 0,
+                    "width" : 16,
+                    "height" : 16
+                },
                 "Lamp - Off" :
                 {
                     "x" : 88,

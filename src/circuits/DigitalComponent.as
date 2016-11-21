@@ -4,6 +4,7 @@ package circuits
 	{
 		public static const DEVICE_CONSTANT:String = "Constant";
 		public static const DEVICE_GATE_NOT:String = "Gate - NOT";
+		public static const DEVICE_GATE_AND:String = "Gate - AND";
 		public static const DEVICE_LAMP:String = "Lamp";
 		public static const CONNECTOR_WIRE:String = "Wire";
 		public static const CONNECTOR_NODE:String = "Node";
