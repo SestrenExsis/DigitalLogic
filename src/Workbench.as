@@ -236,10 +236,12 @@ package
 			var EntitiesAtPoint:Vector.<Entity> = getEntitiesAtPoint(X, Y);
 			_currentEntity = (EntitiesAtPoint.length > 0) ? EntitiesAtPoint[0] : null;
 			var NewEntity:Entity;
+			var PreviousComponent:DigitalComponent = null;
+			if (PreviousEntity)
+				PreviousComponent = PreviousEntity.component;
 			if (_currentEntity)
 			{
 				var CurrentComponent:DigitalComponent = _currentEntity.component;
-				var PreviousComponent:DigitalComponent = PreviousEntity.component;
 				if (((CurrentComponent is Node) && (PreviousComponent is Wire)) ||
 					((PreviousComponent is Node) && (CurrentComponent is Wire)))
 				{
@@ -256,10 +258,18 @@ package
 					NewEntity = addWire(GridX, GridY, PreviousEntity);
 					_currentEntity = NewEntity;
 				}
+				else if ((PreviousComponent is Wire) && (CurrentComponent is Wire))
+				{
+					if ((PreviousComponent as Wire).open &&(CurrentComponent as Wire).open)
+						connect(_currentEntity, PreviousEntity);
+				}
 			}
 			else
 			{
-				NewEntity = addWire(GridX, GridY, PreviousEntity);
+				if ((PreviousComponent is Wire) && !(PreviousComponent as Wire).open)
+					NewEntity = addWire(GridX, GridY);
+				else
+					NewEntity = addWire(GridX, GridY, PreviousEntity);
 				_currentEntity = NewEntity;
 			}
 		}
