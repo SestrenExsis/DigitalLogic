@@ -1,5 +1,7 @@
 package circuits
 {
+	import truthTables.TruthTable;
+	
 	public class Board
 	{
 		private var _components:Vector.<DigitalComponent>;
@@ -49,7 +51,7 @@ package circuits
 		public function addConstant(Powered:Boolean):Device
 		{
 			var NewConstant:Device = new Device(Powered);
-			var NodeOut:Node = NewConstant.addOutput();
+			var NodeOut:Node = NewConstant.addOutput("out");
 			_components.push(NewConstant);
 			_devices.push(NewConstant);
 			_components.push(NodeOut);
@@ -65,7 +67,7 @@ package circuits
 		public function addLamp():Device
 		{
 			var NewLamp:Device = new Device(false);
-			var NodeIn:Node = NewLamp.addInput();
+			var NodeIn:Node = NewLamp.addInput("a");
 			_components.push(NewLamp);
 			_devices.push(NewLamp);
 			_components.push(NodeIn);
@@ -81,16 +83,26 @@ package circuits
 		public function addGate(GateType:String = "NOT"):Device
 		{
 			var NewGate:Device = new Device(true);
-			var NodeIn:Node = NewGate.addInput();
-			var NodeOut:Node = NewGate.addOutput();
+			var NodeIn:Node = NewGate.addInput("a");
+			var NodeOut:Node = NewGate.addOutput("out");
 			_components.push(NewGate);
 			_devices.push(NewGate);
 			_components.push(NodeIn);
 			_components.push(NodeOut);
 			if (GateType == "AND")
 			{
-				var NodeIn2:Node = NewGate.addInput();
+				var TruthTableA:TruthTable = new TruthTable(new <String>["a", "b"], new <String>["out"], false);
+				TruthTableA.setOutputs({a:true, b:true}, {out:true});
+				NewGate.setTruthTable(TruthTableA);
+				
+				var NodeIn2:Node = NewGate.addInput("b");
 				_components.push(NodeIn2);
+			}
+			else if (GateType == "NOT")
+			{
+				TruthTableA = new TruthTable(new <String>["a"], new <String>["out"], false);
+				TruthTableA.setOutputs({a:false}, {out:true});
+				NewGate.setTruthTable(TruthTableA);
 			}
 			
 			return NewGate;

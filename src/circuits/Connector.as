@@ -33,6 +33,10 @@ package circuits
 		
 		public function reset():void
 		{
+			// TODO: BUGFIX
+			// Since this is called every tick, it is causing all Connectors to "flicker", constantly being in either
+			// a rising edge or falling edge state. This has no visual effect, since it happens every frame, but can
+			// be a drag on performance and is also logically incorrect.
 			_powered = false;
 		}
 		

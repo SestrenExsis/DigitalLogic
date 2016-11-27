@@ -1,18 +1,27 @@
 package circuits
 {
+	import truthTables.TruthTable;
+
 	/**
 	 * The basic component that functions as constants, gates, display outputs, etc.
 	 */
 	public class Device extends DigitalComponent
 	{
+		private var _inputs:Object;
+		private var _outputs:Object;
+		private var _search:Object;
 		private var _input:Node;
 		private var _input2:Node;
 		private var _output:Node;
 		private var _invertOutput:Boolean = false;
+		private var _truthTable:TruthTable;
 		
 		public function Device(InvertOutput:Boolean)
 		{
 			_invertOutput = InvertOutput;
+			_inputs = new Object();
+			_outputs = new Object();
+			_search = new Object();
 		}
 		
 		public function pulse(Propogator:DigitalComponent = null):void
@@ -22,15 +31,30 @@ package circuits
 				return;
 			
 			var Powered:Boolean;
-			if (_input && _input2)
-				Powered = _input.powered && _input2.powered;
-			else if (_input)
-				Powered = ((_invertOutput) ? !_input.powered : _input.powered);
+			if (_input && _output)
+			{
+				for (var InputKey:Object in _inputs)
+				{
+					if (_search.hasOwnProperty(InputKey))
+						_search[InputKey] = (_inputs[InputKey] as Node).powered;
+				}
+				var Outputs:Object = _truthTable.getOutputs(_search);
+				for (var OutputKey:Object in Outputs)
+				{
+					if (_outputs.hasOwnProperty(OutputKey))
+						(_outputs[OutputKey] as Node).propagate(Outputs[OutputKey], this);
+				}
+			}
 			else
 				Powered = _invertOutput;
 			
-			if (_output)
+			if (_output && !_input)
 				_output.propagate(Powered, this);
+		}
+		
+		public function setTruthTable(TruthTableToSet:TruthTable):void
+		{
+			_truthTable = TruthTableToSet;
 		}
 		
 		public function get input():Node
@@ -53,8 +77,10 @@ package circuits
 			return _invertOutput;
 		}
 		
-		public function addInput():Node
+		public function addInput(Name:String):Node
 		{
+			if (_inputs.hasOwnProperty(Name))
+				throw new Error("Device already has an input with name: " + Name);
 			if (_input && _input2)
 				return null;
 			
@@ -63,18 +89,23 @@ package circuits
 				_input2 = Input;
 			else
 				_input = Input;
+			_inputs[Name] = Input;
+			_search[Name] = false;
 			updateType();
 			
 			return _input;
 		}
 		
-		public function addOutput():Node
+		public function addOutput(Name:String):Node
 		{
+			if (_outputs.hasOwnProperty(Name))
+				throw new Error("Device already has an output with name: " + Name);
 			if (_output)
 				return null;
 			
 			var Output:Node = new Node(this);
 			_output = Output;
+			_outputs[Name] = Output;
 			updateType();
 			
 			return _output;
