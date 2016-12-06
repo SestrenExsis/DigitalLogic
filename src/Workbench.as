@@ -179,7 +179,13 @@ package
 							NewEntity = addNotGate(GridX, GridY);
 							break;
 						case DigitalComponent.DEVICE_GATE_AND:
-							NewEntity = addAndGate(GridX, GridY);
+							NewEntity = addLogicGate(GridX, GridY, "AND");
+							break;
+						case DigitalComponent.DEVICE_GATE_OR:
+							NewEntity = addLogicGate(GridX, GridY, "OR");
+							break;
+						case DigitalComponent.DEVICE_GATE_XOR:
+							NewEntity = addLogicGate(GridX, GridY, "XOR");
 							break;
 						case DigitalComponent.DEVICE_LAMP:
 							NewEntity = addLamp(GridX, GridY);
@@ -341,23 +347,23 @@ package
 			return NotGateEntity;
 		}
 		
-		private function addAndGate(GridX:uint, GridY:uint):Entity
+		private function addLogicGate(GridX:uint, GridY:uint, GateType:String = "AND"):Entity
 		{
-			var AndGate:Device = _board.addGate("AND");
-			var AndGateEntity:Entity = new Entity(_baseEntity.spriteSheet, AndGate);
-			var NodeInEntityA:Entity = new Entity(_baseEntity.spriteSheet, AndGate.input);
-			NodeInEntityA.addNeighbor(AndGateEntity);
-			var NodeInEntityB:Entity = new Entity(_baseEntity.spriteSheet, AndGate.input2);
-			NodeInEntityB.addNeighbor(AndGateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, AndGate.output);
-			NodeOutEntity.addNeighbor(AndGateEntity);
+			var Gate:Device = _board.addGate(GateType);
+			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
+			var NodeInEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.input);
+			NodeInEntityA.addNeighbor(GateEntity);
+			var NodeInEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.input2);
+			NodeInEntityB.addNeighbor(GateEntity);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.output);
+			NodeOutEntity.addNeighbor(GateEntity);
 			
-			_grid.addEntity(AndGateEntity, GridX, GridY);
+			_grid.addEntity(GateEntity, GridX, GridY);
 			_grid.addEntity(NodeInEntityA, GridX - 1, GridY);
 			_grid.addEntity(NodeInEntityB, GridX - 1, GridY + 1);
 			_grid.addEntity(NodeOutEntity, GridX + 2, GridY);
 			
-			return AndGateEntity;
+			return GateEntity;
 		}
 		
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
@@ -385,6 +391,8 @@ package
 				if (ConnectingComponent is Wire)
 					ConnectorEntity.addNeighbor(WireEntity);
 			}
+			WireEntity.setDirty();
+			ConnectorEntity.setDirty();
 		}
 		
 		public function addToolkit(GridX:uint, GridY:uint):void
@@ -392,9 +400,11 @@ package
 			var PowerSourceA:Entity = addPowerSource(GridX, GridY, false);
 			var PowerSourceB:Entity = addPowerSource(GridX, GridY + 2, true);
 			var NotGate:Entity = addNotGate(GridX, GridY + 4);
-			var AndGate:Entity = addAndGate(GridX, GridY + 6);
-			var Lamp:Entity = addLamp(GridX, GridY + 9);
-			var WireEntityA:Entity = addWire(GridX, GridY + 12);
+			var AndGate:Entity = addLogicGate(GridX, GridY + 6, "AND");
+			var OrGate:Entity = addLogicGate(GridX, GridY + 9, "OR");
+			var XorGate:Entity = addLogicGate(GridX, GridY + 12, "XOR");
+			var Lamp:Entity = addLamp(GridX, GridY + 15);
+			var WireEntityA:Entity = addWire(GridX, GridY + 18);
 			
 			_grid.sortEntities();
 		}

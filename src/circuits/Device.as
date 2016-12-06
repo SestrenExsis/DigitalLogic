@@ -45,6 +45,8 @@ package circuits
 						(_outputs[OutputKey] as Node).propagate(Outputs[OutputKey], this);
 				}
 			}
+			else if (_input)
+				Powered = _input.powered;
 			else
 				Powered = _invertOutput;
 			
@@ -114,7 +116,20 @@ package circuits
 		private function updateType():void
 		{
 			if (_input && _input2 && _output)
-				_type = DEVICE_GATE_AND;
+			{
+				switch (_truthTable.name)
+				{
+					case "AND":
+						_type = DEVICE_GATE_AND;
+						break;
+					case "OR":
+						_type = DEVICE_GATE_OR;
+						break;
+					case "XOR":
+						_type = DEVICE_GATE_XOR;
+						break;
+				}
+			}
 			else if (_input && _output && _invertOutput)
 				_type = DEVICE_GATE_NOT;
 			else if (_input)

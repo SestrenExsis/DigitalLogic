@@ -2,13 +2,15 @@ package truthTables
 {
 	public class TruthTable
 	{
+		private var _name:String;
 		private var _inputNames:Vector.<String>;
 		private var _outputNames:Vector.<String>;
 		private var _inputMaps:Vector.<Object>;
 		private var _outputMaps:Vector.<Object>;
 		
-		public function TruthTable(InputNames:Vector.<String>, OutputNames:Vector.<String>, Default:Boolean = false)
+		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, Default:Boolean = false)
 		{
+			_name = Name;
 			_inputNames = InputNames.concat();
 			_outputNames = OutputNames.concat();
 			
@@ -35,6 +37,11 @@ package truthTables
 				_inputMaps.push(InputMap);
 				_outputMaps.push(OutputMap);
 			}
+		}
+		
+		public function get name():String
+		{
+			return _name;
 		}
 		
 		public function toString():String

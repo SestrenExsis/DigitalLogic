@@ -201,6 +201,20 @@
                     "width" : 16,
                     "height" : 16
                 },
+                "Gate - OR" :
+                {
+                    "x" : 136,
+                    "y" : 0,
+                    "width" : 16,
+                    "height" : 16
+                },
+                "Gate - XOR" :
+                {
+                    "x" : 152,
+                    "y" : 0,
+                    "width" : 16,
+                    "height" : 16
+                },
                 "Lamp - Off" :
                 {
                     "x" : 88,

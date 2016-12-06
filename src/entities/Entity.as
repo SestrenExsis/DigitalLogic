@@ -47,6 +47,8 @@ package entities
 				{
 					case DigitalComponent.DEVICE_LAMP:
 					case DigitalComponent.DEVICE_GATE_AND:
+					case DigitalComponent.DEVICE_GATE_OR:
+					case DigitalComponent.DEVICE_GATE_XOR:
 						_drawingLayer = 1;
 						WidthInTiles = 2;
 						HeightInTiles = 2;
@@ -66,6 +68,11 @@ package entities
 		public function get spriteSheet():SpriteSheet
 		{
 			return _spriteSheet;
+		}
+		
+		public function setDirty():void
+		{
+			_dirty = true;
 		}
 		
 		public function setFrameKey(FrameKey:String):void
@@ -219,13 +226,7 @@ package entities
 			if (component)
 			{
 				if (component is Device)
-				{
-					var DeviceComponent:Device = component as Device;
-					if (DeviceComponent.input && DeviceComponent.input.edge != 0)
-						_dirty = true;
-					if (DeviceComponent.input2 && DeviceComponent.input2.edge != 0)
-						_dirty = true;
-				}
+					_dirty = true;
 				else if (component is Connector)
 				{
 					var ConnectorComponent:Connector = component as Connector;

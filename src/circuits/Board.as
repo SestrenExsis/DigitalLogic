@@ -91,16 +91,35 @@ package circuits
 			_components.push(NodeOut);
 			if (GateType == "AND")
 			{
-				var TruthTableA:TruthTable = new TruthTable(new <String>["a", "b"], new <String>["out"], false);
+				var TruthTableA:TruthTable = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], false);
 				TruthTableA.setOutputs({a:true, b:true}, {out:true});
 				NewGate.setTruthTable(TruthTableA);
 				
 				var NodeIn2:Node = NewGate.addInput("b");
 				_components.push(NodeIn2);
 			}
+			else if (GateType == "OR")
+			{
+				TruthTableA = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], true);
+				TruthTableA.setOutputs({a:false, b:false}, {out:false});
+				NewGate.setTruthTable(TruthTableA);
+				
+				NodeIn2 = NewGate.addInput("b");
+				_components.push(NodeIn2);
+			}
+			else if (GateType == "XOR")
+			{
+				TruthTableA = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], true);
+				TruthTableA.setOutputs({a:false, b:false}, {out:false});
+				TruthTableA.setOutputs({a:true, b:true}, {out:false});
+				NewGate.setTruthTable(TruthTableA);
+				
+				NodeIn2 = NewGate.addInput("b");
+				_components.push(NodeIn2);
+			}
 			else if (GateType == "NOT")
 			{
-				TruthTableA = new TruthTable(new <String>["a"], new <String>["out"], false);
+				TruthTableA = new TruthTable(GateType, new <String>["a"], new <String>["out"], false);
 				TruthTableA.setOutputs({a:false}, {out:true});
 				NewGate.setTruthTable(TruthTableA);
 			}
