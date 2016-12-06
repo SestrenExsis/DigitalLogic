@@ -192,6 +192,9 @@ package
 						case DigitalComponent.DEVICE_GATE_XOR:
 							NewEntity = addLogicGate(GridX, GridY, "XOR");
 							break;
+						case DigitalComponent.DEVICE_GATE_COPY:
+							NewEntity = addSplitter(GridX, GridY);
+							break;
 						case DigitalComponent.DEVICE_LAMP:
 							NewEntity = addLamp(GridX, GridY);
 							break;
@@ -384,6 +387,28 @@ package
 			return GateEntity;
 		}
 		
+		private function addSplitter(GridX:uint, GridY:uint):Entity
+		{
+			var Gate:Device = _board.addSplitter();
+			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.input);
+			NodeInEntity.addNeighbor(GateEntity);
+			var NodeOutEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.output);
+			NodeOutEntityA.addNeighbor(GateEntity);
+			var NodeOutEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.output2);
+			NodeOutEntityB.addNeighbor(GateEntity);
+			var NodeOutEntityC:Entity = new Entity(_baseEntity.spriteSheet, Gate.output3);
+			NodeOutEntityC.addNeighbor(GateEntity);
+			
+			_grid.addEntity(GateEntity, GridX, GridY);
+			_grid.addEntity(NodeInEntity, GridX - 1, GridY);
+			_grid.addEntity(NodeOutEntityA, GridX, GridY - 1);
+			_grid.addEntity(NodeOutEntityB, GridX + 1, GridY);
+			_grid.addEntity(NodeOutEntityC, GridX, GridY + 1);
+			
+			return GateEntity;
+		}
+		
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
 			var NewWire:Wire = _board.addWire();
@@ -422,8 +447,9 @@ package
 			var OrGate:Entity = addLogicGate(GridX, GridY + 9, "OR");
 			var XorGate:Entity = addLogicGate(GridX, GridY + 12, "XOR");
 			var Lamp:Entity = addLamp(GridX, GridY + 15);
-			var WireEntityA:Entity = addWire(GridX, GridY + 18);
-			var Switch:Entity = addSwitch(GridX, GridY + 20);
+			var Wire:Entity = addWire(GridX, GridY + 18);
+			var Splitter:Entity = addSplitter(GridX, GridY + 20);
+			var Switch:Entity = addSwitch(GridX, GridY + 22);
 			
 			_grid.sortEntities();
 		}

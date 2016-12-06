@@ -13,6 +13,8 @@ package circuits
 		private var _input:Node;
 		private var _input2:Node;
 		private var _output:Node;
+		private var _output2:Node;
+		private var _output3:Node;
 		private var _invertOutput:Boolean = false;
 		private var _truthTable:TruthTable;
 		
@@ -75,6 +77,16 @@ package circuits
 			return _output;
 		}
 		
+		public function get output2():Node
+		{
+			return _output2;
+		}
+		
+		public function get output3():Node
+		{
+			return _output3;
+		}
+		
 		public function get invertOutput():Boolean
 		{
 			return _invertOutput;
@@ -107,11 +119,16 @@ package circuits
 		{
 			if (_outputs.hasOwnProperty(Name))
 				throw new Error("Device already has an output with name: " + Name);
-			if (_output)
+			if (_output && _output2 && _output3)
 				return null;
 			
 			var Output:Node = new Node(this);
-			_output = Output;
+			if (_output && _output2)
+				_output3 = Output;
+			else if (_output)
+				_output2 = Output;
+			else
+				_output = Output;
 			_outputs[Name] = Output;
 			
 			return _output;

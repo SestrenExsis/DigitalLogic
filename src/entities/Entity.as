@@ -208,6 +208,7 @@ package entities
 						var PowerSourceA:Device = (_component as Device);
 						FrameKey += ((PowerSourceA.invertOutput) ? " - On" : " - Off");
 						break;
+					case DigitalComponent.DEVICE_GATE_COPY:
 					case DigitalComponent.DEVICE_LAMP:
 						var LampA:Device = (_component as Device);
 						var Input:Node = LampA.input;

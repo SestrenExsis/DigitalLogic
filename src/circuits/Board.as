@@ -92,6 +92,31 @@ package circuits
 		}
 		
 		/**
+		 * Adds a new device to the Board with the properties of a splitter.
+		 * Splitters have exactly one input, and up to three outputs, so up to four Nodes are also added to the 
+		 * Board connected to the inputs and outputs of the splitter.
+		 */
+		public function addSplitter():Device
+		{
+			var NewGate:Device = new Device(DigitalComponent.DEVICE_GATE_COPY, true);
+			var NodeIn:Node = NewGate.addInput("a");
+			var NodeOut:Node = NewGate.addOutput("b");
+			var NodeOut2:Node = NewGate.addOutput("c");
+			var NodeOut3:Node = NewGate.addOutput("d");
+			_components.push(NewGate);
+			_devices.push(NewGate);
+			_components.push(NodeIn);
+			_components.push(NodeOut);
+			_components.push(NodeOut2);
+			_components.push(NodeOut3);
+			var TruthTableA:TruthTable = new TruthTable("Copy", new <String>["a"], new <String>["b", "c", "d"], false);
+			TruthTableA.setOutputs({a:true}, {b:true, c:true, d:true});
+			NewGate.setTruthTable(TruthTableA);
+			
+			return NewGate;
+		}
+		
+		/**
 		 * Adds a new device to the Board with the properties of a logic gate.
 		 * Gates have at least one input, and at least one output, so two or more Nodes are also added to the 
 		 * Board connected to the inputs and outputs of the gate, based on its type.

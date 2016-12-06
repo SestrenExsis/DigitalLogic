@@ -9,6 +9,7 @@ package circuits
 		public static const DEVICE_GATE_AND:String = "Gate - AND";
 		public static const DEVICE_GATE_OR:String = "Gate - OR";
 		public static const DEVICE_GATE_XOR:String = "Gate - XOR";
+		public static const DEVICE_GATE_COPY:String = "Gate - Copy";
 		public static const DEVICE_LAMP:String = "Lamp";
 		public static const CONNECTOR_WIRE:String = "Wire";
 		public static const CONNECTOR_NODE:String = "Node";

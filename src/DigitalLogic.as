@@ -1,6 +1,7 @@
 package
 {
 	import entities.Entity;
+	import overlays.FramerateCounter;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -17,6 +18,7 @@ package
 		
 		private var _buffer:Bitmap;
 		private var _workbench:Workbench;
+		private var _framerateCounter:FramerateCounter;
 		
 		public function DigitalLogic()
 		{
@@ -32,8 +34,10 @@ package
 			var BackgroundTile:Entity = new Entity(_spriteSheet);
 			BackgroundTile.setFrameKey("Background");
 			_workbench = new Workbench(BackgroundTile, 40, 30);
-			_workbench.addToolkit(1, 0);
+			_workbench.addToolkit(1, 2);
 			_workbench.testBasicCircuit(5, 5);
+			
+			_framerateCounter = new FramerateCounter(_spriteSheet);
 			
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
@@ -46,6 +50,9 @@ package
 			_workbench.update();
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
+			
+			_framerateCounter.update();
+			_framerateCounter.drawOntoBuffer(_buffer.bitmapData);
 		}
 		
 		private function onMouseDown(e:MouseEvent):void 
