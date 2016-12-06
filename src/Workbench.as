@@ -276,6 +276,11 @@ package
 				{
 					if ((PreviousComponent as Wire).open &&(CurrentComponent as Wire).open)
 						connect(_currentEntity, PreviousEntity);
+					else if ((PreviousComponent as Wire).open)
+					{
+						NewEntity = addWire(GridX, GridY, PreviousEntity);
+						_currentEntity = NewEntity;
+					}
 				}
 			}
 			else
