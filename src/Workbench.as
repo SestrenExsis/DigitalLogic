@@ -127,6 +127,8 @@ package
 				{
 					_currentEntity = DeviceEntity;
 					_latestEntity = DeviceEntity;
+					if (DeviceEntity.component.type == DigitalComponent.DEVICE_SWITCH)
+						(DeviceEntity.component as Device).toggle();
 				}
 				else
 				{
@@ -174,6 +176,9 @@ package
 						case DigitalComponent.DEVICE_CONSTANT:
 							var Powered:Boolean = (LatestComponent as Device).invertOutput;
 							NewEntity = addPowerSource(GridX, GridY, Powered);
+							break;
+						case DigitalComponent.DEVICE_SWITCH:
+							NewEntity = addSwitch(GridX, GridY);
 							break;
 						case DigitalComponent.DEVICE_GATE_NOT:
 							NewEntity = addNotGate(GridX, GridY);
@@ -318,6 +323,19 @@ package
 			return PowerSourceEntity;
 		}
 		
+		private function addSwitch(GridX:uint, GridY:uint):Entity
+		{
+			var Switch:Device = _board.addSwitch();
+			var SwitchEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch.output);
+			NodeOutEntity.addNeighbor(SwitchEntity);
+			
+			_grid.addEntity(SwitchEntity, GridX, GridY);
+			_grid.addEntity(NodeOutEntity, GridX + 2, GridY);
+			
+			return SwitchEntity;
+		}
+		
 		private function addLamp(GridX:uint, GridY:uint):Entity
 		{
 			var Lamp:Device = _board.addLamp();
@@ -405,6 +423,7 @@ package
 			var XorGate:Entity = addLogicGate(GridX, GridY + 12, "XOR");
 			var Lamp:Entity = addLamp(GridX, GridY + 15);
 			var WireEntityA:Entity = addWire(GridX, GridY + 18);
+			var Switch:Entity = addSwitch(GridX, GridY + 20);
 			
 			_grid.sortEntities();
 		}

@@ -49,6 +49,7 @@ package entities
 					case DigitalComponent.DEVICE_GATE_AND:
 					case DigitalComponent.DEVICE_GATE_OR:
 					case DigitalComponent.DEVICE_GATE_XOR:
+					case DigitalComponent.DEVICE_SWITCH:
 						_drawingLayer = 1;
 						WidthInTiles = 2;
 						HeightInTiles = 2;
@@ -188,33 +189,33 @@ package entities
 			if (_component)
 			{
 				FrameKey = _component.type;
-				if (_component is Wire)
+				switch (_component.type)
 				{
-					var WireA:Wire = (_component as Wire);
-					FrameKey += ((WireA.powered) ? " - On" : " - Off");
-					var NeighborString:String = getNeighborString();
-					if (NeighborString != "")
-						FrameKey += " - " + NeighborString;
-				}
-				else if (_component is Node)
-				{
-					NeighborString = getNeighborString();
-					if (NeighborString != "")
-						FrameKey += " - " + NeighborString;
-				}
-				else if (component.type == DigitalComponent.DEVICE_CONSTANT)
-				{
-					var ConstantA:Device = (_component as Device);
-					FrameKey += ((ConstantA.invertOutput) ? " - On" : " - Off");
-				}
-				else if (component.type == DigitalComponent.DEVICE_LAMP)
-				{
-					var LampA:Device = (_component as Device);
-					var Input:Node = LampA.input;
-					if (Input)
-						FrameKey += ((Input.powered) ? " - On" : " - Off");
-					else
-						FrameKey += " - Off";
+					case DigitalComponent.CONNECTOR_WIRE:
+						var WireA:Wire = (_component as Wire);
+						FrameKey += ((WireA.powered) ? " - On" : " - Off");
+						var NeighborString:String = getNeighborString();
+						if (NeighborString != "")
+							FrameKey += " - " + NeighborString;
+						break;
+					case DigitalComponent.CONNECTOR_NODE:
+						NeighborString = getNeighborString();
+						if (NeighborString != "")
+							FrameKey += " - " + NeighborString;
+						break;
+					case DigitalComponent.DEVICE_CONSTANT:
+					case DigitalComponent.DEVICE_SWITCH:
+						var PowerSourceA:Device = (_component as Device);
+						FrameKey += ((PowerSourceA.invertOutput) ? " - On" : " - Off");
+						break;
+					case DigitalComponent.DEVICE_LAMP:
+						var LampA:Device = (_component as Device);
+						var Input:Node = LampA.input;
+						if (Input)
+							FrameKey += ((Input.powered) ? " - On" : " - Off");
+						else
+							FrameKey += " - Off";
+						break;
 				}
 			}
 			setFrameKey(FrameKey);
@@ -225,14 +226,8 @@ package entities
 		{
 			if (component)
 			{
-				if (component is Device)
+				if ((component is Device) || (component is Connector))
 					_dirty = true;
-				else if (component is Connector)
-				{
-					var ConnectorComponent:Connector = component as Connector;
-					if (ConnectorComponent.edge != 0)
-						_dirty = true;
-				}
 			}
 			if (_dirty)
 				update();

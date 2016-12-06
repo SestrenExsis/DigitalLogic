@@ -229,31 +229,45 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Node - North" :
+                "Switch - Off" :
                 {
                     "x" : 88,
                     "y" : 16,
+                    "width" : 16,
+                    "height" : 16
+                },
+                "Switch - On" :
+                {
+                    "x" : 104,
+                    "y" : 16,
+                    "width" : 16,
+                    "height" : 16
+                },
+                "Node - North" :
+                {
+                    "x" : 0,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 },
                 "Node - East" :
                 {
-                    "x" : 96,
-                    "y" : 16,
+                    "x" : 8,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 },
                 "Node - South" :
                 {
-                    "x" : 104,
-                    "y" : 16,
+                    "x" : 16,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 },
                 "Node - West" :
                 {
-                    "x" : 112,
-                    "y" : 16,
+                    "x" : 24,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 }

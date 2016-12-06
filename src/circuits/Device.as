@@ -16,8 +16,9 @@ package circuits
 		private var _invertOutput:Boolean = false;
 		private var _truthTable:TruthTable;
 		
-		public function Device(InvertOutput:Boolean)
+		public function Device(Type:String, InvertOutput:Boolean)
 		{
+			_type = Type;
 			_invertOutput = InvertOutput;
 			_inputs = new Object();
 			_outputs = new Object();
@@ -79,6 +80,11 @@ package circuits
 			return _invertOutput;
 		}
 		
+		public function toggle():void
+		{
+			_invertOutput = !_invertOutput;
+		}
+		
 		public function addInput(Name:String):Node
 		{
 			if (_inputs.hasOwnProperty(Name))
@@ -93,7 +99,6 @@ package circuits
 				_input = Input;
 			_inputs[Name] = Input;
 			_search[Name] = false;
-			updateType();
 			
 			return _input;
 		}
@@ -108,34 +113,8 @@ package circuits
 			var Output:Node = new Node(this);
 			_output = Output;
 			_outputs[Name] = Output;
-			updateType();
 			
 			return _output;
-		}
-		
-		private function updateType():void
-		{
-			if (_input && _input2 && _output)
-			{
-				switch (_truthTable.name)
-				{
-					case "AND":
-						_type = DEVICE_GATE_AND;
-						break;
-					case "OR":
-						_type = DEVICE_GATE_OR;
-						break;
-					case "XOR":
-						_type = DEVICE_GATE_XOR;
-						break;
-				}
-			}
-			else if (_input && _output && _invertOutput)
-				_type = DEVICE_GATE_NOT;
-			else if (_input)
-				_type = DEVICE_LAMP;
-			else if (_output)
-				_type = DEVICE_CONSTANT;
 		}
 	}
 }

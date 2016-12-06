@@ -50,7 +50,7 @@ package circuits
 		 */
 		public function addConstant(Powered:Boolean):Device
 		{
-			var NewConstant:Device = new Device(Powered);
+			var NewConstant:Device = new Device(DigitalComponent.DEVICE_CONSTANT, Powered);
 			var NodeOut:Node = NewConstant.addOutput("out");
 			_components.push(NewConstant);
 			_devices.push(NewConstant);
@@ -60,13 +60,29 @@ package circuits
 		}
 		
 		/**
+		 * Adds a new device to the Board with the properties of a switch.
+		 * Since switches have no inputs, and one output, a Node is also added to the Board connected 
+		 * to the output of the switch.
+		 */
+		public function addSwitch():Device
+		{
+			var NewSwitch:Device = new Device(DigitalComponent.DEVICE_SWITCH, false);
+			var NodeOut:Node = NewSwitch.addOutput("out");
+			_components.push(NewSwitch);
+			_devices.push(NewSwitch);
+			_components.push(NodeOut);
+			
+			return NewSwitch;
+		}
+		
+		/**
 		 * Adds a new device to the Board with the properties of a lamp.
 		 * Since lamps have one input, and no output, a Node is also added to the Board connected to the
 		 * input of the lamp.
 		 */
 		public function addLamp():Device
 		{
-			var NewLamp:Device = new Device(false);
+			var NewLamp:Device = new Device(DigitalComponent.DEVICE_LAMP, false);
 			var NodeIn:Node = NewLamp.addInput("a");
 			_components.push(NewLamp);
 			_devices.push(NewLamp);
@@ -82,7 +98,8 @@ package circuits
 		 */
 		public function addGate(GateType:String = "NOT"):Device
 		{
-			var NewGate:Device = new Device(true);
+			var DeviceType:String = DigitalComponent.DEVICE_GATE + " - " + GateType;
+			var NewGate:Device = new Device(DeviceType, true);
 			var NodeIn:Node = NewGate.addInput("a");
 			var NodeOut:Node = NewGate.addOutput("out");
 			_components.push(NewGate);
