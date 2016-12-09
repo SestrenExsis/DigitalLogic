@@ -25,7 +25,7 @@ package circuits
 			}
 			for each (var CurrentDevice:Device in _devices)
 			{
-				if (!CurrentDevice.input)
+				if (CurrentDevice.inputCount == 0)
 					CurrentDevice.pulse();
 			}
 		}

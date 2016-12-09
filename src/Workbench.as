@@ -320,9 +320,10 @@ package
 		
 		private function addPowerSource(GridX:uint, GridY:uint, Powered:Boolean):Entity
 		{
+			trace("addPowerSource(" + GridX + ", " + GridY + ", " + Powered + ")");
 			var PowerSource:Device = _board.addConstant(Powered);
 			var PowerSourceEntity:Entity = new Entity(_baseEntity.spriteSheet, PowerSource);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, PowerSource.output);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, PowerSource.getOutput("out"));
 			NodeOutEntity.addNeighbor(PowerSourceEntity);
 			
 			_grid.addEntity(PowerSourceEntity, GridX, GridY);
@@ -333,9 +334,10 @@ package
 		
 		private function addSwitch(GridX:uint, GridY:uint):Entity
 		{
+			trace("addSwitch(" + GridX + ", " + GridY + ")");
 			var Switch:Device = _board.addSwitch();
 			var SwitchEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch.output);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch.getOutput("out"));
 			NodeOutEntity.addNeighbor(SwitchEntity);
 			
 			_grid.addEntity(SwitchEntity, GridX, GridY);
@@ -346,9 +348,10 @@ package
 		
 		private function addLamp(GridX:uint, GridY:uint):Entity
 		{
+			trace("addLamp(" + GridX + ", " + GridY + ")");
 			var Lamp:Device = _board.addLamp();
 			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp.input);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp.getInput("a"));
 			NodeInEntity.addNeighbor(LampEntity);
 			
 			_grid.addEntity(LampEntity, GridX, GridY);
@@ -359,11 +362,12 @@ package
 		
 		private function addNotGate(GridX:uint, GridY:uint):Entity
 		{
+			trace("addNotGate(" + GridX + ", " + GridY + ")");
 			var NotGate:Device = _board.addGate();
 			var NotGateEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.input);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.getInput("a"));
 			NodeInEntity.addNeighbor(NotGateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.output);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.getOutput("out"));
 			NodeOutEntity.addNeighbor(NotGateEntity);
 			
 			_grid.addEntity(NotGateEntity, GridX, GridY);
@@ -375,13 +379,14 @@ package
 		
 		private function addLogicGate(GridX:uint, GridY:uint, GateType:String = "AND"):Entity
 		{
+			trace("addLogicGate(" + GridX + ", " + GridY + ", " + GateType + ")");
 			var Gate:Device = _board.addGate(GateType);
 			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
-			var NodeInEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.input);
+			var NodeInEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("a"));
 			NodeInEntityA.addNeighbor(GateEntity);
-			var NodeInEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.input2);
+			var NodeInEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("b"));
 			NodeInEntityB.addNeighbor(GateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.output);
+			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("out"));
 			NodeOutEntity.addNeighbor(GateEntity);
 			
 			_grid.addEntity(GateEntity, GridX, GridY);
@@ -394,15 +399,16 @@ package
 		
 		private function addSplitter(GridX:uint, GridY:uint):Entity
 		{
+			trace("addSplitter(" + GridX + ", " + GridY + ")");
 			var Gate:Device = _board.addSplitter();
 			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.input);
+			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("a"));
 			NodeInEntity.addNeighbor(GateEntity);
-			var NodeOutEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.output);
+			var NodeOutEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("b"));
 			NodeOutEntityA.addNeighbor(GateEntity);
-			var NodeOutEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.output2);
+			var NodeOutEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("c"));
 			NodeOutEntityB.addNeighbor(GateEntity);
-			var NodeOutEntityC:Entity = new Entity(_baseEntity.spriteSheet, Gate.output3);
+			var NodeOutEntityC:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("d"));
 			NodeOutEntityC.addNeighbor(GateEntity);
 			
 			_grid.addEntity(GateEntity, GridX, GridY);
@@ -416,6 +422,7 @@ package
 		
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
+			trace("addWire(" + GridX + ", " + GridY + ", " + EntityA + ", " + EntityB + ")");
 			var NewWire:Wire = _board.addWire();
 			var WireEntity:Entity = new Entity(_baseEntity.spriteSheet, NewWire);
 			if (EntityA)
@@ -430,6 +437,7 @@ package
 		
 		private function connect(WireEntity:Entity, ConnectorEntity:Entity):void
 		{
+			trace("connect(" + WireEntity.component.type + ", " + ConnectorEntity.component.type + ")");
 			var BaseComponent:DigitalComponent = WireEntity.component;
 			var ConnectingComponent:DigitalComponent = ConnectorEntity.component;
 			if ((BaseComponent is Wire) && (ConnectingComponent is Connector))
@@ -461,30 +469,20 @@ package
 		
 		public function testBasicCircuit(GridX:uint, GridY:uint):void
 		{
-			var PowerSource:Entity = addPowerSource(GridX, GridY, true);
-			var PowerSourceOut:Entity = _grid.entities[_grid.entities.length - 1];
-			
-			var NotGateA:Entity = addNotGate(GridX + 2, GridY + 1);
-			var NotGateAIn:Entity = _grid.entities[_grid.entities.length - 2];
-			var NotGateAOut:Entity = _grid.entities[_grid.entities.length - 1];
-			
-			var NotGateB:Entity = addNotGate(GridX + 4, GridY + 1);
-			var NotGateBIn:Entity = _grid.entities[_grid.entities.length - 2];
-			var NotGateBOut:Entity = _grid.entities[_grid.entities.length - 1];
-			
-			var Lamp:Entity = addLamp(GridX + 6, GridY + 3);
-			var LampIn:Entity = _grid.entities[_grid.entities.length - 1];
-			LampIn.gridX += 1;
-			LampIn.gridY -= 1;
-			
-			var WireEntityA:Entity = addWire(GridX + 1, GridY, PowerSourceOut);
-			var WireEntityB:Entity = addWire(GridX + 1, GridY + 1, WireEntityA, NotGateAIn);
-			var WireEntityC:Entity = addWire(GridX + 3, GridY + 1, NotGateAOut, NotGateBIn);
-			var WireEntityD:Entity = addWire(GridX + 5, GridY + 1, NotGateBOut);
-			var WireEntityE:Entity = addWire(GridX + 6, GridY + 1, WireEntityD);
-			var WireEntityF:Entity = addWire(GridX + 6, GridY + 2, WireEntityE, LampIn);
-			
-			_grid.sortEntities();
+			addSwitch(GridX, GridY);
+			addSwitch(GridX, GridY + 3);
+			addSwitch(GridX, GridY + 5);
+			addSplitter(GridX + 3, GridY + 5);
+			addSplitter(GridX + 5, GridY + 3);
+			addLogicGate(GridX + 7, GridY + 3, "XOR");
+			addLogicGate(GridX + 7, GridY + 5, "AND");
+			addSplitter(GridX + 10, GridY + 3);
+			addSplitter(GridX + 11, GridY);
+			addLogicGate(GridX + 13, GridY, "XOR");
+			addLogicGate(GridX + 13, GridY + 2, "AND");
+			addLogicGate(GridX + 16, GridY + 2, "OR");
+			addLamp(GridX + 19, GridY + 2);
+			addLamp(GridX + 19, GridY);
 		}
 	}
 }

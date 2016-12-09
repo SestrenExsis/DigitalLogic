@@ -211,7 +211,7 @@ package entities
 					case DigitalComponent.DEVICE_GATE_COPY:
 					case DigitalComponent.DEVICE_LAMP:
 						var LampA:Device = (_component as Device);
-						var Input:Node = LampA.input;
+						var Input:Node = LampA.getInput("a");
 						if (Input)
 							FrameKey += ((Input.powered) ? " - On" : " - Off");
 						else
