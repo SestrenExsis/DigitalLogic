@@ -98,22 +98,16 @@ package circuits
 		 */
 		public function addSplitter():Device
 		{
-			var NewGate:Device = new Device(DigitalComponent.DEVICE_GATE_COPY, true);
-			var NodeIn:Node = NewGate.addInput("a");
-			var NodeOut:Node = NewGate.addOutput("b");
-			var NodeOut2:Node = NewGate.addOutput("c");
-			var NodeOut3:Node = NewGate.addOutput("d");
-			_components.push(NewGate);
-			_devices.push(NewGate);
-			_components.push(NodeIn);
-			_components.push(NodeOut);
-			_components.push(NodeOut2);
-			_components.push(NodeOut3);
-			var TruthTableA:TruthTable = new TruthTable("Copy", new <String>["a"], new <String>["b", "c", "d"], false);
+			var TruthTableA:TruthTable = new TruthTable(
+				DigitalComponent.DEVICE_GATE_COPY, 
+				new <String>["a"], 
+				new <String>["b", "c", "d"], 
+				false
+			);
 			TruthTableA.setOutputs({a:true}, {b:true, c:true, d:true});
-			NewGate.setTruthTable(TruthTableA);
 			
-			return NewGate;
+			var NewSplitter:Device = addDevice(TruthTableA);
+			return NewSplitter;
 		}
 		
 		/**
@@ -123,50 +117,70 @@ package circuits
 		 */
 		public function addGate(GateType:String = "NOT"):Device
 		{
-			var DeviceType:String = DigitalComponent.DEVICE_GATE + " - " + GateType;
-			var NewGate:Device = new Device(DeviceType, true);
-			var NodeIn:Node = NewGate.addInput("a");
-			var NodeOut:Node = NewGate.addOutput("out");
-			_components.push(NewGate);
-			_devices.push(NewGate);
-			_components.push(NodeIn);
-			_components.push(NodeOut);
+			var TruthTableA:TruthTable;
+			var StringAB:Vector.<String> = new <String>["a", "b"];
+			var StringOut:Vector.<String> = new <String>["out"];
 			if (GateType == "AND")
 			{
-				var TruthTableA:TruthTable = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], false);
+				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_AND, StringAB, StringOut, false);
 				TruthTableA.setOutputs({a:true, b:true}, {out:true});
-				NewGate.setTruthTable(TruthTableA);
-				
-				var NodeIn2:Node = NewGate.addInput("b");
-				_components.push(NodeIn2);
 			}
 			else if (GateType == "OR")
 			{
-				TruthTableA = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], true);
+				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_OR, StringAB, StringOut, true);
 				TruthTableA.setOutputs({a:false, b:false}, {out:false});
-				NewGate.setTruthTable(TruthTableA);
-				
-				NodeIn2 = NewGate.addInput("b");
-				_components.push(NodeIn2);
 			}
 			else if (GateType == "XOR")
 			{
-				TruthTableA = new TruthTable(GateType, new <String>["a", "b"], new <String>["out"], true);
+				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_XOR, StringAB, StringOut, true);
 				TruthTableA.setOutputs({a:false, b:false}, {out:false});
 				TruthTableA.setOutputs({a:true, b:true}, {out:false});
-				NewGate.setTruthTable(TruthTableA);
-				
-				NodeIn2 = NewGate.addInput("b");
-				_components.push(NodeIn2);
 			}
 			else if (GateType == "NOT")
 			{
-				TruthTableA = new TruthTable(GateType, new <String>["a"], new <String>["out"], false);
+				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_NOT, new <String>["a"], StringOut, false);
 				TruthTableA.setOutputs({a:false}, {out:true});
-				NewGate.setTruthTable(TruthTableA);
 			}
 			
+			var NewGate:Device = addDevice(TruthTableA);
 			return NewGate;
+		}
+		
+		public function addHalfAdder():Device
+		{
+			var TruthTableA:TruthTable = new TruthTable(
+				DigitalComponent.DEVICE_HALF_ADDER, 
+				new <String>["a", "b"], 
+				new <String>["sum", "carry_out"], 
+				false
+			);
+			TruthTableA.setOutputs({a:false, b:true}, {sum:true, carry_out:false});
+			TruthTableA.setOutputs({a:true, b:false}, {sum:true, carry_out:false});
+			TruthTableA.setOutputs({a:true, b:true}, {sum:false, carry_out:true});
+			
+			var NewDevice:Device = addDevice(TruthTableA);
+			return NewDevice;
+		}
+		
+		public function addDevice(TruthTableA:TruthTable):Device
+		{
+			var NewDevice:Device = new Device(TruthTableA.name, false);
+			for each (var InputName:String in TruthTableA.inputNames)
+			{
+				var NodeIn:Node = NewDevice.addInput(InputName);
+				_components.push(NodeIn);
+			}
+			
+			for each (var OutputName:String in TruthTableA.outputNames)
+			{
+				var NodeOut:Node = NewDevice.addOutput(OutputName);
+				_components.push(NodeOut);
+			}
+			_components.push(NewDevice);
+			_devices.push(NewDevice);
+			NewDevice.setTruthTable(TruthTableA);
+			
+			return NewDevice;
 		}
 	}
 }

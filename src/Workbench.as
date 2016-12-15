@@ -198,6 +198,9 @@ package
 						case DigitalComponent.DEVICE_LAMP:
 							NewEntity = addLamp(GridX, GridY);
 							break;
+						case DigitalComponent.DEVICE_HALF_ADDER:
+							NewEntity = addHalfAdder(GridX, GridY);
+							break;
 					}
 				}
 				else
@@ -397,6 +400,29 @@ package
 			return GateEntity;
 		}
 		
+		private function addHalfAdder(GridX:uint, GridY:uint):Entity
+		{
+			trace("addHalfAdder(" + GridX + ", " + GridY + ")");
+			var NewDevice:Device = _board.addHalfAdder();
+			var DeviceEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice);
+			var NodeInAEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput("a"));
+			NodeInAEntity.addNeighbor(DeviceEntity);
+			var NodeInBEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput("b"));
+			NodeInBEntity.addNeighbor(DeviceEntity);
+			var NodeOutSumEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput("sum"));
+			NodeOutSumEntity.addNeighbor(DeviceEntity);
+			var NodeOutCarryOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput("carry_out"));
+			NodeOutCarryOutEntity.addNeighbor(DeviceEntity);
+			
+			_grid.addEntity(DeviceEntity, GridX, GridY);
+			_grid.addEntity(NodeInAEntity, GridX - 1, GridY);
+			_grid.addEntity(NodeInBEntity, GridX - 1, GridY + 1);
+			_grid.addEntity(NodeOutSumEntity, GridX + 2, GridY);
+			_grid.addEntity(NodeOutCarryOutEntity, GridX + 2, GridY + 1);
+			
+			return DeviceEntity;
+		}
+		
 		private function addSplitter(GridX:uint, GridY:uint):Entity
 		{
 			trace("addSplitter(" + GridX + ", " + GridY + ")");
@@ -463,6 +489,7 @@ package
 			var Wire:Entity = addWire(GridX, GridY + 18);
 			var Splitter:Entity = addSplitter(GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
+			var HalfAdder:Entity = addHalfAdder(GridX, GridY + 25);
 			
 			_grid.sortEntities();
 		}

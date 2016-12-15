@@ -44,6 +44,16 @@ package truthTables
 			return _name;
 		}
 		
+		public function get inputNames():Vector.<String>
+		{
+			return _inputNames;
+		}
+		
+		public function get outputNames():Vector.<String>
+		{
+			return _outputNames;
+		}
+		
 		public function toString():String
 		{
 			var ReturnString:String = "Inputs: " + _inputNames.toString();

@@ -257,6 +257,13 @@
                     "width" : 16,
                     "height" : 16
                 },
+                "Device - Half Adder" :
+                {
+                    "x" : 152,
+                    "y" : 16,
+                    "width" : 16,
+                    "height" : 16
+                },
                 "Node - North" :
                 {
                     "x" : 0,

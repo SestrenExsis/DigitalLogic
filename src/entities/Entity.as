@@ -50,6 +50,7 @@ package entities
 					case DigitalComponent.DEVICE_GATE_OR:
 					case DigitalComponent.DEVICE_GATE_XOR:
 					case DigitalComponent.DEVICE_SWITCH:
+					case DigitalComponent.DEVICE_HALF_ADDER:
 						_drawingLayer = 1;
 						WidthInTiles = 2;
 						HeightInTiles = 2;

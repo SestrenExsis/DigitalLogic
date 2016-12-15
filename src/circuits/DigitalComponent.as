@@ -11,6 +11,7 @@ package circuits
 		public static const DEVICE_GATE_XOR:String = "Gate - XOR";
 		public static const DEVICE_GATE_COPY:String = "Gate - Copy";
 		public static const DEVICE_LAMP:String = "Lamp";
+		public static const DEVICE_HALF_ADDER:String = "Device - Half Adder";
 		public static const CONNECTOR_WIRE:String = "Wire";
 		public static const CONNECTOR_NODE:String = "Node";
 		
