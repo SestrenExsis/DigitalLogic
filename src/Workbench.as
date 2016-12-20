@@ -16,6 +16,8 @@ package
 	
 	import interfaces.IGameEntity;
 	
+	import truthTables.TruthTable;
+	
 	public class Workbench implements IGameEntity
 	{
 		private var _baseEntity:Entity;
@@ -26,6 +28,7 @@ package
 		private var _currentTouch:Point;
 		private var _board:Board;
 		private var _mouseDown:Boolean = false;
+		private var _truthTables:Object;
 		
 		public function Workbench(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -40,6 +43,47 @@ package
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
+			
+			_truthTables = new Object();
+			var StringAB:Vector.<String> = new <String>["a", "b"];
+			var StringOut:Vector.<String> = new <String>["out"];
+			
+			var AndTable:TruthTable = new TruthTable("AND Gate", StringAB, StringOut, false);
+			AndTable.setOutputs({a:true, b:true}, {out:true});
+			_truthTables["AND Gate"] = AndTable;
+			
+			var OrTable:TruthTable = new TruthTable("OR Gate", StringAB, StringOut, true);
+			OrTable.setOutputs({a:false, b:false}, {out:false});
+			_truthTables["OR Gate"] = OrTable;
+			
+			var XorTable:TruthTable = new TruthTable("XOR Gate", StringAB, StringOut, true);
+			XorTable.setOutputs({a:false, b:false}, {out:false});
+			XorTable.setOutputs({a:true, b:true}, {out:false});
+			_truthTables["XOR Gate"] = XorTable;
+			
+			var NotTable:TruthTable = new TruthTable("NOT Gate", new <String>["a"], StringOut, false);
+			NotTable.setOutputs({a:false}, {out:true});
+			_truthTables["NOT Gate"] = NotTable;
+			
+			var SplitterTable:TruthTable = new TruthTable(
+				"Splitter",
+				new <String>["a"], 
+				new <String>["b", "c", "d"], 
+				false
+			);
+			SplitterTable.setOutputs({a:true}, {b:true, c:true, d:true});
+			_truthTables["Splitter"] = SplitterTable;
+			
+			var HalfAdderTable:TruthTable = new TruthTable(
+				"Half Adder", 
+				new <String>["a", "b"], 
+				new <String>["sum", "carry_out"], 
+				false
+			);
+			HalfAdderTable.setOutputs({a:false, b:true}, {sum:true, carry_out:false});
+			HalfAdderTable.setOutputs({a:true, b:false}, {sum:true, carry_out:false});
+			HalfAdderTable.setOutputs({a:true, b:true}, {sum:false, carry_out:true});
+			_truthTables["Half Adder"] = HalfAdderTable;
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
@@ -168,39 +212,35 @@ package
 			{
 				if (LatestComponent)
 				{
-					switch (LatestComponent.type)
+					if (LatestComponent is Device && (LatestComponent as Device).truthTable)
 					{
-						case DigitalComponent.CONNECTOR_WIRE:
-							NewEntity = addWire(GridX, GridY, _currentEntity);
-							break;
-						case DigitalComponent.DEVICE_CONSTANT:
-							var Powered:Boolean = (LatestComponent as Device).invertOutput;
-							NewEntity = addPowerSource(GridX, GridY, Powered);
-							break;
-						case DigitalComponent.DEVICE_SWITCH:
-							NewEntity = addSwitch(GridX, GridY);
-							break;
-						case DigitalComponent.DEVICE_GATE_NOT:
-							NewEntity = addNotGate(GridX, GridY);
-							break;
-						case DigitalComponent.DEVICE_GATE_AND:
-							NewEntity = addLogicGate(GridX, GridY, "AND");
-							break;
-						case DigitalComponent.DEVICE_GATE_OR:
-							NewEntity = addLogicGate(GridX, GridY, "OR");
-							break;
-						case DigitalComponent.DEVICE_GATE_XOR:
-							NewEntity = addLogicGate(GridX, GridY, "XOR");
-							break;
-						case DigitalComponent.DEVICE_GATE_COPY:
-							NewEntity = addSplitter(GridX, GridY);
-							break;
-						case DigitalComponent.DEVICE_LAMP:
-							NewEntity = addLamp(GridX, GridY);
-							break;
-						case DigitalComponent.DEVICE_HALF_ADDER:
-							NewEntity = addHalfAdder(GridX, GridY);
-							break;
+						var LatestDevice:Device = LatestComponent as Device;
+						if (LatestDevice.truthTable)
+						{
+							if (LatestDevice.truthTable.name == "Splitter")
+								NewEntity = addSplitter(GridX, GridY);
+							else
+								NewEntity = addDevice(GridX, GridY, LatestDevice.truthTable);
+						}
+					}
+					else
+					{
+						switch (LatestComponent.type)
+						{
+							case DigitalComponent.CONNECTOR_WIRE:
+								NewEntity = addWire(GridX, GridY, _currentEntity);
+								break;
+							case DigitalComponent.DEVICE_CONSTANT:
+								var Powered:Boolean = (LatestComponent as Device).invertOutput;
+								NewEntity = addPowerSource(GridX, GridY, Powered);
+								break;
+							case DigitalComponent.DEVICE_SWITCH:
+								NewEntity = addSwitch(GridX, GridY);
+								break;
+							case DigitalComponent.DEVICE_LAMP:
+								NewEntity = addLamp(GridX, GridY);
+								break;
+						}
 					}
 				}
 				else
@@ -339,7 +379,7 @@ package
 		{
 			trace("addSwitch(" + GridX + ", " + GridY + ")");
 			var Switch:Device = _board.addSwitch();
-			var SwitchEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch);
+			var SwitchEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch, 2, 2);
 			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch.getOutput("out"));
 			NodeOutEntity.addNeighbor(SwitchEntity);
 			
@@ -352,73 +392,46 @@ package
 		private function addLamp(GridX:uint, GridY:uint):Entity
 		{
 			trace("addLamp(" + GridX + ", " + GridY + ")");
+			
 			var Lamp:Device = _board.addLamp();
-			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp);
+			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp, 2, 2);
 			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp.getInput("a"));
 			NodeInEntity.addNeighbor(LampEntity);
-			
 			_grid.addEntity(LampEntity, GridX, GridY);
 			_grid.addEntity(NodeInEntity, GridX - 1, GridY);
 			
 			return LampEntity;
 		}
 		
-		private function addNotGate(GridX:uint, GridY:uint):Entity
+		private function addDevice(GridX:uint, GridY:uint, TruthTableA:TruthTable, OutputPositions:Vector.<Point> = null):Entity
 		{
-			trace("addNotGate(" + GridX + ", " + GridY + ")");
-			var NotGate:Device = _board.addGate();
-			var NotGateEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.getInput("a"));
-			NodeInEntity.addNeighbor(NotGateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NotGate.getOutput("out"));
-			NodeOutEntity.addNeighbor(NotGateEntity);
-			
-			_grid.addEntity(NotGateEntity, GridX, GridY);
-			_grid.addEntity(NodeInEntity, GridX - 1, GridY);
-			_grid.addEntity(NodeOutEntity, GridX + 1, GridY);
-			
-			return NotGateEntity;
-		}
-		
-		private function addLogicGate(GridX:uint, GridY:uint, GateType:String = "AND"):Entity
-		{
-			trace("addLogicGate(" + GridX + ", " + GridY + ", " + GateType + ")");
-			var Gate:Device = _board.addGate(GateType);
-			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
-			var NodeInEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("a"));
-			NodeInEntityA.addNeighbor(GateEntity);
-			var NodeInEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("b"));
-			NodeInEntityB.addNeighbor(GateEntity);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("out"));
-			NodeOutEntity.addNeighbor(GateEntity);
-			
-			_grid.addEntity(GateEntity, GridX, GridY);
-			_grid.addEntity(NodeInEntityA, GridX - 1, GridY);
-			_grid.addEntity(NodeInEntityB, GridX - 1, GridY + 1);
-			_grid.addEntity(NodeOutEntity, GridX + 2, GridY);
-			
-			return GateEntity;
-		}
-		
-		private function addHalfAdder(GridX:uint, GridY:uint):Entity
-		{
-			trace("addHalfAdder(" + GridX + ", " + GridY + ")");
-			var NewDevice:Device = _board.addHalfAdder();
-			var DeviceEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice);
-			var NodeInAEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput("a"));
-			NodeInAEntity.addNeighbor(DeviceEntity);
-			var NodeInBEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput("b"));
-			NodeInBEntity.addNeighbor(DeviceEntity);
-			var NodeOutSumEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput("sum"));
-			NodeOutSumEntity.addNeighbor(DeviceEntity);
-			var NodeOutCarryOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput("carry_out"));
-			NodeOutCarryOutEntity.addNeighbor(DeviceEntity);
-			
+			var NewDevice:Device = _board.addDevice(TruthTableA);
+			var HeightInTiles:uint = TruthTableA.inputNames.length;
+			var WidthInTiles:uint = HeightInTiles;
+			var DeviceEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice, WidthInTiles, HeightInTiles);
 			_grid.addEntity(DeviceEntity, GridX, GridY);
-			_grid.addEntity(NodeInAEntity, GridX - 1, GridY);
-			_grid.addEntity(NodeInBEntity, GridX - 1, GridY + 1);
-			_grid.addEntity(NodeOutSumEntity, GridX + 2, GridY);
-			_grid.addEntity(NodeOutCarryOutEntity, GridX + 2, GridY + 1);
+			var Index:uint = 0;
+			for each (var InputName:String in TruthTableA.inputNames)
+			{
+				var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput(InputName));
+				NodeInEntity.addNeighbor(DeviceEntity);
+				_grid.addEntity(NodeInEntity, GridX - 1, GridY + Index);
+				Index++;
+			}
+			Index = 0;
+			for each (var OutputName:String in TruthTableA.outputNames)
+			{
+				var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput(OutputName));
+				NodeOutEntity.addNeighbor(DeviceEntity);
+				if (OutputPositions)
+				{
+					var OutputPosition:Point = OutputPositions[Index];
+					_grid.addEntity(NodeOutEntity, GridX + OutputPosition.x, GridY + OutputPosition.y);
+				}
+				else
+					_grid.addEntity(NodeOutEntity, GridX + DeviceEntity.widthInTiles, GridY + Index);
+				Index++;
+			}
 			
 			return DeviceEntity;
 		}
@@ -426,22 +439,19 @@ package
 		private function addSplitter(GridX:uint, GridY:uint):Entity
 		{
 			trace("addSplitter(" + GridX + ", " + GridY + ")");
-			var Gate:Device = _board.addSplitter();
-			var GateEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Gate.getInput("a"));
-			NodeInEntity.addNeighbor(GateEntity);
-			var NodeOutEntityA:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("b"));
-			NodeOutEntityA.addNeighbor(GateEntity);
-			var NodeOutEntityB:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("c"));
-			NodeOutEntityB.addNeighbor(GateEntity);
-			var NodeOutEntityC:Entity = new Entity(_baseEntity.spriteSheet, Gate.getOutput("d"));
-			NodeOutEntityC.addNeighbor(GateEntity);
 			
-			_grid.addEntity(GateEntity, GridX, GridY);
-			_grid.addEntity(NodeInEntity, GridX - 1, GridY);
-			_grid.addEntity(NodeOutEntityA, GridX, GridY - 1);
-			_grid.addEntity(NodeOutEntityB, GridX + 1, GridY);
-			_grid.addEntity(NodeOutEntityC, GridX, GridY + 1);
+			var TruthTableA:TruthTable = new TruthTable("Splitter", 
+				new <String>["a"], 
+				new <String>["b", "c", "d"], 
+				false
+			);
+			TruthTableA.setOutputs({a:true}, {b:true, c:true, d:true});
+			
+			var OutputPositions:Vector.<Point> = new Vector.<Point>();
+			OutputPositions.push(new Point(0, -1));
+			OutputPositions.push(new Point(1, 0));
+			OutputPositions.push(new Point(0, 1));
+			var GateEntity:Entity = addDevice(GridX, GridY, TruthTableA, OutputPositions);
 			
 			return GateEntity;
 		}
@@ -481,15 +491,15 @@ package
 		{
 			var PowerSourceA:Entity = addPowerSource(GridX, GridY, false);
 			var PowerSourceB:Entity = addPowerSource(GridX, GridY + 2, true);
-			var NotGate:Entity = addNotGate(GridX, GridY + 4);
-			var AndGate:Entity = addLogicGate(GridX, GridY + 6, "AND");
-			var OrGate:Entity = addLogicGate(GridX, GridY + 9, "OR");
-			var XorGate:Entity = addLogicGate(GridX, GridY + 12, "XOR");
+			var NotGate:Entity = addDevice(GridX, GridY + 4, _truthTables["NOT Gate"]);
+			var AndGate:Entity = addDevice(GridX, GridY + 6, _truthTables["AND Gate"]);
+			var OrGate:Entity = addDevice(GridX, GridY + 9, _truthTables["OR Gate"]);
+			var XorGate:Entity = addDevice(GridX, GridY + 12, _truthTables["XOR Gate"]);
 			var Lamp:Entity = addLamp(GridX, GridY + 15);
 			var Wire:Entity = addWire(GridX, GridY + 18);
 			var Splitter:Entity = addSplitter(GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
-			var HalfAdder:Entity = addHalfAdder(GridX, GridY + 25);
+			var HalfAdder:Entity = addDevice(GridX, GridY + 25, _truthTables["Half Adder"]);
 			
 			_grid.sortEntities();
 		}
@@ -501,13 +511,13 @@ package
 			addSwitch(GridX, GridY + 5);
 			addSplitter(GridX + 3, GridY + 5);
 			addSplitter(GridX + 5, GridY + 3);
-			addLogicGate(GridX + 7, GridY + 3, "XOR");
-			addLogicGate(GridX + 7, GridY + 5, "AND");
+			addDevice(GridX + 7, GridY + 3, _truthTables["XOR Gate"]);
+			addDevice(GridX + 7, GridY + 5, _truthTables["AND Gate"]);
 			addSplitter(GridX + 10, GridY + 3);
 			addSplitter(GridX + 11, GridY);
-			addLogicGate(GridX + 13, GridY, "XOR");
-			addLogicGate(GridX + 13, GridY + 2, "AND");
-			addLogicGate(GridX + 16, GridY + 2, "OR");
+			addDevice(GridX + 13, GridY, _truthTables["XOR Gate"]);
+			addDevice(GridX + 13, GridY + 2, _truthTables["AND Gate"]);
+			addDevice(GridX + 16, GridY + 2, _truthTables["OR Gate"]);
 			addLamp(GridX + 19, GridY + 2);
 			addLamp(GridX + 19, GridY);
 		}

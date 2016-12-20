@@ -70,6 +70,11 @@ package circuits
 			}
 		}
 		
+		public function get truthTable():TruthTable
+		{
+			return _truthTable;
+		}
+		
 		public function setTruthTable(TruthTableToSet:TruthTable):void
 		{
 			_truthTable = TruthTableToSet;

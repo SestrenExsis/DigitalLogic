@@ -31,7 +31,7 @@ package
 			SpriteSheetKey.init();
 			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
 			
-			var BackgroundTile:Entity = new Entity(_spriteSheet);
+			var BackgroundTile:Entity = new Entity(_spriteSheet, null, 2, 2);
 			BackgroundTile.setFrameKey("Background");
 			_workbench = new Workbench(BackgroundTile, 40, 30);
 			_workbench.addToolkit(1, 2);

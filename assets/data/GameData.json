@@ -187,42 +187,42 @@
                     "width" : 8,
                     "height" : 8
                 },
-                "Gate - NOT" :
+                "Device - NOT Gate" :
                 {
                     "x" : 80,
                     "y" : 16,
                     "width" : 8,
                     "height" : 8
                 },
-                "Gate - AND" :
+                "Device - AND Gate" :
                 {
                     "x" : 120,
                     "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
-                "Gate - OR" :
+                "Device - OR Gate" :
                 {
                     "x" : 136,
                     "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
-                "Gate - XOR" :
+                "Device - XOR Gate" :
                 {
                     "x" : 152,
                     "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
-                "Gate - Copy - Off" :
+                "Device - Splitter - Off" :
                 {
                     "x" : 120,
                     "y" : 16,
                     "width" : 8,
                     "height" : 8
                 },
-                "Gate - Copy - On" :
+                "Device - Splitter - On" :
                 {
                     "x" : 120,
                     "y" : 24,

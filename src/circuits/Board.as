@@ -92,79 +92,12 @@ package circuits
 		}
 		
 		/**
-		 * Adds a new device to the Board with the properties of a splitter.
-		 * Splitters have exactly one input, and up to three outputs, so up to four Nodes are also added to the 
-		 * Board connected to the inputs and outputs of the splitter.
+		 * Adds a new device to the Board based on a truth table.
+		 * The number of Nodes that are also created is based on the inputs and outputs in the truth table.
 		 */
-		public function addSplitter():Device
-		{
-			var TruthTableA:TruthTable = new TruthTable(
-				DigitalComponent.DEVICE_GATE_COPY, 
-				new <String>["a"], 
-				new <String>["b", "c", "d"], 
-				false
-			);
-			TruthTableA.setOutputs({a:true}, {b:true, c:true, d:true});
-			
-			var NewSplitter:Device = addDevice(TruthTableA);
-			return NewSplitter;
-		}
-		
-		/**
-		 * Adds a new device to the Board with the properties of a logic gate.
-		 * Gates have at least one input, and at least one output, so two or more Nodes are also added to the 
-		 * Board connected to the inputs and outputs of the gate, based on its type.
-		 */
-		public function addGate(GateType:String = "NOT"):Device
-		{
-			var TruthTableA:TruthTable;
-			var StringAB:Vector.<String> = new <String>["a", "b"];
-			var StringOut:Vector.<String> = new <String>["out"];
-			if (GateType == "AND")
-			{
-				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_AND, StringAB, StringOut, false);
-				TruthTableA.setOutputs({a:true, b:true}, {out:true});
-			}
-			else if (GateType == "OR")
-			{
-				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_OR, StringAB, StringOut, true);
-				TruthTableA.setOutputs({a:false, b:false}, {out:false});
-			}
-			else if (GateType == "XOR")
-			{
-				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_XOR, StringAB, StringOut, true);
-				TruthTableA.setOutputs({a:false, b:false}, {out:false});
-				TruthTableA.setOutputs({a:true, b:true}, {out:false});
-			}
-			else if (GateType == "NOT")
-			{
-				TruthTableA = new TruthTable(DigitalComponent.DEVICE_GATE_NOT, new <String>["a"], StringOut, false);
-				TruthTableA.setOutputs({a:false}, {out:true});
-			}
-			
-			var NewGate:Device = addDevice(TruthTableA);
-			return NewGate;
-		}
-		
-		public function addHalfAdder():Device
-		{
-			var TruthTableA:TruthTable = new TruthTable(
-				DigitalComponent.DEVICE_HALF_ADDER, 
-				new <String>["a", "b"], 
-				new <String>["sum", "carry_out"], 
-				false
-			);
-			TruthTableA.setOutputs({a:false, b:true}, {sum:true, carry_out:false});
-			TruthTableA.setOutputs({a:true, b:false}, {sum:true, carry_out:false});
-			TruthTableA.setOutputs({a:true, b:true}, {sum:false, carry_out:true});
-			
-			var NewDevice:Device = addDevice(TruthTableA);
-			return NewDevice;
-		}
-		
 		public function addDevice(TruthTableA:TruthTable):Device
 		{
-			var NewDevice:Device = new Device(TruthTableA.name, false);
+			var NewDevice:Device = new Device(DigitalComponent.DEVICE, false);
 			for each (var InputName:String in TruthTableA.inputNames)
 			{
 				var NodeIn:Node = NewDevice.addInput(InputName);

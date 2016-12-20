@@ -39,6 +39,22 @@ package truthTables
 			}
 		}
 		
+		public function clone():TruthTable
+		{
+			var Clone:TruthTable = new TruthTable(_name, _inputNames, _outputNames, false);
+			
+			for (var i:uint = 0; i < Clone._outputMaps.length; i++)
+			{
+				var OutputKey:Object = Clone._outputMaps[i];
+				for (var OutputElement:Object in OutputKey)
+				{
+					Clone._outputMaps[i][OutputElement] = _outputMaps[i][OutputElement];
+				}
+			}
+			
+			return Clone;
+		}
+		
 		public function get name():String
 		{
 			return _name;

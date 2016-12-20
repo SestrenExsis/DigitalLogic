@@ -31,40 +31,29 @@ package entities
 		public var gridX:uint = 0;
 		public var gridY:uint = 0;
 		
-		public function Entity(SpriteSheetA:SpriteSheet, Component:DigitalComponent = null)
+		public function Entity(SpriteSheetA:SpriteSheet, Component:DigitalComponent = null, WidthInTiles:uint = 1, HeightInTiles:uint = 1)
 		{
 			_spriteSheet = SpriteSheetA;
 			_topLeft = new Point();
 			_neighbors = new Vector.<Entity>();
 			_component = Component;
-			
-			var WidthInTiles:uint = 2;
-			var HeightInTiles:uint = 2;
+			_widthInTiles = WidthInTiles;
+			_heightInTiles = HeightInTiles;
 			
 			if (_component)
 			{
 				switch (_component.type)
 				{
+					case DigitalComponent.DEVICE:
 					case DigitalComponent.DEVICE_LAMP:
-					case DigitalComponent.DEVICE_GATE_AND:
-					case DigitalComponent.DEVICE_GATE_OR:
-					case DigitalComponent.DEVICE_GATE_XOR:
 					case DigitalComponent.DEVICE_SWITCH:
-					case DigitalComponent.DEVICE_HALF_ADDER:
 						_drawingLayer = 1;
-						WidthInTiles = 2;
-						HeightInTiles = 2;
 						break;
 					default:
 						_drawingLayer = ((_component.type == DigitalComponent.CONNECTOR_NODE) ? 3 : 2);
-						WidthInTiles = 1;
-						HeightInTiles = 1;
 						break;
 				}
 			}
-			
-			_widthInTiles = WidthInTiles;
-			_heightInTiles = HeightInTiles;
 		}
 		
 		public function get spriteSheet():SpriteSheet
@@ -209,12 +198,26 @@ package entities
 						var PowerSourceA:Device = (_component as Device);
 						FrameKey += ((PowerSourceA.invertOutput) ? " - On" : " - Off");
 						break;
-					case DigitalComponent.DEVICE_GATE_COPY:
+					case DigitalComponent.DEVICE:
+						var DeviceA:Device = (_component as Device);
+						if (DeviceA.truthTable)
+						{
+							FrameKey += " - " + DeviceA.truthTable.name;
+							if (DeviceA.truthTable.name == "Splitter")
+							{
+								var DeviceInput:Node = DeviceA.getInput("a");
+								if (DeviceInput)
+									FrameKey += ((DeviceInput.powered) ? " - On" : " - Off");
+								else
+									FrameKey += " - Off";
+							}
+						}
+						break;
 					case DigitalComponent.DEVICE_LAMP:
 						var LampA:Device = (_component as Device);
-						var Input:Node = LampA.getInput("a");
-						if (Input)
-							FrameKey += ((Input.powered) ? " - On" : " - Off");
+						var LampInput:Node = LampA.getInput("a");
+						if (LampInput)
+							FrameKey += ((LampInput.powered) ? " - On" : " - Off");
 						else
 							FrameKey += " - Off";
 						break;
