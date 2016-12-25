@@ -363,7 +363,7 @@ package
 		
 		private function addDevice(GridX:uint, GridY:uint, TruthTableKey:String, OutputPositions:Vector.<Point> = null):Entity
 		{
-			var TruthTableA:TruthTable = SpriteSheetKey.getTruthTable(TruthTableKey);
+			var TruthTableA:TruthTable = GameData.getTruthTable(TruthTableKey);
 			var NewDevice:Device = _board.addDevice(TruthTableA);
 			var HeightInTiles:uint = TruthTableA.inputNames.length;
 			var WidthInTiles:uint = HeightInTiles;

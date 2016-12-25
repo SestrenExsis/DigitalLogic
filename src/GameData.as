@@ -6,7 +6,7 @@ package
 	
 	import truthTables.TruthTable;
 	
-	public final class SpriteSheetKey
+	public final class GameData
 	{
 		public static const SPRITES:String = "Sprites.png";
 		

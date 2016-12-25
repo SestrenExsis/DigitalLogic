@@ -28,8 +28,8 @@ package
 			_buffer = new Bitmap(BitmapDataA, PixelSnapping.ALWAYS);
 			addChild(_buffer);
 			
-			SpriteSheetKey.init();
-			_spriteSheet = SpriteSheetKey.getSpriteSheet(SpriteSheetKey.SPRITES);
+			GameData.init();
+			_spriteSheet = GameData.getSpriteSheet(GameData.SPRITES);
 			
 			var BackgroundTile:Entity = new Entity(_spriteSheet, null, 2, 2);
 			BackgroundTile.setFrameKey("Background");
