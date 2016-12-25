@@ -371,5 +371,140 @@
                 }
             }
         }
+    },
+    "truthTables" :
+    {
+        "Splitter" :
+        {
+            "inputs" :
+                ["x"],
+            "outputs" :
+                ["a", "b", "c"],
+            "states" :
+                ["Off", "On"],
+            "outputValues" :
+            {
+                "a":
+                    [0, 1],
+                "b":
+                    [0, 1],
+                "c":
+                    [0, 1]
+            }
+        },
+        "NOT Gate" :
+        {
+            "inputs" :
+                ["x"],
+            "outputs" :
+                ["a"],
+            "states" :
+                ["On", "Off"],
+            "outputValues" :
+            {
+                "a":
+                    [1, 0]
+            }
+        },
+        "AND Gate" :
+        {
+            "inputs" :
+                ["x", "y"],
+            "outputs" :
+                ["a"],
+            "states" :
+                ["Off", "Off", "Off", "On"],
+            "outputValues" :
+            {
+                "a":
+                    [0, 0, 0, 1]
+            }
+        },
+        "OR Gate" :
+        {
+            "inputs" :
+                ["x", "y"],
+            "outputs" :
+                ["a"],
+            "states" :
+                ["Off", "On", "On", "On"],
+            "outputValues" :
+            {
+                "a":
+                    [0, 1, 1, 1]
+            }
+        },
+        "XOR Gate" :
+        {
+            "inputs" :
+                ["x", "y"],
+            "outputs" :
+                ["a"],
+            "states" :
+                ["Off", "On", "On", "Off"],
+            "outputValues" :
+            {
+                "a" :
+                    [0, 1, 1, 0]
+            }
+        },
+        "BCD to 7-segment Converter" :
+        {
+            "inputs" :
+                ["1", "2", "4", "8"],
+            "outputs" :
+                ["a", "b", "c", "d", "e", "f", "g"],
+            "states" :
+                ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"],
+            "outputValues" :
+            {
+                "a" :
+                    [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+                "b" :
+                    [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0],
+                "c" :
+                    [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+                "d" :
+                    [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0],
+                "e" :
+                    [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1],
+                "f" :
+                    [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
+                "g" :
+                    [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+            }
+        },
+        "Half Adder" :
+        {
+            "inputs" :
+                ["x", "y"],
+            "outputs" :
+                ["sum", "carry_out"],
+            "states" :
+                ["0", "1", "1", "2"],
+            "outputValues" :
+            {
+                "sum" :
+                    [0, 1, 1, 0],
+                "carry_out" :
+                    [0, 0, 0, 1]
+            }
+        },
+        "Full Adder" :
+        {
+            "inputs" :
+                ["x", "y", "carry_in"],
+            "outputs" :
+                ["sum", "carry_out"],
+            "states" :
+                ["0", "1", "1", "2", "1", "2", "2", "3"],
+            "outputValues" :
+            {
+                "sum" :
+                    [0, 1, 1, 0, 1, 0, 0, 1],
+                "carry_out" :
+                    [0, 0, 0, 1, 0, 1, 1, 1]
+            }
+        }
     }
 }

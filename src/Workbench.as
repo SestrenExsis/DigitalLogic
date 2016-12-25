@@ -28,7 +28,6 @@ package
 		private var _currentTouch:Point;
 		private var _board:Board;
 		private var _mouseDown:Boolean = false;
-		private var _truthTables:Object;
 		
 		public function Workbench(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -43,47 +42,6 @@ package
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
-			
-			_truthTables = new Object();
-			var StringAB:Vector.<String> = new <String>["a", "b"];
-			var StringOut:Vector.<String> = new <String>["out"];
-			
-			var AndTable:TruthTable = new TruthTable("AND Gate", StringAB, StringOut, false);
-			AndTable.setOutputs({a:true, b:true}, {out:true});
-			_truthTables["AND Gate"] = AndTable;
-			
-			var OrTable:TruthTable = new TruthTable("OR Gate", StringAB, StringOut, true);
-			OrTable.setOutputs({a:false, b:false}, {out:false});
-			_truthTables["OR Gate"] = OrTable;
-			
-			var XorTable:TruthTable = new TruthTable("XOR Gate", StringAB, StringOut, true);
-			XorTable.setOutputs({a:false, b:false}, {out:false});
-			XorTable.setOutputs({a:true, b:true}, {out:false});
-			_truthTables["XOR Gate"] = XorTable;
-			
-			var NotTable:TruthTable = new TruthTable("NOT Gate", new <String>["a"], StringOut, false);
-			NotTable.setOutputs({a:false}, {out:true});
-			_truthTables["NOT Gate"] = NotTable;
-			
-			var SplitterTable:TruthTable = new TruthTable(
-				"Splitter",
-				new <String>["a"], 
-				new <String>["b", "c", "d"], 
-				false
-			);
-			SplitterTable.setOutputs({a:true}, {b:true, c:true, d:true});
-			_truthTables["Splitter"] = SplitterTable;
-			
-			var HalfAdderTable:TruthTable = new TruthTable(
-				"Half Adder", 
-				new <String>["a", "b"], 
-				new <String>["sum", "carry_out"], 
-				false
-			);
-			HalfAdderTable.setOutputs({a:false, b:true}, {sum:true, carry_out:false});
-			HalfAdderTable.setOutputs({a:true, b:false}, {sum:true, carry_out:false});
-			HalfAdderTable.setOutputs({a:true, b:true}, {sum:false, carry_out:true});
-			_truthTables["Half Adder"] = HalfAdderTable;
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
@@ -220,7 +178,7 @@ package
 							if (LatestDevice.truthTable.name == "Splitter")
 								NewEntity = addSplitter(GridX, GridY);
 							else
-								NewEntity = addDevice(GridX, GridY, LatestDevice.truthTable);
+								NewEntity = addDevice(GridX, GridY, LatestDevice.truthTable.name);
 						}
 					}
 					else
@@ -403,8 +361,9 @@ package
 			return LampEntity;
 		}
 		
-		private function addDevice(GridX:uint, GridY:uint, TruthTableA:TruthTable, OutputPositions:Vector.<Point> = null):Entity
+		private function addDevice(GridX:uint, GridY:uint, TruthTableKey:String, OutputPositions:Vector.<Point> = null):Entity
 		{
+			var TruthTableA:TruthTable = SpriteSheetKey.getTruthTable(TruthTableKey);
 			var NewDevice:Device = _board.addDevice(TruthTableA);
 			var HeightInTiles:uint = TruthTableA.inputNames.length;
 			var WidthInTiles:uint = HeightInTiles;
@@ -440,18 +399,11 @@ package
 		{
 			trace("addSplitter(" + GridX + ", " + GridY + ")");
 			
-			var TruthTableA:TruthTable = new TruthTable("Splitter", 
-				new <String>["a"], 
-				new <String>["b", "c", "d"], 
-				false
-			);
-			TruthTableA.setOutputs({a:true}, {b:true, c:true, d:true});
-			
 			var OutputPositions:Vector.<Point> = new Vector.<Point>();
 			OutputPositions.push(new Point(0, -1));
 			OutputPositions.push(new Point(1, 0));
 			OutputPositions.push(new Point(0, 1));
-			var GateEntity:Entity = addDevice(GridX, GridY, TruthTableA, OutputPositions);
+			var GateEntity:Entity = addDevice(GridX, GridY, "Splitter", OutputPositions);
 			
 			return GateEntity;
 		}
@@ -491,15 +443,15 @@ package
 		{
 			var PowerSourceA:Entity = addPowerSource(GridX, GridY, false);
 			var PowerSourceB:Entity = addPowerSource(GridX, GridY + 2, true);
-			var NotGate:Entity = addDevice(GridX, GridY + 4, _truthTables["NOT Gate"]);
-			var AndGate:Entity = addDevice(GridX, GridY + 6, _truthTables["AND Gate"]);
-			var OrGate:Entity = addDevice(GridX, GridY + 9, _truthTables["OR Gate"]);
-			var XorGate:Entity = addDevice(GridX, GridY + 12, _truthTables["XOR Gate"]);
+			var NotGate:Entity = addDevice(GridX, GridY + 4, "NOT Gate");
+			var AndGate:Entity = addDevice(GridX, GridY + 6, "AND Gate");
+			var OrGate:Entity = addDevice(GridX, GridY + 9, "OR Gate");
+			var XorGate:Entity = addDevice(GridX, GridY + 12, "XOR Gate");
 			var Lamp:Entity = addLamp(GridX, GridY + 15);
 			var Wire:Entity = addWire(GridX, GridY + 18);
 			var Splitter:Entity = addSplitter(GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
-			var HalfAdder:Entity = addDevice(GridX, GridY + 25, _truthTables["Half Adder"]);
+			var HalfAdder:Entity = addDevice(GridX, GridY + 25, "Half Adder");
 			
 			_grid.sortEntities();
 		}
@@ -511,13 +463,13 @@ package
 			addSwitch(GridX, GridY + 5);
 			addSplitter(GridX + 3, GridY + 5);
 			addSplitter(GridX + 5, GridY + 3);
-			addDevice(GridX + 7, GridY + 3, _truthTables["XOR Gate"]);
-			addDevice(GridX + 7, GridY + 5, _truthTables["AND Gate"]);
+			addDevice(GridX + 7, GridY + 3, "XOR Gate");
+			addDevice(GridX + 7, GridY + 5, "AND Gate");
 			addSplitter(GridX + 10, GridY + 3);
 			addSplitter(GridX + 11, GridY);
-			addDevice(GridX + 13, GridY, _truthTables["XOR Gate"]);
-			addDevice(GridX + 13, GridY + 2, _truthTables["AND Gate"]);
-			addDevice(GridX + 16, GridY + 2, _truthTables["OR Gate"]);
+			addDevice(GridX + 13, GridY, "XOR Gate");
+			addDevice(GridX + 13, GridY + 2, "AND Gate");
+			addDevice(GridX + 16, GridY + 2, "OR Gate");
 			addLamp(GridX + 19, GridY + 2);
 			addLamp(GridX + 19, GridY);
 		}

@@ -8,7 +8,10 @@ package truthTables
 		private var _inputMaps:Vector.<Object>;
 		private var _outputMaps:Vector.<Object>;
 		
-		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, Default:Boolean = false)
+		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, 
+			Default:Boolean = false,
+			OutputValues:Object = null
+		)
 		{
 			_name = Name;
 			_inputNames = InputNames.concat();
@@ -31,28 +34,15 @@ package truthTables
 				var OutputMap:Object = new Object();
 				for each (var OutputName:String in _outputNames)
 				{
-					OutputMap[OutputName] = Default;
+					if (OutputValues)
+						OutputMap[OutputName] = OutputValues[OutputName][i];
+					else
+						OutputMap[OutputName] = Default;
 				}
 				
 				_inputMaps.push(InputMap);
 				_outputMaps.push(OutputMap);
 			}
-		}
-		
-		public function clone():TruthTable
-		{
-			var Clone:TruthTable = new TruthTable(_name, _inputNames, _outputNames, false);
-			
-			for (var i:uint = 0; i < Clone._outputMaps.length; i++)
-			{
-				var OutputKey:Object = Clone._outputMaps[i];
-				for (var OutputElement:Object in OutputKey)
-				{
-					Clone._outputMaps[i][OutputElement] = _outputMaps[i][OutputElement];
-				}
-			}
-			
-			return Clone;
 		}
 		
 		public function get name():String
@@ -114,16 +104,6 @@ package truthTables
 					return _outputMaps[i];
 			}
 			return null;
-		}
-		
-		public function setOutputs(Search:Object, NewOutputs:Object):void
-		{
-			var OldOutputs:Object = getOutputs(Search);
-			for (var SearchKey:Object in NewOutputs)
-			{
-				if (OldOutputs.hasOwnProperty(SearchKey))
-					OldOutputs[SearchKey] = NewOutputs[SearchKey];
-			}
 		}
 	}
 }
