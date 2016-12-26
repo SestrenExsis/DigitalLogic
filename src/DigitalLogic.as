@@ -35,7 +35,7 @@ package
 			BackgroundTile.setFrameKey("Background");
 			_workbench = new Workbench(BackgroundTile, 40, 30);
 			_workbench.addToolkit(1, 2);
-			_workbench.testBasicCircuit(5, 5);
+			//_workbench.testBasicCircuit(10, 5);
 			
 			_framerateCounter = new FramerateCounter(_spriteSheet);
 			

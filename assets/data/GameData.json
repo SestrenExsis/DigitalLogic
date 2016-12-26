@@ -229,6 +229,13 @@
                     "width" : 8,
                     "height" : 8
                 },
+                "Device - BCD to 7-segment Converter" :
+                {
+                    "x" : 0,
+                    "y" : 32,
+                    "width" : 16,
+                    "height" : 56
+                },
                 "Lamp - Off" :
                 {
                     "x" : 88,
