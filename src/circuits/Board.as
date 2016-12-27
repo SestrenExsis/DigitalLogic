@@ -76,22 +76,6 @@ package circuits
 		}
 		
 		/**
-		 * Adds a new device to the Board with the properties of a lamp.
-		 * Since lamps have one input, and no output, a Node is also added to the Board connected to the
-		 * input of the lamp.
-		 */
-		public function addLamp():Device
-		{
-			var NewLamp:Device = new Device(DigitalComponent.DEVICE_LAMP, false);
-			var NodeIn:Node = NewLamp.addInput("a");
-			_components.push(NewLamp);
-			_devices.push(NewLamp);
-			_components.push(NodeIn);
-			
-			return NewLamp;
-		}
-		
-		/**
 		 * Adds a new device to the Board based on a truth table.
 		 * The number of Nodes that are also created is based on the inputs and outputs in the truth table.
 		 */

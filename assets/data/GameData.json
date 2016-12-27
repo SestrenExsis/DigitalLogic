@@ -236,14 +236,14 @@
                     "width" : 16,
                     "height" : 56
                 },
-                "Lamp - Off" :
+                "Device - Lamp - Off" :
                 {
                     "x" : 88,
                     "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
-                "Lamp - On" :
+                "Device - Lamp - On" :
                 {
                     "x" : 104,
                     "y" : 0,
@@ -396,6 +396,20 @@
                 "b":
                     [0, 1],
                 "c":
+                    [0, 1]
+            }
+        },
+        "Lamp" :
+        {
+            "inputs" :
+                ["x"],
+            "outputs" :
+                ["a"],
+            "states" :
+                ["Off", "On"],
+            "outputValues" :
+            {
+                "a":
                     [0, 1]
             }
         },

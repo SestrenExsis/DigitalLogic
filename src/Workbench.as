@@ -199,9 +199,6 @@ package
 							case DigitalComponent.DEVICE_SWITCH:
 								NewEntity = addSwitch(GridX, GridY);
 								break;
-							case DigitalComponent.DEVICE_LAMP:
-								NewEntity = addLamp(GridX, GridY);
-								break;
 						}
 					}
 				}
@@ -351,20 +348,6 @@ package
 			return SwitchEntity;
 		}
 		
-		private function addLamp(GridX:uint, GridY:uint):Entity
-		{
-			trace("addLamp(" + GridX + ", " + GridY + ")");
-			
-			var Lamp:Device = _board.addLamp();
-			var LampEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp, 2, 2);
-			var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, Lamp.getInput("a"));
-			NodeInEntity.addNeighbor(LampEntity);
-			_grid.addEntity(LampEntity, GridX, GridY);
-			_grid.addEntity(NodeInEntity, GridX - 1, GridY);
-			
-			return LampEntity;
-		}
-		
 		private function addDevice(GridX:uint, GridY:uint, 
 			TruthTableKey:String,
 			WidthInTiles:uint = 1,
@@ -454,7 +437,7 @@ package
 			var AndGate:Entity = addDevice(GridX, GridY + 6, "AND Gate", 2, 2);
 			var OrGate:Entity = addDevice(GridX, GridY + 9, "OR Gate", 2, 2);
 			var XorGate:Entity = addDevice(GridX, GridY + 12, "XOR Gate", 2, 2);
-			var Lamp:Entity = addLamp(GridX, GridY + 15);
+			var Lamp:Entity = addDevice(GridX, GridY + 15, "Lamp", 2, 2);
 			var Wire:Entity = addWire(GridX, GridY + 18);
 			var Splitter:Entity = addSplitter(GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
@@ -478,8 +461,8 @@ package
 			addDevice(GridX + 13, GridY, "XOR Gate", 2, 2);
 			addDevice(GridX + 13, GridY + 2, "AND Gate", 2, 2);
 			addDevice(GridX + 16, GridY + 2, "OR Gate", 2, 2);
-			addLamp(GridX + 19, GridY + 2);
-			addLamp(GridX + 19, GridY);
+			addDevice(GridX + 19, GridY + 2, "Lamp", 2, 2);
+			addDevice(GridX + 19, GridY, "Lamp", 2, 2);
 		}
 	}
 }

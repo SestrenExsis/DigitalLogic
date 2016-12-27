@@ -45,7 +45,6 @@ package entities
 				switch (_component.type)
 				{
 					case DigitalComponent.DEVICE:
-					case DigitalComponent.DEVICE_LAMP:
 					case DigitalComponent.DEVICE_SWITCH:
 						_drawingLayer = 1;
 						break;
@@ -203,23 +202,16 @@ package entities
 						if (DeviceA.truthTable)
 						{
 							FrameKey += " - " + DeviceA.truthTable.name;
-							if (DeviceA.truthTable.name == "Splitter")
+							if ((DeviceA.truthTable.name == "Splitter") ||
+								(DeviceA.truthTable.name == "Lamp"))
 							{
-								var DeviceInput:Node = DeviceA.getInput("a");
+								var DeviceInput:Node = DeviceA.getInput("x");
 								if (DeviceInput)
 									FrameKey += ((DeviceInput.powered) ? " - On" : " - Off");
 								else
 									FrameKey += " - Off";
 							}
 						}
-						break;
-					case DigitalComponent.DEVICE_LAMP:
-						var LampA:Device = (_component as Device);
-						var LampInput:Node = LampA.getInput("a");
-						if (LampInput)
-							FrameKey += ((LampInput.powered) ? " - On" : " - Off");
-						else
-							FrameKey += " - Off";
 						break;
 				}
 			}
