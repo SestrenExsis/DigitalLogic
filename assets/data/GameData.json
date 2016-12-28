@@ -236,6 +236,27 @@
                     "width" : 16,
                     "height" : 56
                 },
+                "Device - 7-segment Display" :
+                {
+                    "x" : 16,
+                    "y" : 32,
+                    "width" : 16,
+                    "height" : 32
+                },
+                "Device - 7-segment Horizontal Bar" :
+                {
+                    "x" : 36,
+                    "y" : 38,
+                    "width" : 8,
+                    "height" : 3
+                },
+                "Device - 7-segment Vertical Bar" :
+                {
+                    "x" : 34,
+                    "y" : 40,
+                    "width" : 3,
+                    "height" : 8
+                },
                 "Device - Lamp - Off" :
                 {
                     "x" : 88,
@@ -379,6 +400,594 @@
             }
         }
     },
+    "entities" :
+    {
+        "Splitter" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 0,
+                    "y" : -1,
+                    "outputValues" :
+                        [0, 1]
+                },
+                "b" :
+                {
+                    "x" : 1,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1]
+                },
+                "c" :
+                {
+                    "x" : 0,
+                    "y" : 1,
+                    "outputValues" :
+                        [0, 1]
+                }
+            },
+            "frames" :
+            {
+                "off" :
+                {
+                    "frameKey" : "Device - Splitter - Off",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 0]
+                },
+                "on" :
+                {
+                    "frameKey" : "Device - Splitter - On",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [0, 1]
+                }
+            }
+        },
+        "Lamp" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1]
+                }
+            },
+            "frames" :
+            {
+                "off" :
+                {
+                    "frameKey" : "Device - Lamp - Off",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 0]
+                },
+                "on" :
+                {
+                    "frameKey" : "Device - Lamp - On",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [0, 1]
+                }
+            }
+        },
+        "NOT Gate" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 1,
+                    "y" : 0,
+                    "outputValues" :
+                        [1, 0]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - NOT Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1]
+                }
+            }
+        },
+        "AND Gate" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 0, 0, 1]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - AND Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1]
+                }
+            }
+        },
+        "OR Gate" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - OR Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1]
+                }
+            }
+        },
+        "XOR Gate" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 1, 0]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - XOR Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1]
+                }
+            }
+        },
+        "Half Adder" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                }
+            },
+            "outputs" :
+            {
+                "sum" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 1, 0]
+                },
+                "carry_out" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [0, 0, 0, 1]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - Half Adder",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1]
+                }
+            }
+        },
+        "Full Adder" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 3,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                },
+                "carry_in" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 4
+                }
+            },
+            "outputs" :
+            {
+                "sum" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 1, 0, 1, 0, 0, 1]
+                },
+                "carry_out" :
+                {
+                    "x" : 2,
+                    "y" : 2,
+                    "outputValues" :
+                        [0, 0, 0, 1, 0, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - Full Adder",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1]
+                }
+            }
+        },
+        "7-segment Display" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 4,
+            "inputs" :
+            {
+                "1" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "2" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                },
+                "4" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 4
+                },
+                "8" :
+                {
+                    "x" : -1,
+                    "y" : 3,
+                    "weight" : 8
+                }
+            },
+            "outputs" :
+            {
+                "1" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+                },
+                "2" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1]
+                },
+                "4" :
+                {
+                    "x" : 2,
+                    "y" : 2,
+                    "outputValues" :
+                        [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]
+                },
+                "8" :
+                {
+                    "x" : 2,
+                    "y" : 3,
+                    "outputValues" :
+                        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "background" :
+                {
+                    "frameKey" : "Device - 7-segment Display",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "a" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 6,
+                    "visibleValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
+                },
+                "b" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 11,
+                    "yOffset" : 8,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0]
+                },
+                "c" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 11,
+                    "yOffset" : 17,
+                    "visibleValues" :
+                        [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
+                },
+                "d" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 24,
+                    "visibleValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0]
+                },
+                "e" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 2,
+                    "yOffset" : 17,
+                    "visibleValues" :
+                        [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+                },
+                "f" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 2,
+                    "yOffset" : 8,
+                    "visibleValues" :
+                        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1]
+                },
+                "g" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 15,
+                    "visibleValues" :
+                        [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+                }
+            }
+        },
+        "BCD to 7-segment Converter" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 7,
+            "inputs" :
+            {
+                "1" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "2" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 2
+                },
+                "4" :
+                {
+                    "x" : -1,
+                    "y" : 4,
+                    "weight" : 4
+                },
+                "8" :
+                {
+                    "x" : -1,
+                    "y" : 6,
+                    "weight" : 8
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
+                },
+                "b" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0]
+                },
+                "c" :
+                {
+                    "x" : 2,
+                    "y" : 2,
+                    "outputValues" :
+                        [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
+                },
+                "d" :
+                {
+                    "x" : 2,
+                    "y" : 3,
+                    "outputValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0]
+                },
+                "e" :
+                {
+                    "x" : 2,
+                    "y" : 4,
+                    "outputValues" :
+                        [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+                },
+                "f" :
+                {
+                    "x" : 2,
+                    "y" : 5,
+                    "outputValues" :
+                        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1]
+                },
+                "g" :
+                {
+                    "x" : 2,
+                    "y" : 6,
+                    "outputValues" :
+                        [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "background" :
+                {
+                    "frameKey" : "Device - BCD to 7-segment Converter",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            }
+        }
+    },
     "truthTables" :
     {
         "Splitter" :
@@ -493,6 +1102,26 @@
                     [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
                 "g" :
                     [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+            }
+        },
+        "7-segment Display" :
+        {
+            "inputs" :
+                ["1", "2", "4", "8"],
+            "outputs" :
+                ["1", "2", "4", "8"],
+            "states" :
+                ["Off", "On"],
+            "outputValues" :
+            {
+                "1":
+                    [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+                "2":
+                    [0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1],
+                "4":
+                    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+                "8":
+                    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
             }
         },
         "Half Adder" :

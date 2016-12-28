@@ -8,6 +8,8 @@ package circuits
 		private var _wire:Wire;
 		private var _device:Device;
 		
+		public var weight:uint = 1;
+		
 		public function Node(AttachedDevice:Device)
 		{
 			_type = CONNECTOR_NODE;

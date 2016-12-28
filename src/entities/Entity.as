@@ -12,6 +12,8 @@ package entities
 	
 	import interfaces.IGameEntity;
 	
+	import truthTables.TruthTable;
+	
 	public class Entity implements IGameEntity
 	{
 		private var _spriteSheet:SpriteSheet;
@@ -30,6 +32,8 @@ package entities
 		
 		public var gridX:uint = 0;
 		public var gridY:uint = 0;
+		
+		private var _frames:Vector.<Frame>;
 		
 		public function Entity(SpriteSheetA:SpriteSheet, Component:DigitalComponent = null, WidthInTiles:uint = 1, HeightInTiles:uint = 1)
 		{
@@ -53,6 +57,34 @@ package entities
 						break;
 				}
 			}
+			
+			_frames = new Vector.<Frame>();
+		}
+		
+		public static function convertObjectToEntity(SpriteSheetA:SpriteSheet, ObjectToConvert:Object, Component:DigitalComponent = null):Entity
+		{
+			var NewEntity:Entity = new Entity(SpriteSheetA, Component);
+			if (ObjectToConvert.hasOwnProperty("widthInTiles"))
+				NewEntity._widthInTiles = ObjectToConvert["widthInTiles"];
+			if (ObjectToConvert.hasOwnProperty("heightInTiles"))
+				NewEntity._heightInTiles = ObjectToConvert["heightInTiles"];
+			if (ObjectToConvert.hasOwnProperty("frames"))
+			{
+				var Frames:Object = ObjectToConvert["frames"];
+				for (var FrameKey:String in Frames)
+				{
+					var FrameObj:Object = Frames[FrameKey];
+					var NewFrame:Frame = Frame.convertObjectToFrame(FrameObj);
+					NewEntity.addFrame(NewFrame);
+				}
+			}
+			
+			return NewEntity;
+		}
+		
+		public function addFrame(FrameToAdd:Frame):void
+		{
+			_frames.push(FrameToAdd);
 		}
 		
 		public function get spriteSheet():SpriteSheet
@@ -219,6 +251,40 @@ package entities
 			_dirty = false;
 		}
 		
+		public function drawFramesOntoBuffer(Buffer:BitmapData):void
+		{
+			if (!_frames)
+				return;
+			
+			if (_component && (_component is Device))
+			{
+				var Index:uint = 0;
+				var DeviceA:Device = (_component as Device);
+				for (var InputNodeKey:String in DeviceA.inputKeys)
+				{
+					var InputNode:Node = DeviceA.getInput(InputNodeKey);
+					Index += (InputNode.powered) ? InputNode.weight : 0;
+				}
+			}
+			
+			var BaseRect:Rectangle = frameRect;
+			var TileWidth:uint = BaseRect.width / _widthInTiles;
+			var TileHeight:uint = BaseRect.height / _heightInTiles;
+			var InitialX:Number = gridX * TileWidth;
+			var InitialY:Number = gridY * TileHeight;
+			for each (var FrameToDraw:Frame in _frames)
+			{
+				if (!FrameToDraw.getVisibilityAtIndex(Index))
+					continue;
+				
+				var FrameRect:Rectangle = _spriteSheet.getFrame(FrameToDraw.frameKey);
+				var TileX:Number = InitialX + FrameToDraw.offset.x;
+				var TileY:Number = InitialY + FrameToDraw.offset.y;
+				_topLeft.setTo(TileX, TileY);
+				Buffer.copyPixels(_spriteSheet.bitmapData, FrameRect, _topLeft, null, null, true);
+			}
+		}
+		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
 			if (component)
@@ -228,6 +294,12 @@ package entities
 			}
 			if (_dirty)
 				update();
+			
+			if (_frames.length > 0)
+			{
+				drawFramesOntoBuffer(Buffer);
+				return;
+			}
 			
 			var FrameRect:Rectangle = frameRect;
 			var TileWidth:uint = FrameRect.width / _widthInTiles;

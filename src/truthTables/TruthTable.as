@@ -8,10 +8,7 @@ package truthTables
 		private var _inputMaps:Vector.<Object>;
 		private var _outputMaps:Vector.<Object>;
 		
-		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, 
-			Default:Boolean = false,
-			OutputValues:Object = null
-		)
+		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, OutputValues:Object)
 		{
 			_name = Name;
 			_inputNames = InputNames.concat();
@@ -34,15 +31,41 @@ package truthTables
 				var OutputMap:Object = new Object();
 				for each (var OutputName:String in _outputNames)
 				{
-					if (OutputValues)
-						OutputMap[OutputName] = OutputValues[OutputName][i];
-					else
-						OutputMap[OutputName] = Default;
+					OutputMap[OutputName] = OutputValues[OutputName][i];
 				}
 				
 				_inputMaps.push(InputMap);
 				_outputMaps.push(OutputMap);
 			}
+		}
+		
+		public static function convertObjectToTruthTable(Name:String, ObjectToConvert:Object):TruthTable
+		{
+			var InputNames:Vector.<String> = new Vector.<String>();
+			var OutputNames:Vector.<String> = new Vector.<String>();
+			var OutputValues:Object = new Object();
+			if (ObjectToConvert.hasOwnProperty("inputs"))
+			{
+				var InputsObj:Object = ObjectToConvert["inputs"];
+				for (var InputKey:String in InputsObj)
+				{
+					InputNames.push(InputKey);
+				}
+			}
+			if (ObjectToConvert.hasOwnProperty("outputs"))
+			{
+				var OutputsObj:Object = ObjectToConvert["outputs"];
+				for (var OutputKey:String in OutputsObj)
+				{
+					var OutputObj:Object = OutputsObj[OutputKey];
+					OutputNames.push(OutputKey);
+					if (OutputObj.hasOwnProperty("outputValues"))
+						OutputValues[OutputKey] = OutputObj["outputValues"].concat();
+				}
+			}
+			var NewTruthTable:TruthTable = new TruthTable(Name, InputNames, OutputNames, OutputValues);
+			
+			return NewTruthTable;
 		}
 		
 		public function get name():String

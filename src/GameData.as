@@ -17,6 +17,7 @@ package
 		private static var _initialized:Boolean = false;
 		private static var _spriteSheetCache:Object;
 		private static var _truthTableCache:Object;
+		private static var _entityObjectCache:Object;
 		
 		public static function init():void
 		{
@@ -27,6 +28,7 @@ package
 			var DataString:String = DataBytes.readUTFBytes(DataBytes.length);
 			var DataObj:Object = JSON.parse(DataString);
 			
+			// Initialize sprite sheet cache
 			_spriteSheetCache = new Object();
 			if (DataObj.hasOwnProperty("spriteSheets"))
 			{
@@ -40,6 +42,7 @@ package
 				}
 			}
 			
+			// Initialize truth table cache
 			_truthTableCache = new Object();
 			if (DataObj.hasOwnProperty("truthTables"))
 			{
@@ -84,8 +87,20 @@ package
 						}
 					}
 					
-					var NewTruthTable:TruthTable = new TruthTable(TruthTableKey, InputNames, OutputNames, false, OutputValues);
+					var NewTruthTable:TruthTable = new TruthTable(TruthTableKey, InputNames, OutputNames, OutputValues);
 					_truthTableCache[TruthTableKey] = NewTruthTable;
+				}
+			}
+			
+			// Initialize entity object cache
+			_entityObjectCache = new Object();
+			if (DataObj.hasOwnProperty("entities"))
+			{
+				var EntitiesObj:Object = DataObj.entities;
+				for (var EntityKey:String in EntitiesObj)
+				{
+					var EntityObj:Object = EntitiesObj[EntityKey];
+					_entityObjectCache[EntityKey] = EntityObj;
 				}
 			}
 			
@@ -104,6 +119,14 @@ package
 		{
 			if (_truthTableCache.hasOwnProperty(Key))
 				return _truthTableCache[Key];
+			else
+				return null;
+		}
+		
+		public static function getEntityObject(Key:String):Object
+		{
+			if (_entityObjectCache.hasOwnProperty(Key))
+				return _entityObjectCache[Key];
 			else
 				return null;
 		}

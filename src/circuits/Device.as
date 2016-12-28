@@ -36,8 +36,6 @@ package circuits
 				}
 			}
 			
-			
-			
 			var Powered:Boolean = false;
 			if (_truthTable)
 			{
@@ -56,7 +54,7 @@ package circuits
 			else
 			{
 				if (_inputCount == 1)
-					Powered = _inputs["a"].powered;
+					throw new Error("If this never throws, delete it."); //Powered = _inputs["x"].powered;
 				else
 					Powered = _invertOutput;
 			}
@@ -78,6 +76,11 @@ package circuits
 		public function setTruthTable(TruthTableToSet:TruthTable):void
 		{
 			_truthTable = TruthTableToSet;
+		}
+		
+		public function get inputKeys():Object
+		{
+			return _inputs;
 		}
 		
 		public function getInput(InputKey:String):Node

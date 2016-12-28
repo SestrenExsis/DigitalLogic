@@ -413,6 +413,39 @@ package
 			return WireEntity;
 		}
 		
+		private function addEntity(EntityKey:String, GridX:uint, GridY:uint):Entity
+		{
+			var EntityObject:Object = GameData.getEntityObject(EntityKey);
+			var NewTruthTable:TruthTable = TruthTable.convertObjectToTruthTable(EntityKey, EntityObject);
+			var NewDevice:Device = _board.addDevice(NewTruthTable);
+			var NewEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, NewDevice);
+			
+			_grid.addEntity(NewEntity, GridX, GridY);
+			for each (var InputName:String in NewTruthTable.inputNames)
+			{
+				var InputObj:Object = EntityObject["inputs"][InputName];
+				var InputOffsetX:uint = InputObj["x"];
+				var InputOffsetY:uint = InputObj["y"];
+				var InputWeight:uint = InputObj["weight"];
+				var InputNode:Node = NewDevice.getInput(InputName);
+				InputNode.weight = InputWeight;
+				var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, InputNode);
+				NodeInEntity.addNeighbor(NewEntity);
+				_grid.addEntity(NodeInEntity, GridX + InputOffsetX, GridY + InputOffsetY);
+			}
+			for each (var OutputName:String in NewTruthTable.outputNames)
+			{
+				var OutputOffsets:Object = EntityObject["outputs"][OutputName];
+				var OutputOffsetX:uint = OutputOffsets["x"];
+				var OutputOffsetY:uint = OutputOffsets["y"];
+				var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput(OutputName));
+				NodeOutEntity.addNeighbor(NewEntity);
+				_grid.addEntity(NodeOutEntity, GridX + OutputOffsetX, GridY + OutputOffsetY);
+			}
+			
+			return NewEntity;
+		}
+		
 		private function connect(WireEntity:Entity, ConnectorEntity:Entity):void
 		{
 			trace("connect(" + WireEntity.component.type + ", " + ConnectorEntity.component.type + ")");
@@ -444,6 +477,8 @@ package
 			var HalfAdder:Entity = addDevice(GridX, GridY + 25, "Half Adder", 2, 2);
 			var BCDTo7SegConverter:Entity = addDevice(GridX + 4, GridY, "BCD to 7-segment Converter", 2, 7);
 			
+			var TestNewSplitter:Entity = addEntity("Splitter", GridX + 2, GridY + 20)
+			var TestNew7SegDisplay:Entity = addEntity("7-segment Display", GridX + 15, GridY + 20)
 			_grid.sortEntities();
 		}
 		
