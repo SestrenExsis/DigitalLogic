@@ -174,16 +174,7 @@ package
 					{
 						var LatestDevice:Device = LatestComponent as Device;
 						if (LatestDevice.truthTable)
-						{
-							if (LatestDevice.truthTable.name == "Splitter")
-								NewEntity = addSplitter(GridX, GridY);
-							else
-							{
-								var W:uint = _latestEntity.widthInTiles;
-								var H:uint = _latestEntity.heightInTiles;
-								NewEntity = addDevice(GridX, GridY, LatestDevice.truthTable.name, W, H);
-							}
-						}
+							NewEntity = addEntity(LatestDevice.truthTable.name, GridX, GridY);
 					}
 					else
 					{
@@ -348,56 +339,6 @@ package
 			return SwitchEntity;
 		}
 		
-		private function addDevice(GridX:uint, GridY:uint, 
-			TruthTableKey:String,
-			WidthInTiles:uint = 1,
-			HeightInTiles:uint = 1,
-			OutputPositions:Vector.<Point> = null
-		):Entity
-		{
-			var TruthTableA:TruthTable = GameData.getTruthTable(TruthTableKey);
-			var NewDevice:Device = _board.addDevice(TruthTableA);
-			var DeviceEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice, WidthInTiles, HeightInTiles);
-			_grid.addEntity(DeviceEntity, GridX, GridY);
-			var Index:uint = 0;
-			for each (var InputName:String in TruthTableA.inputNames)
-			{
-				var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getInput(InputName));
-				NodeInEntity.addNeighbor(DeviceEntity);
-				_grid.addEntity(NodeInEntity, GridX - 1, GridY + Index);
-				Index++;
-			}
-			Index = 0;
-			for each (var OutputName:String in TruthTableA.outputNames)
-			{
-				var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput(OutputName));
-				NodeOutEntity.addNeighbor(DeviceEntity);
-				if (OutputPositions)
-				{
-					var OutputPosition:Point = OutputPositions[Index];
-					_grid.addEntity(NodeOutEntity, GridX + OutputPosition.x, GridY + OutputPosition.y);
-				}
-				else
-					_grid.addEntity(NodeOutEntity, GridX + DeviceEntity.widthInTiles, GridY + Index);
-				Index++;
-			}
-			
-			return DeviceEntity;
-		}
-		
-		private function addSplitter(GridX:uint, GridY:uint):Entity
-		{
-			trace("addSplitter(" + GridX + ", " + GridY + ")");
-			
-			var OutputPositions:Vector.<Point> = new Vector.<Point>();
-			OutputPositions.push(new Point(0, -1));
-			OutputPositions.push(new Point(1, 0));
-			OutputPositions.push(new Point(0, 1));
-			var GateEntity:Entity = addDevice(GridX, GridY, "Splitter", 1, 1, OutputPositions);
-			
-			return GateEntity;
-		}
-		
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
 			trace("addWire(" + GridX + ", " + GridY + ", " + EntityA + ", " + EntityB + ")");
@@ -466,18 +407,17 @@ package
 		{
 			var PowerSourceA:Entity = addPowerSource(GridX, GridY, false);
 			var PowerSourceB:Entity = addPowerSource(GridX, GridY + 2, true);
-			var NotGate:Entity = addDevice(GridX, GridY + 4, "NOT Gate");
-			var AndGate:Entity = addDevice(GridX, GridY + 6, "AND Gate", 2, 2);
-			var OrGate:Entity = addDevice(GridX, GridY + 9, "OR Gate", 2, 2);
-			var XorGate:Entity = addDevice(GridX, GridY + 12, "XOR Gate", 2, 2);
-			var Lamp:Entity = addDevice(GridX, GridY + 15, "Lamp", 2, 2);
+			var NotGate:Entity = addEntity("NOT Gate", GridX, GridY + 4);
+			var AndGate:Entity = addEntity("AND Gate", GridX, GridY + 6);
+			var OrGate:Entity = addEntity("OR Gate", GridX, GridY + 9);
+			var XorGate:Entity = addEntity("XOR Gate", GridX, GridY + 12);
+			var Lamp:Entity = addEntity("Lamp", GridX, GridY + 15);
 			var Wire:Entity = addWire(GridX, GridY + 18);
-			var Splitter:Entity = addSplitter(GridX, GridY + 20);
+			var Splitter:Entity = addEntity("Splitter", GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
-			var HalfAdder:Entity = addDevice(GridX, GridY + 25, "Half Adder", 2, 2);
-			var BCDTo7SegConverter:Entity = addDevice(GridX + 4, GridY, "BCD to 7-segment Converter", 2, 7);
+			var HalfAdder:Entity = addEntity("Half Adder", GridX, GridY + 25);
+			var BCDTo7SegConverter:Entity = addEntity("BCD to 7-segment Converter", GridX + 4, GridY);
 			
-			var TestNewSplitter:Entity = addEntity("Splitter", GridX + 2, GridY + 20)
 			var TestNew7SegDisplay:Entity = addEntity("7-segment Display", GridX + 15, GridY + 20)
 			_grid.sortEntities();
 		}
@@ -487,17 +427,17 @@ package
 			addSwitch(GridX, GridY);
 			addSwitch(GridX, GridY + 3);
 			addSwitch(GridX, GridY + 5);
-			addSplitter(GridX + 3, GridY + 5);
-			addSplitter(GridX + 5, GridY + 3);
-			addDevice(GridX + 7, GridY + 3, "XOR Gate", 2, 2);
-			addDevice(GridX + 7, GridY + 5, "AND Gate", 2, 2);
-			addSplitter(GridX + 10, GridY + 3);
-			addSplitter(GridX + 11, GridY);
-			addDevice(GridX + 13, GridY, "XOR Gate", 2, 2);
-			addDevice(GridX + 13, GridY + 2, "AND Gate", 2, 2);
-			addDevice(GridX + 16, GridY + 2, "OR Gate", 2, 2);
-			addDevice(GridX + 19, GridY + 2, "Lamp", 2, 2);
-			addDevice(GridX + 19, GridY, "Lamp", 2, 2);
+			addEntity("Splitter", GridX + 3, GridY + 5);
+			addEntity("Splitter", GridX + 5, GridY + 3);
+			addEntity("XOR Gate", GridX + 7, GridY + 3);
+			addEntity("AND Gate", GridX + 7, GridY + 5);
+			addEntity("Splitter", GridX + 10, GridY + 3);
+			addEntity("Splitter", GridX + 11, GridY);
+			addEntity("XOR Gate", GridX + 13, GridY);
+			addEntity("AND Gate", GridX + 13, GridY + 2);
+			addEntity("OR Gate", GridX + 16, GridY + 2);
+			addEntity("Lamp", GridX + 19, GridY + 2);
+			addEntity("Lamp", GridX + 19, GridY);
 		}
 	}
 }
