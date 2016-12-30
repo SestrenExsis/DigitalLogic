@@ -416,9 +416,9 @@ package
 			var Splitter:Entity = addEntity("Splitter", GridX, GridY + 20);
 			var Switch:Entity = addSwitch(GridX, GridY + 22);
 			var HalfAdder:Entity = addEntity("Half Adder", GridX, GridY + 25);
+			var FullAdder:Entity = addEntity("Full Adder", GridX + 3, GridY + 25);
 			var BCDTo7SegConverter:Entity = addEntity("BCD to 7-segment Converter", GridX + 4, GridY);
-			
-			var TestNew7SegDisplay:Entity = addEntity("7-segment Display", GridX + 15, GridY + 20)
+			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 4, GridY + 20)
 			_grid.sortEntities();
 		}
 		

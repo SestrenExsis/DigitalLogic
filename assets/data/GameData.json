@@ -287,10 +287,17 @@
                 },
                 "Device - Half Adder" :
                 {
-                    "x" : 152,
+                    "x" : 136,
                     "y" : 16,
                     "width" : 16,
                     "height" : 16
+                },
+                "Device - Full Adder" :
+                {
+                    "x" : 152,
+                    "y" : 16,
+                    "width" : 16,
+                    "height" : 24
                 },
                 "Node - North" :
                 {
