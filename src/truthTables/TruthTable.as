@@ -5,42 +5,49 @@ package truthTables
 		private var _name:String;
 		private var _inputNames:Vector.<String>;
 		private var _outputNames:Vector.<String>;
-		private var _inputMaps:Vector.<Object>;
-		private var _outputMaps:Vector.<Object>;
+		private var _inputWeights:Object;
+		private var _outputMaps:Array;
 		
-		public function TruthTable(Name:String, InputNames:Vector.<String>, OutputNames:Vector.<String>, OutputValues:Object)
+		public function TruthTable(Name:String, Inputs:Object, OutputNames:Vector.<String>, OutputValues:Object)
 		{
 			_name = Name;
-			_inputNames = InputNames.concat();
+			_inputNames = new Vector.<String>();
+			_inputWeights = new Object();
+			for (var InputKey:String in Inputs)
+			{
+				_inputNames.push(InputKey);
+				_inputWeights[InputKey] = Inputs[InputKey];
+			}
 			_outputNames = OutputNames.concat();
 			
-			_inputMaps = new Vector.<Object>();
-			_outputMaps = new Vector.<Object>();
+			_outputMaps = new Array();
 			var InputCombinationCount:uint = Math.pow(2, _inputNames.length);
 			for (var i:uint = 0; i < InputCombinationCount; i++)
 			{
 				var InputMap:Object = new Object();
+				var Index:uint = 0;
 				for (var j:uint = 0; j < _inputNames.length; j++)
 				{
 					var Bit:uint = (i >> j) % 2;
 					var Bool:Boolean = (Bit > 0) ? true : false;
 					var InputName:String = _inputNames[j];
-					InputMap[InputName] = Bool;
+					Index += (Bool) ? Inputs[InputName] : 0;
 				}
 				
 				var OutputMap:Object = new Object();
 				for each (var OutputName:String in _outputNames)
 				{
-					OutputMap[OutputName] = OutputValues[OutputName][i];
+					OutputMap[OutputName] = OutputValues[OutputName][Index];
 				}
-				
-				_inputMaps.push(InputMap);
-				_outputMaps.push(OutputMap);
+				if (_outputMaps[Index])
+					throw new Error("Duplicate index found");
+				_outputMaps[Index] = OutputMap;
 			}
 		}
 		
 		public static function convertObjectToTruthTable(Name:String, ObjectToConvert:Object):TruthTable
 		{
+			var Inputs:Object = new Object();
 			var InputNames:Vector.<String> = new Vector.<String>();
 			var OutputNames:Vector.<String> = new Vector.<String>();
 			var OutputValues:Object = new Object();
@@ -49,7 +56,10 @@ package truthTables
 				var InputsObj:Object = ObjectToConvert["inputs"];
 				for (var InputKey:String in InputsObj)
 				{
+					var InputObj:Object = InputsObj[InputKey];
 					InputNames.push(InputKey);
+					if (InputObj.hasOwnProperty("weight"))
+						Inputs[InputKey] = InputObj["weight"];
 				}
 			}
 			if (ObjectToConvert.hasOwnProperty("outputs"))
@@ -63,7 +73,7 @@ package truthTables
 						OutputValues[OutputKey] = OutputObj["outputValues"].concat();
 				}
 			}
-			var NewTruthTable:TruthTable = new TruthTable(Name, InputNames, OutputNames, OutputValues);
+			var NewTruthTable:TruthTable = new TruthTable(Name, Inputs, OutputNames, OutputValues);
 			
 			return NewTruthTable;
 		}
@@ -87,46 +97,21 @@ package truthTables
 		{
 			var ReturnString:String = "Inputs: " + _inputNames.toString();
 			ReturnString += "\nOutputs: " + _outputNames.toString();
-			ReturnString += "\nMap:\n";
-			for (var i:uint = 0; i < _inputMaps.length; i++)
-			{
-				var Key:Object = _inputMaps[i];
-				var KeyString:String = "[";
-				for (var InputKey:Object in Key)
-				{
-					KeyString += InputKey + ": " + Key[InputKey] + ",";
-				}
-				KeyString += "]";
-				
-				var Value:Object = _outputMaps[i];
-				var ValueString:String = "[";
-				for (var OutputKey:Object in Value)
-				{
-					ValueString += OutputKey + ": " + Value[OutputKey] + ",";
-				}
-				ValueString += "]";
-				
-				ReturnString += KeyString + " = " + ValueString + "\n";
-			}
+			ReturnString += "\nOutputMaps: " + _outputMaps.toString();
+			
 			return ReturnString;
 		}
 		
 		public function getOutputs(Search:Object):Object
 		{
-			var Match:Boolean;
-			for (var i:uint = 0; i < _inputMaps.length; i++)
+			var Index:int = 0;
+			for (var InputKey:String in Search)
 			{
-				Match = true;
-				var Key:Object = _inputMaps[i];
-				for (var SearchKey:Object in Key)
-				{
-					if (!Search.hasOwnProperty(SearchKey) || (Key[SearchKey] != Search[SearchKey]))
-						Match = false;
-				}
-				if (Match)
-					return _outputMaps[i];
+				var Powered:Boolean = Search[InputKey];
+				if (Powered)
+					Index += _inputWeights[InputKey]
 			}
-			return null;
+			return _outputMaps[Index];
 		}
 	}
 }
