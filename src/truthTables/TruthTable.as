@@ -7,6 +7,7 @@ package truthTables
 		private var _outputNames:Vector.<String>;
 		private var _inputWeights:Object;
 		private var _outputMaps:Array;
+		private var _stateCount:uint = 1;
 		
 		public function TruthTable(Name:String, Inputs:Object, OutputNames:Vector.<String>, OutputValues:Object)
 		{
@@ -20,22 +21,36 @@ package truthTables
 			}
 			_outputNames = OutputNames.concat();
 			
-			_outputMaps = new Array();
+			// Verify that state count and input combinations agree with output values
 			var InputCombinationCount:uint = Math.pow(2, _inputNames.length);
-			for (var i:uint = 0; i < InputCombinationCount; i++)
+			var OutputValuesLength:uint;
+			for each (var OutputName:String in _outputNames)
+			{
+				OutputValuesLength = OutputValues[OutputName].length;
+				_stateCount = OutputValuesLength / InputCombinationCount;
+				
+				var PreviousOutputValuesLength:uint = 0;
+				if ((PreviousOutputValuesLength > 0) && (PreviousOutputValuesLength != OutputValuesLength))
+					throw new Error("Output values of varying lengths found!");
+				PreviousOutputValuesLength = OutputValuesLength;
+			}
+			
+			_outputMaps = new Array();
+			for (var i:uint = 0; i < OutputValuesLength; i++)
 			{
 				var InputMap:Object = new Object();
-				var Index:uint = 0;
+				var Index:uint = i % _stateCount;
+				var InputIndex:uint = i / _stateCount;
 				for (var j:uint = 0; j < _inputNames.length; j++)
 				{
-					var Bit:uint = (i >> j) % 2;
+					var Bit:uint = (InputIndex >> j) % 2;
 					var Bool:Boolean = (Bit > 0) ? true : false;
 					var InputName:String = _inputNames[j];
-					Index += (Bool) ? Inputs[InputName] : 0;
+					Index += (Bool) ? (_stateCount * Inputs[InputName]) : 0;
 				}
 				
 				var OutputMap:Object = new Object();
-				for each (var OutputName:String in _outputNames)
+				for each (OutputName in _outputNames)
 				{
 					OutputMap[OutputName] = OutputValues[OutputName][Index];
 				}
@@ -93,6 +108,11 @@ package truthTables
 			return _outputNames;
 		}
 		
+		public function get stateCount():uint
+		{
+			return _stateCount;
+		}
+		
 		public function toString():String
 		{
 			var ReturnString:String = "Inputs: " + _inputNames.toString();
@@ -102,14 +122,14 @@ package truthTables
 			return ReturnString;
 		}
 		
-		public function getOutputs(Search:Object):Object
+		public function getOutputs(Search:Object, CurrentState:uint = 0):Object
 		{
-			var Index:int = 0;
+			var Index:int = CurrentState;
 			for (var InputKey:String in Search)
 			{
 				var Powered:Boolean = Search[InputKey];
 				if (Powered)
-					Index += _inputWeights[InputKey]
+					Index += _stateCount * _inputWeights[InputKey]
 			}
 			return _outputMaps[Index];
 		}

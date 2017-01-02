@@ -44,44 +44,12 @@ package circuits
 		}
 		
 		/**
-		 * Adds a new device to the Board with the properties of a constant.
-		 * Since constants have no inputs, and one output, a Node is also added to the Board connected 
-		 * to the output of the constant.
-		 */
-		public function addConstant(Powered:Boolean):Device
-		{
-			var NewConstant:Device = new Device(DigitalComponent.DEVICE_CONSTANT, Powered);
-			var NodeOut:Node = NewConstant.addOutput("out");
-			_components.push(NewConstant);
-			_devices.push(NewConstant);
-			_components.push(NodeOut);
-			
-			return NewConstant;
-		}
-		
-		/**
-		 * Adds a new device to the Board with the properties of a switch.
-		 * Since switches have no inputs, and one output, a Node is also added to the Board connected 
-		 * to the output of the switch.
-		 */
-		public function addSwitch():Device
-		{
-			var NewSwitch:Device = new Device(DigitalComponent.DEVICE_SWITCH, false);
-			var NodeOut:Node = NewSwitch.addOutput("out");
-			_components.push(NewSwitch);
-			_devices.push(NewSwitch);
-			_components.push(NodeOut);
-			
-			return NewSwitch;
-		}
-		
-		/**
 		 * Adds a new device to the Board based on a truth table.
 		 * The number of Nodes that are also created is based on the inputs and outputs in the truth table.
 		 */
 		public function addDevice(TruthTableA:TruthTable):Device
 		{
-			var NewDevice:Device = new Device(DigitalComponent.DEVICE, false);
+			var NewDevice:Device = new Device(DigitalComponent.DEVICE);
 			for each (var InputName:String in TruthTableA.inputNames)
 			{
 				var NodeIn:Node = NewDevice.addInput(InputName);

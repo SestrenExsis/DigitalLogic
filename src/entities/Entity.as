@@ -49,7 +49,6 @@ package entities
 				switch (_component.type)
 				{
 					case DigitalComponent.DEVICE:
-					case DigitalComponent.DEVICE_SWITCH:
 						_drawingLayer = 1;
 						break;
 					default:
@@ -224,26 +223,8 @@ package entities
 						if (NeighborString != "")
 							FrameKey += " - " + NeighborString;
 						break;
-					case DigitalComponent.DEVICE_CONSTANT:
-					case DigitalComponent.DEVICE_SWITCH:
-						var PowerSourceA:Device = (_component as Device);
-						FrameKey += ((PowerSourceA.invertOutput) ? " - On" : " - Off");
-						break;
-					case DigitalComponent.DEVICE:
-						var DeviceA:Device = (_component as Device);
-						if (DeviceA.truthTable)
-						{
-							FrameKey += " - " + DeviceA.truthTable.name;
-							if ((DeviceA.truthTable.name == "Splitter") ||
-								(DeviceA.truthTable.name == "Lamp"))
-							{
-								var DeviceInput:Node = DeviceA.getInput("x");
-								if (DeviceInput)
-									FrameKey += ((DeviceInput.powered) ? " - On" : " - Off");
-								else
-									FrameKey += " - Off";
-							}
-						}
+					default:
+						FrameKey = "Default";
 						break;
 				}
 			}
@@ -258,18 +239,18 @@ package entities
 			
 			if (_component && (_component is Device))
 			{
-				var Index:uint = 0;
 				var DeviceA:Device = (_component as Device);
+				var Index:uint = DeviceA.currentState;
 				for (var InputNodeKey:String in DeviceA.inputKeys)
 				{
 					var InputNode:Node = DeviceA.getInput(InputNodeKey);
-					Index += (InputNode.powered) ? InputNode.weight : 0;
+					var StateCount:uint = DeviceA.truthTable.stateCount;
+					Index += (InputNode.powered) ? StateCount * InputNode.weight : 0;
 				}
 			}
 			
-			var BaseRect:Rectangle = frameRect;
-			var TileWidth:uint = BaseRect.width / _widthInTiles;
-			var TileHeight:uint = BaseRect.height / _heightInTiles;
+			var TileWidth:uint = frameRect.width;
+			var TileHeight:uint = frameRect.height;
 			var InitialX:Number = gridX * TileWidth;
 			var InitialY:Number = gridY * TileHeight;
 			for each (var FrameToDraw:Frame in _frames)

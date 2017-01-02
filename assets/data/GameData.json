@@ -194,6 +194,13 @@
                     "width" : 8,
                     "height" : 8
                 },
+                "Device - Buffer" :
+                {
+                    "x" : 80,
+                    "y" : 24,
+                    "width" : 8,
+                    "height" : 8
+                },
                 "Device - AND Gate" :
                 {
                     "x" : 120,
@@ -271,14 +278,21 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Switch - Off" :
+                "Device - Switch" :
                 {
                     "x" : 88,
                     "y" : 16,
                     "width" : 16,
                     "height" : 16
                 },
-                "Switch - On" :
+                "Device - Switch - Off" :
+                {
+                    "x" : 88,
+                    "y" : 16,
+                    "width" : 16,
+                    "height" : 16
+                },
+                "Device - Switch - On" :
                 {
                     "x" : 104,
                     "y" : 16,
@@ -466,6 +480,95 @@
                 }
             }
         },
+        "Constant - Off" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "inputs" : {},
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 1,
+                    "y" : 0,
+                    "outputValues" :
+                        [0]
+                }
+            },
+            "frames" :
+            {
+                "Background" :
+                {
+                    "frameKey" : "Constant - Off",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1]
+                }
+            }
+        },
+        "Constant - On" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "inputs" : {},
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 1,
+                    "y" : 0,
+                    "outputValues" :
+                        [1]
+                }
+            },
+            "frames" :
+            {
+                "Background" :
+                {
+                    "frameKey" : "Constant - On",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1]
+                }
+            }
+        },
+        "Switch" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" : {},
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1]
+                }
+            },
+            "frames" :
+            {
+                "Off" :
+                {
+                    "frameKey" : "Device - Switch - Off",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 0]
+                },
+                "On" :
+                {
+                    "frameKey" : "Device - Switch - On",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [0, 1]
+                }
+            }
+        },
         "Lamp" :
         {
             "widthInTiles" : 2,
@@ -541,6 +644,49 @@
                     "yOffset" : 0,
                     "visibleValues" :
                         [1, 1]
+                }
+            }
+        },
+        "Toggleable NOT Gate" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 1,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 1, 0]
+                }
+            },
+            "frames" :
+            {
+                "Off" :
+                {
+                    "frameKey" : "Device - Buffer",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 0, 1, 0]
+                },
+                "On" :
+                {
+                    "frameKey" : "Device - NOT Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [0, 1, 0, 1]
                 }
             }
         },
@@ -800,6 +946,110 @@
                     "weight" : 8
                 }
             },
+            "outputs" :
+            {
+                "1" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+                },
+                "2" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1]
+                },
+                "4" :
+                {
+                    "x" : 2,
+                    "y" : 2,
+                    "outputValues" :
+                        [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]
+                },
+                "8" :
+                {
+                    "x" : 2,
+                    "y" : 3,
+                    "outputValues" :
+                        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "background" :
+                {
+                    "frameKey" : "Device - 7-segment Display",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "a" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 6,
+                    "visibleValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
+                },
+                "b" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 11,
+                    "yOffset" : 8,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0]
+                },
+                "c" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 11,
+                    "yOffset" : 17,
+                    "visibleValues" :
+                        [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
+                },
+                "d" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 24,
+                    "visibleValues" :
+                        [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0]
+                },
+                "e" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 2,
+                    "yOffset" : 17,
+                    "visibleValues" :
+                        [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+                },
+                "f" :
+                {
+                    "frameKey" : "Device - 7-segment Vertical Bar",
+                    "xOffset" : 2,
+                    "yOffset" : 8,
+                    "visibleValues" :
+                        [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1]
+                },
+                "g" :
+                {
+                    "frameKey" : "Device - 7-segment Horizontal Bar",
+                    "xOffset" : 4,
+                    "yOffset" : 15,
+                    "visibleValues" :
+                        [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+                }
+            }
+        },
+        "4-bit Switch" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 4,
+            "inputs" : {},
             "outputs" :
             {
                 "1" :

@@ -12,13 +12,12 @@ package circuits
 		private var _inputCount:uint = 0;
 		private var _outputCount:uint = 0;
 		private var _search:Object;
-		private var _invertOutput:Boolean = false;
 		private var _truthTable:TruthTable;
+		private var _currentState:uint = 0;
 		
-		public function Device(Type:String, InvertOutput:Boolean)
+		public function Device(Type:String)
 		{
 			_type = Type;
-			_invertOutput = InvertOutput;
 			_inputs = new Object();
 			_outputs = new Object();
 			_search = new Object();
@@ -39,12 +38,14 @@ package circuits
 			var Powered:Boolean = false;
 			if (_truthTable)
 			{
+				var InputCount:uint = 0;
 				for (var InputKey:Object in _inputs)
 				{
+					InputCount++;
 					if (_search.hasOwnProperty(InputKey))
 						_search[InputKey] = (_inputs[InputKey] as Node).powered;
 				}
-				var Outputs:Object = _truthTable.getOutputs(_search);
+				var Outputs:Object = _truthTable.getOutputs(_search, _currentState);
 				for (OutputKey in Outputs)
 				{
 					if (_outputs.hasOwnProperty(OutputKey))
@@ -56,10 +57,10 @@ package circuits
 				if (_inputCount == 1)
 					throw new Error("If this never throws, delete it."); //Powered = _inputs["x"].powered;
 				else
-					Powered = _invertOutput;
+					Powered = false; // _invertOutput;
 			}
 			
-			if (_outputCount > 0 && _inputCount == 0)
+			if (_outputCount > 0 && _inputCount == 0 && !_truthTable)
 			{
 				for (OutputKey in _outputs)
 				{
@@ -104,14 +105,17 @@ package circuits
 			return _inputCount;
 		}
 		
-		public function get invertOutput():Boolean
+		public function get currentState():uint
 		{
-			return _invertOutput;
+			return _currentState;
 		}
 		
-		public function toggle():void
+		public function nextState():void
 		{
-			_invertOutput = !_invertOutput;
+			_currentState++;
+			
+			if (!_truthTable || (_currentState >= _truthTable.stateCount))
+				_currentState = 0;
 		}
 		
 		public function addInput(Name:String):Node

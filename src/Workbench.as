@@ -129,8 +129,8 @@ package
 				{
 					_currentEntity = DeviceEntity;
 					_latestEntity = DeviceEntity;
-					if (DeviceEntity.component.type == DigitalComponent.DEVICE_SWITCH)
-						(DeviceEntity.component as Device).toggle();
+					if (DeviceEntity.component.type == DigitalComponent.DEVICE)
+						(DeviceEntity.component as Device).nextState();
 				}
 				else
 				{
@@ -182,13 +182,6 @@ package
 						{
 							case DigitalComponent.CONNECTOR_WIRE:
 								NewEntity = addWire(GridX, GridY, _currentEntity);
-								break;
-							case DigitalComponent.DEVICE_CONSTANT:
-								var Powered:Boolean = (LatestComponent as Device).invertOutput;
-								NewEntity = addPowerSource(GridX, GridY, Powered);
-								break;
-							case DigitalComponent.DEVICE_SWITCH:
-								NewEntity = addSwitch(GridX, GridY);
 								break;
 						}
 					}
@@ -311,34 +304,6 @@ package
 			}
 		}
 		
-		private function addPowerSource(GridX:uint, GridY:uint, Powered:Boolean):Entity
-		{
-			trace("addPowerSource(" + GridX + ", " + GridY + ", " + Powered + ")");
-			var PowerSource:Device = _board.addConstant(Powered);
-			var PowerSourceEntity:Entity = new Entity(_baseEntity.spriteSheet, PowerSource);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, PowerSource.getOutput("out"));
-			NodeOutEntity.addNeighbor(PowerSourceEntity);
-			
-			_grid.addEntity(PowerSourceEntity, GridX, GridY);
-			_grid.addEntity(NodeOutEntity, GridX + 1, GridY);
-			
-			return PowerSourceEntity;
-		}
-		
-		private function addSwitch(GridX:uint, GridY:uint):Entity
-		{
-			trace("addSwitch(" + GridX + ", " + GridY + ")");
-			var Switch:Device = _board.addSwitch();
-			var SwitchEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch, 2, 2);
-			var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, Switch.getOutput("out"));
-			NodeOutEntity.addNeighbor(SwitchEntity);
-			
-			_grid.addEntity(SwitchEntity, GridX, GridY);
-			_grid.addEntity(NodeOutEntity, GridX + 2, GridY);
-			
-			return SwitchEntity;
-		}
-		
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
 			trace("addWire(" + GridX + ", " + GridY + ", " + EntityA + ", " + EntityB + ")");
@@ -356,6 +321,7 @@ package
 		
 		private function addEntity(EntityKey:String, GridX:uint, GridY:uint):Entity
 		{
+			trace("addEntity(" + EntityKey + ", " + GridX + ", " + GridY + ")");
 			var EntityObject:Object = GameData.getEntityObject(EntityKey);
 			var NewTruthTable:TruthTable = TruthTable.convertObjectToTruthTable(EntityKey, EntityObject);
 			var NewDevice:Device = _board.addDevice(NewTruthTable);
@@ -405,8 +371,8 @@ package
 		
 		public function addToolkit(GridX:uint, GridY:uint):void
 		{
-			var PowerSourceA:Entity = addPowerSource(GridX, GridY, false);
-			var PowerSourceB:Entity = addPowerSource(GridX, GridY + 2, true);
+			var ConstantOff:Entity = addEntity("Constant - Off", GridX, GridY);
+			var ConstantOn:Entity = addEntity("Constant - On", GridX, GridY + 2);
 			var NotGate:Entity = addEntity("NOT Gate", GridX, GridY + 4);
 			var AndGate:Entity = addEntity("AND Gate", GridX, GridY + 6);
 			var OrGate:Entity = addEntity("OR Gate", GridX, GridY + 9);
@@ -414,19 +380,22 @@ package
 			var Lamp:Entity = addEntity("Lamp", GridX, GridY + 15);
 			var Wire:Entity = addWire(GridX, GridY + 18);
 			var Splitter:Entity = addEntity("Splitter", GridX, GridY + 20);
-			var Switch:Entity = addSwitch(GridX, GridY + 22);
+			var Switch:Entity = addEntity("Switch", GridX, GridY + 22);
 			var HalfAdder:Entity = addEntity("Half Adder", GridX, GridY + 25);
 			var FullAdder:Entity = addEntity("Full Adder", GridX + 3, GridY + 25);
 			var BCDTo7SegConverter:Entity = addEntity("BCD to 7-segment Converter", GridX + 4, GridY);
-			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 4, GridY + 20)
+			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 4, GridY + 20);
+			
+			var ToggleableNotGate:Entity = addEntity("Toggleable NOT Gate", GridX + 10, GridY + 4);
+			var FourBitSwitch:Entity = addEntity("4-bit Switch", GridX + 10, GridY + 6);
 			_grid.sortEntities();
 		}
 		
 		public function testBasicCircuit(GridX:uint, GridY:uint):void
 		{
-			addSwitch(GridX, GridY);
-			addSwitch(GridX, GridY + 3);
-			addSwitch(GridX, GridY + 5);
+			addEntity("Switch", GridX, GridY);
+			addEntity("Switch", GridX, GridY + 3);
+			addEntity("Switch", GridX, GridY + 5);
 			addEntity("Splitter", GridX + 3, GridY + 5);
 			addEntity("Splitter", GridX + 5, GridY + 3);
 			addEntity("XOR Gate", GridX + 7, GridY + 3);
