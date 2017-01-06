@@ -9,6 +9,7 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.KeyboardEvent;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="#555555")]
 	
@@ -43,6 +44,7 @@ package
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 		
 		private function onEnterFrame(e:Event):void
@@ -76,6 +78,11 @@ package
 			var IsButtonDown:Boolean = e.buttonDown;
 			if (IsButtonDown)
 				_workbench.onDrag(MouseX, MouseY);
+		}
+		
+		private function onKeyDown(e:KeyboardEvent):void 
+		{
+			_workbench.onKeyDown(e.keyCode);
 		}
 	}
 }

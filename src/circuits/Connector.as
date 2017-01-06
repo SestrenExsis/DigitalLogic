@@ -45,10 +45,12 @@ package circuits
 			
 		}
 		
-		public function propagate(Powered:Boolean, Propagator:DigitalComponent):void
+		public function propagate(Powered:Boolean, Propagator:DigitalComponent):DigitalComponent
 		{
 			_previouslyPowered = _powered;
 			_powered = Powered;
+			
+			return null;
 		}
 	}
 }

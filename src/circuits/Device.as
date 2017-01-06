@@ -23,15 +23,20 @@ package circuits
 			_search = new Object();
 		}
 		
-		public function pulse(Propogator:DigitalComponent = null):void
+		public function get outputs():Object
+		{
+			return _outputs;
+		}
+		
+		public function pulse(Propagator:DigitalComponent = null):Object
 		{
 			// Do not accept pulse requests from output nodes.
-			if (Propogator)
+			if (Propagator)
 			{
 				for (var OutputKey:Object in _outputs)
 				{
-					if (Propogator === _outputs[OutputKey])
-						return;
+					if (Propagator === _outputs[OutputKey])
+						return null;
 				}
 			}
 			
@@ -46,6 +51,8 @@ package circuits
 						_search[InputKey] = (_inputs[InputKey] as Node).powered;
 				}
 				var Outputs:Object = _truthTable.getOutputs(_search, _currentState);
+				return Outputs;
+				
 				for (OutputKey in Outputs)
 				{
 					if (_outputs.hasOwnProperty(OutputKey))
@@ -62,11 +69,15 @@ package circuits
 			
 			if (_outputCount > 0 && _inputCount == 0 && !_truthTable)
 			{
+				throw new Error("If this never throws, delete it.");
+				
 				for (OutputKey in _outputs)
 				{
 					(_outputs[OutputKey] as Node).propagate(Powered, this);
 				}
 			}
+			
+			return null;
 		}
 		
 		public function get truthTable():TruthTable

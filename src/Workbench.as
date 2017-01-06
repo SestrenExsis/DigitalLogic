@@ -11,8 +11,10 @@ package
 	import entities.Grid;
 	
 	import flash.display.BitmapData;
+	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.ui.Keyboard;
 	
 	import interfaces.IGameEntity;
 	
@@ -289,9 +291,19 @@ package
 			_currentTouch.setTo(-1.0, -1.0);
 		}
 		
+		public function onKeyDown(KeyCode:uint):void
+		{
+			if (KeyCode == Keyboard.R)
+				_board.reset();
+			if (KeyCode == Keyboard.P)
+				_board.prime();
+			if (KeyCode == Keyboard.SPACE)
+				_board.newTick();
+		}
+		
 		public function update():void
 		{
-			_board.tick();
+			//_board.tick();
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void

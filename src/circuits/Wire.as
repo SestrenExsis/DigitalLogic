@@ -39,20 +39,16 @@ package circuits
 			ConnectorToConnect.connect(this);
 		}
 		
-		override public function propagate(Powered:Boolean, Propagator:DigitalComponent):void
+		override public function propagate(Powered:Boolean, Propagator:DigitalComponent):DigitalComponent
 		{
 			super.propagate(Powered, Propagator);
 			
 			if (Propagator === _a)
-			{
-				if (_b)
-					_b.propagate(Powered, this);
-			}
+				return _b;
 			else if (Propagator === _b)
-			{
-				if (_a)
-					_a.propagate(Powered, this);
-			}
+				return _a;
+			else
+				return null;
 		}
 	}
 }
