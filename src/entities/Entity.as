@@ -241,7 +241,7 @@ package entities
 			{
 				var DeviceA:Device = (_component as Device);
 				var Index:uint = DeviceA.currentState;
-				for (var InputNodeKey:String in DeviceA.inputKeys)
+				for (var InputNodeKey:String in DeviceA.inputs)
 				{
 					var InputNode:Node = DeviceA.getInput(InputNodeKey);
 					var StateCount:uint = DeviceA.truthTable.stateCount;

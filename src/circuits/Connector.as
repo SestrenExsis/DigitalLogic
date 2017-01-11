@@ -3,7 +3,7 @@ package circuits
 	public class Connector extends DigitalComponent
 	{
 		private var _powered:Boolean = false;
-		private var _previouslyPowered:Boolean = false;
+		private var _previouslyPowered:Boolean = true;
 		
 		public function Connector()
 		{
@@ -38,11 +38,17 @@ package circuits
 			// a rising edge or falling edge state. This has no visual effect, since it happens every frame, but can
 			// be a drag on performance and is also logically incorrect.
 			_powered = false;
+			_previouslyPowered = true;
 		}
 		
 		public function connect(ConnectorToConnect:Connector):void
 		{
 			
+		}
+		
+		public function tick():void
+		{
+			_previouslyPowered = _powered;
 		}
 		
 		public function propagate(Powered:Boolean, Propagator:DigitalComponent):DigitalComponent

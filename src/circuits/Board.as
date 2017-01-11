@@ -6,29 +6,38 @@ package circuits
 	{
 		private var _components:Vector.<DigitalComponent>;
 		private var _devices:Vector.<Device>;
-		
-		private var _tickCounter:uint = 0;
-		private var _stepCounter:uint = 0;
 		private var _devicesInTick:Vector.<Device>;
 		
 		public function Board()
 		{
 			_components = new Vector.<DigitalComponent>();
 			_devices = new Vector.<Device>();
+			_devicesInTick = new Vector.<Device>();
 		}
 		
-		private function stats():void
+		public function reset():void
 		{
-			trace("Tick #" + _tickCounter);
-			trace("  Components: " + _components.length);
-			trace("  Devices:    " + _devicesInTick.length + " of " + _devices.length);
+			for each (var CurrentComponent:DigitalComponent in _components)
+			{
+				if (CurrentComponent is Connector)
+					(CurrentComponent as Connector).reset();
+			}
+			while (_devicesInTick.length > 0)
+				_devicesInTick.pop();
 		}
 		
-		public function newTick():void
+		public function prime():void
 		{
-			_tickCounter++;
-			stats();
-			
+			for each (var CurrentDevice:Device in _devices)
+			{
+				var EdgeTriggered:Boolean = CurrentDevice.edgeTriggered();
+				if (EdgeTriggered)
+					_devicesInTick.push(CurrentDevice);
+			}
+		}
+		
+		public function tick():void
+		{
 			var DeviceCount:uint = _devicesInTick.length;
 			for (var j:uint = 0; j < DeviceCount; j++)
 			{
@@ -40,7 +49,8 @@ package circuits
 					if (OutputNode)
 					{
 						var Current:Connector = OutputNode;
-						var Next:DigitalComponent = Current.propagate(Outputs[OutputKey], DeviceToTick);
+						var OutputPower:Boolean = Outputs[OutputKey];
+						var Next:DigitalComponent = Current.propagate(OutputPower, DeviceToTick);
 						while (Next && (Next is Connector))
 						{
 							var Prev:DigitalComponent = Current;
@@ -48,50 +58,14 @@ package circuits
 							Next = Current.propagate(Outputs[OutputKey], Prev);
 						}
 						if (Next is Device)
-							_devicesInTick.push(Next as Device);
+						{
+							var NextDevice:Device = (Next as Device);
+							var IndexOfDeviceInTick:int = _devicesInTick.indexOf(NextDevice);
+							if (IndexOfDeviceInTick == -1)
+								_devicesInTick.push(NextDevice);
+						}
 					}
 				}
-			}
-		}
-		
-		public function prime():void
-		{
-			trace("---");
-			for each (var CurrentDevice:Device in _devices)
-			{
-				if (CurrentDevice.inputCount == 0)
-				{
-					var IndexOfDeviceInTick:int = _devicesInTick.indexOf(CurrentDevice);
-					if (IndexOfDeviceInTick == -1)
-						_devicesInTick.push(CurrentDevice);
-				}
-			}
-			stats();
-		}
-		
-		public function reset():void
-		{
-			_tickCounter = 0;
-			for each (var CurrentComponent:DigitalComponent in _components)
-			{
-				if (CurrentComponent is Connector)
-					(CurrentComponent as Connector).reset();
-			}
-			_devicesInTick = new Vector.<Device>();
-			stats();
-		}
-		
-		/**
-		 * Updates the state of all components on the board.
-		 */
-		public function tick():void
-		{
-			reset();
-			
-			for each (var CurrentDevice:Device in _devices)
-			{
-				if (CurrentDevice.inputCount == 0)
-					CurrentDevice.pulse();
 			}
 		}
 		

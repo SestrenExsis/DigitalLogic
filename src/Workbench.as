@@ -295,15 +295,12 @@ package
 		{
 			if (KeyCode == Keyboard.R)
 				_board.reset();
-			if (KeyCode == Keyboard.P)
-				_board.prime();
-			if (KeyCode == Keyboard.SPACE)
-				_board.newTick();
 		}
 		
 		public function update():void
 		{
-			//_board.tick();
+			_board.prime();
+			_board.tick();
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void

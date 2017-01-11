@@ -13,6 +13,7 @@ package circuits
 		private var _outputCount:uint = 0;
 		private var _search:Object;
 		private var _truthTable:TruthTable;
+		private var _previousState:uint = 1;
 		private var _currentState:uint = 0;
 		
 		public function Device(Type:String)
@@ -21,6 +22,11 @@ package circuits
 			_inputs = new Object();
 			_outputs = new Object();
 			_search = new Object();
+		}
+		
+		public function get inputs():Object
+		{
+			return _inputs;
 		}
 		
 		public function get outputs():Object
@@ -90,11 +96,6 @@ package circuits
 			_truthTable = TruthTableToSet;
 		}
 		
-		public function get inputKeys():Object
-		{
-			return _inputs;
-		}
-		
 		public function getInput(InputKey:String):Node
 		{
 			if (_inputs.hasOwnProperty(InputKey))
@@ -119,6 +120,24 @@ package circuits
 		public function get currentState():uint
 		{
 			return _currentState;
+		}
+		
+		public function edgeTriggered():Boolean
+		{
+			var EdgeTriggered:Boolean = false;
+			var InputNodesObj:Object = _inputs;
+			for (var InputNodeKey:String in InputNodesObj)
+			{
+				var InputNode:Node = (InputNodesObj[InputNodeKey] as Node);
+				if (InputNode.edge != 0)
+					EdgeTriggered = true;
+				InputNode.tick();
+			}
+			if (_previousState != _currentState)
+				EdgeTriggered = true;
+			_previousState = _currentState;
+			
+			return EdgeTriggered;
 		}
 		
 		public function nextState():void
