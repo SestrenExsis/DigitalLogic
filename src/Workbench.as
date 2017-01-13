@@ -30,6 +30,10 @@ package
 		private var _currentTouch:Point;
 		private var _board:Board;
 		private var _mouseDown:Boolean = false;
+		private var _clock:Entity;
+		private var _currentTime:uint = 0;
+		private var _offInterval:uint = 8;
+		private var _onInterval:uint = 8;
 		
 		public function Workbench(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -44,6 +48,7 @@ package
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
+			_clock = addEntity("Switch", 7, 15);
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
@@ -295,12 +300,36 @@ package
 		{
 			if (KeyCode == Keyboard.R)
 				_board.reset();
+			if (KeyCode == Keyboard.LEFT || KeyCode == Keyboard.RIGHT)
+			{
+				if (KeyCode == Keyboard.RIGHT)
+					_offInterval++;
+				else
+					_offInterval--;
+				trace(_offInterval + " / " + _onInterval);
+			}
+			if (KeyCode == Keyboard.DOWN || KeyCode == Keyboard.UP)
+			{
+				if (KeyCode == Keyboard.UP)
+					_onInterval++;
+				else
+					_onInterval--;
+				trace(_offInterval + " / " + _onInterval);
+			}
 		}
 		
 		public function update():void
 		{
 			_board.prime();
 			_board.tick();
+			_currentTime++;
+			if (_currentTime == _offInterval)
+				(_clock.component as Device).nextState();
+			if (_currentTime >= _offInterval + _onInterval)
+			{
+				(_clock.component as Device).nextState();
+				_currentTime = 0;
+			}
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
@@ -383,6 +412,7 @@ package
 			var ConstantOff:Entity = addEntity("Constant - Off", GridX, GridY);
 			var ConstantOn:Entity = addEntity("Constant - On", GridX, GridY + 2);
 			var NotGate:Entity = addEntity("NOT Gate", GridX, GridY + 4);
+			var ToggleableNotGate:Entity = addEntity("Toggleable NOT Gate", GridX + 2, GridY + 4);
 			var AndGate:Entity = addEntity("AND Gate", GridX, GridY + 6);
 			var OrGate:Entity = addEntity("OR Gate", GridX, GridY + 9);
 			var XorGate:Entity = addEntity("XOR Gate", GridX, GridY + 12);
@@ -394,9 +424,9 @@ package
 			var FullAdder:Entity = addEntity("Full Adder", GridX + 3, GridY + 25);
 			var BCDTo7SegConverter:Entity = addEntity("BCD to 7-segment Converter", GridX + 4, GridY);
 			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 4, GridY + 20);
+			var FourBitSwitch:Entity = addEntity("4-bit Switch", GridX + 3, GridY + 8);
+			var NandGate3:Entity = addEntity("3-Input NAND Gate", GridX + 3, GridY + 13);
 			
-			var ToggleableNotGate:Entity = addEntity("Toggleable NOT Gate", GridX + 10, GridY + 4);
-			var FourBitSwitch:Entity = addEntity("4-bit Switch", GridX + 10, GridY + 6);
 			_grid.sortEntities();
 		}
 		

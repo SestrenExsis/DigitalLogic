@@ -208,6 +208,13 @@
                     "width" : 16,
                     "height" : 16
                 },
+                "Device - 3-Input NAND Gate" :
+                {
+                    "x" : 88,
+                    "y" : 32,
+                    "width" : 16,
+                    "height" : 24
+                },
                 "Device - OR Gate" :
                 {
                     "x" : 136,
@@ -728,6 +735,53 @@
                     "yOffset" : 0,
                     "visibleValues" :
                         [1, 1, 1, 1]
+                }
+            }
+        },
+        "3-Input NAND Gate" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 3,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                },
+                "z" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 4
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 0]
+                }
+            },
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Device - 3-Input NAND Gate",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
                 }
             }
         },
