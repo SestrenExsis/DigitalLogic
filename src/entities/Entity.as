@@ -77,13 +77,28 @@ package entities
 					NewEntity.addFrame(NewFrame);
 				}
 			}
+			NewEntity.sortFrames();
 			
 			return NewEntity;
 		}
 		
-		public function addFrame(FrameToAdd:Frame):void
+		private function addFrame(FrameToAdd:Frame):void
 		{
 			_frames.push(FrameToAdd);
+		}
+		
+		private function sortFrames():void
+		{
+			var SortingArray:Array = new Array();
+			while (_frames.length > 0)
+			{
+				SortingArray.push(_frames.pop());
+			}
+			SortingArray.sortOn("layer", Array.NUMERIC | Array.DESCENDING);
+			while (SortingArray.length > 0)
+			{
+				_frames.push(SortingArray.pop());
+			}
 		}
 		
 		public function get spriteSheet():SpriteSheet
@@ -253,8 +268,9 @@ package entities
 			var TileHeight:uint = frameRect.height;
 			var InitialX:Number = gridX * TileWidth;
 			var InitialY:Number = gridY * TileHeight;
-			for each (var FrameToDraw:Frame in _frames)
+			for (var i:uint = 0; i < _frames.length; i++)
 			{
+				var FrameToDraw:Frame = _frames[i];
 				if (!FrameToDraw.getVisibilityAtIndex(Index))
 					continue;
 				

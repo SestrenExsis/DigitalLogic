@@ -7,12 +7,14 @@ package entities
 	{
 		private var _frameKey:String;
 		private var _offset:Point;
+		private var _layer:uint = 0;
 		private var _visibleValues:Array;
 		
-		public function Frame(FrameKey:String, OffsetX:Number, OffsetY:Number, VisibleValues:Array)
+		public function Frame(FrameKey:String, OffsetX:Number, OffsetY:Number, Layer:uint, VisibleValues:Array)
 		{
 			_frameKey = FrameKey;
 			_offset = new Point(OffsetX, OffsetY);
+			_layer = Layer;
 			_visibleValues = VisibleValues.concat();
 		}
 		
@@ -21,6 +23,7 @@ package entities
 			var FrameKey:String = "Default";
 			var OffsetX:uint = 0;
 			var OffsetY:uint = 0;
+			var Layer:uint = 0;
 			var VisibleValues:Array = null;
 			if (ObjectToConvert.hasOwnProperty("frameKey"))
 				FrameKey = ObjectToConvert["frameKey"];
@@ -28,9 +31,11 @@ package entities
 				OffsetX = ObjectToConvert["xOffset"];
 			if (ObjectToConvert.hasOwnProperty("yOffset"))
 				OffsetY = ObjectToConvert["yOffset"];
+			if (ObjectToConvert.hasOwnProperty("layer"))
+				Layer = ObjectToConvert["layer"];
 			if (ObjectToConvert.hasOwnProperty("visibleValues"))
 				VisibleValues = ObjectToConvert["visibleValues"];
-			var NewFrame:Frame = new Frame(FrameKey, OffsetX, OffsetY, VisibleValues);
+			var NewFrame:Frame = new Frame(FrameKey, OffsetX, OffsetY, Layer, VisibleValues);
 			
 			return NewFrame;
 		}
@@ -38,6 +43,11 @@ package entities
 		public function get frameKey():String
 		{
 			return _frameKey;
+		}
+		
+		public function get layer():uint
+		{
+			return _layer;
 		}
 		
 		public function get offset():Point

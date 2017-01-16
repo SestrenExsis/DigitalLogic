@@ -298,8 +298,6 @@ package
 		
 		public function onKeyDown(KeyCode:uint):void
 		{
-			if (KeyCode == Keyboard.R)
-				_board.reset();
 			if (KeyCode == Keyboard.LEFT || KeyCode == Keyboard.RIGHT)
 			{
 				if (KeyCode == Keyboard.RIGHT)
@@ -423,9 +421,11 @@ package
 			var HalfAdder:Entity = addEntity("Half Adder", GridX, GridY + 25);
 			var FullAdder:Entity = addEntity("Full Adder", GridX + 3, GridY + 25);
 			var BCDTo7SegConverter:Entity = addEntity("BCD to 7-segment Converter", GridX + 4, GridY);
-			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 4, GridY + 20);
+			var DisplayBCD:Entity = addEntity("BCD Display", GridX + 4, GridY + 20);
+			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 8, GridY + 20);
 			var FourBitSwitch:Entity = addEntity("4-bit Switch", GridX + 3, GridY + 8);
 			var NandGate3:Entity = addEntity("3-Input NAND Gate", GridX + 3, GridY + 13);
+			var NandGate:Entity = addEntity("NAND Gate", GridX + 3, GridY + 17);
 			
 			_grid.sortEntities();
 		}
