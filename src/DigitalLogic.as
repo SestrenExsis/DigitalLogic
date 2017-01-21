@@ -1,15 +1,16 @@
 package
 {
 	import entities.Entity;
-	import overlays.FramerateCounter;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.PixelSnapping;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	
+	import overlays.FramerateCounter;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="#555555")]
 	
@@ -25,7 +26,9 @@ package
 		{
 			scaleX = scaleY = 2.0;
 			
-			var BitmapDataA:BitmapData = new BitmapData(320, 240);
+			var BitmapWidth:int = stage.stageWidth / scaleX;
+			var BitmapHeight:int = stage.stageHeight / scaleY;
+			var BitmapDataA:BitmapData = new BitmapData(BitmapWidth, BitmapHeight);
 			_buffer = new Bitmap(BitmapDataA, PixelSnapping.ALWAYS);
 			addChild(_buffer);
 			
@@ -47,6 +50,22 @@ package
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 		
+		private function getMouseX():Number
+		{
+			var InverseScaleX:Number = 1 / scaleX;
+			var MouseX:Number = InverseScaleX * stage.mouseX;
+			
+			return MouseX;
+		}
+		
+		private function getMouseY():Number
+		{
+			var InverseScaleY:Number = 1 / scaleY;
+			var MouseY:Number = InverseScaleY * stage.mouseY;
+			
+			return MouseY;
+		}
+		
 		private function onEnterFrame(e:Event):void
 		{
 			_workbench.update();
@@ -59,25 +78,19 @@ package
 		
 		private function onMouseDown(e:MouseEvent):void 
 		{
-			var MouseX:Number = 0.5 * stage.mouseX;
-			var MouseY:Number = 0.5 * stage.mouseY;
-			_workbench.onTouch(MouseX, MouseY);
+			_workbench.onTouch(getMouseX(), getMouseY());
 		}
 		
 		private function onMouseUp(e:MouseEvent):void 
 		{
-			var MouseX:Number = 0.5 * stage.mouseX;
-			var MouseY:Number = 0.5 * stage.mouseY;
-			_workbench.onRelease(MouseX, MouseY);
+			_workbench.onRelease(getMouseX(), getMouseY());
 		}
 		
 		private function onMouseMove(e:MouseEvent):void 
 		{
-			var MouseX:Number = 0.5 * stage.mouseX;
-			var MouseY:Number = 0.5 * stage.mouseY;
 			var IsButtonDown:Boolean = e.buttonDown;
 			if (IsButtonDown)
-				_workbench.onDrag(MouseX, MouseY);
+				_workbench.onDrag(getMouseX(), getMouseY());
 		}
 		
 		private function onKeyDown(e:KeyboardEvent):void 

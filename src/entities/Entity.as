@@ -30,8 +30,8 @@ package entities
 		private var _widthInTiles:uint;
 		private var _heightInTiles:uint;
 		
-		public var gridX:uint = 0;
-		public var gridY:uint = 0;
+		public var gridX:int = 0;
+		public var gridY:int = 0;
 		
 		private var _frames:Vector.<Frame>;
 		
@@ -161,10 +161,10 @@ package entities
 		
 		protected function getNeighborString():String
 		{
-			var Left:uint = gridX;
-			var Right:uint = Left + widthInTiles - 1;
-			var Top:uint = gridY;
-			var Bottom:uint = Top + heightInTiles - 1;
+			var Left:int = gridX;
+			var Right:int = Left + widthInTiles - 1;
+			var Top:int = gridY;
+			var Bottom:int = Top + heightInTiles - 1;
 			var NeighborString:String = "";
 			for each (var Neighbor:Entity in _neighbors)
 			{
@@ -172,10 +172,10 @@ package entities
 				if (NeighborComponent is Node)
 					NeighborString += Neighbor.getNeighborString();
 				
-				var NeighborLeft:uint = Neighbor.gridX;
-				var NeighborRight:uint = NeighborLeft + Neighbor.widthInTiles - 1;
-				var NeighborTop:uint = Neighbor.gridY;
-				var NeighborBottom:uint = NeighborTop + Neighbor.heightInTiles - 1;
+				var NeighborLeft:int = Neighbor.gridX;
+				var NeighborRight:int = NeighborLeft + Neighbor.widthInTiles - 1;
+				var NeighborTop:int = Neighbor.gridY;
+				var NeighborBottom:int = NeighborTop + Neighbor.heightInTiles - 1;
 				
 				if (NeighborTop > Bottom)
 					NeighborString += "South";

@@ -34,6 +34,7 @@ package
 		private var _currentTime:uint = 0;
 		private var _offInterval:uint = 8;
 		private var _onInterval:uint = 8;
+		private var _gridVisible:Rectangle;
 		
 		public function Workbench(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
@@ -49,6 +50,7 @@ package
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
 			_clock = addEntity("Switch", 7, 15);
+			_gridVisible = new Rectangle(0, 0, 20, 20);
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
@@ -299,21 +301,35 @@ package
 		public function onKeyDown(KeyCode:uint):void
 		{
 			if (KeyCode == Keyboard.LEFT || KeyCode == Keyboard.RIGHT)
-			{
-				if (KeyCode == Keyboard.RIGHT)
-					_offInterval++;
-				else
-					_offInterval--;
-				trace(_offInterval + " / " + _onInterval);
-			}
+				(KeyCode == Keyboard.RIGHT) ? shiftGrid(1, 0) : shiftGrid(-1, 0);
 			if (KeyCode == Keyboard.DOWN || KeyCode == Keyboard.UP)
+				(KeyCode == Keyboard.UP) ? shiftGrid(0, -1) : shiftGrid(0, 1);
+		}
+		
+		private function shiftGrid(AmountX:int, AmountY:int):void
+		{
+			var PreviousGridX:int = _gridVisible.x;
+			_gridVisible.x += AmountX;
+			if (_gridVisible.x < 0)
+				_gridVisible.x = 0;
+			else if (_gridVisible.right > _grid.widthInTiles)
+				_gridVisible.x = _grid.widthInTiles - _gridVisible.width;
+			
+			var PreviousGridY:int = _gridVisible.y;
+			_gridVisible.y += AmountY;
+			if (_gridVisible.y < 0)
+				_gridVisible.y = 0;
+			else if (_gridVisible.bottom > _grid.heightInTiles)
+				_gridVisible.y = _grid.heightInTiles - _gridVisible.height;
+			
+			var ShiftX:int = PreviousGridX - _gridVisible.x;
+			var ShiftY:int = PreviousGridY - _gridVisible.y;
+			for each (var EntityToShift:Entity in _grid.entities)
 			{
-				if (KeyCode == Keyboard.UP)
-					_onInterval++;
-				else
-					_onInterval--;
-				trace(_offInterval + " / " + _onInterval);
+				EntityToShift.gridX += ShiftX;
+				EntityToShift.gridY += ShiftY;
 			}
+			trace(_gridVisible.toString());
 		}
 		
 		public function update():void
