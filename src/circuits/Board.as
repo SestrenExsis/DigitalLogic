@@ -36,6 +36,23 @@ package circuits
 			}
 		}
 		
+		private function propagate(Current:Connector, Next:DigitalComponent, Power:Boolean):void
+		{
+			while (Next && (Next is Connector))
+			{
+				var Prev:DigitalComponent = Current;
+				var Current:Connector = (Next as Connector);
+				Next = Current.propagate(Power, Prev);
+			}
+			if (Next is Device)
+			{
+				var NextDevice:Device = (Next as Device);
+				var IndexOfDeviceInTick:int = _devicesInTick.indexOf(NextDevice);
+				if (IndexOfDeviceInTick == -1)
+					_devicesInTick.push(NextDevice);
+			}
+		}
+		
 		public function tick():void
 		{
 			var DeviceCount:uint = _devicesInTick.length;
@@ -51,19 +68,7 @@ package circuits
 						var Current:Connector = OutputNode;
 						var OutputPower:Boolean = Outputs[OutputKey];
 						var Next:DigitalComponent = Current.propagate(OutputPower, DeviceToTick);
-						while (Next && (Next is Connector))
-						{
-							var Prev:DigitalComponent = Current;
-							Current = (Next as Connector);
-							Next = Current.propagate(Outputs[OutputKey], Prev);
-						}
-						if (Next is Device)
-						{
-							var NextDevice:Device = (Next as Device);
-							var IndexOfDeviceInTick:int = _devicesInTick.indexOf(NextDevice);
-							if (IndexOfDeviceInTick == -1)
-								_devicesInTick.push(NextDevice);
-						}
+						propagate(Current, Next, OutputPower);
 					}
 				}
 			}
@@ -105,6 +110,58 @@ package circuits
 			NewDevice.setTruthTable(TruthTableA);
 			
 			return NewDevice;
+		}
+		
+		public function deleteComponent(ComponentToDelete:DigitalComponent):void
+		{
+			var IndexOfComponent:int = _components.indexOf(ComponentToDelete);
+			if (IndexOfComponent == -1)
+				throw new Error("Component to delete not found on Board.");
+			
+			_components.splice(IndexOfComponent, 1);
+			if (ComponentToDelete is Device)
+			{
+				var DeviceToDelete:Device = (ComponentToDelete as Device);
+				var IndexOfDevice:int = _devices.indexOf(DeviceToDelete);
+				if (IndexOfDevice == -1)
+					throw new Error("Component deleted, but Device to delete not found on Board.");
+				
+				_devices.splice(IndexOfDevice, 1);
+				for (var InputKey:String in DeviceToDelete.inputs)
+				{
+					var InputNode:Node = DeviceToDelete.inputs[InputKey];
+					deleteComponent(InputNode);
+				}
+				for (var OutputKey:String in DeviceToDelete.outputs)
+				{
+					var OutputNode:Node = DeviceToDelete.outputs[OutputKey];
+					deleteComponent(OutputNode);
+				}
+			}
+			else if (ComponentToDelete is Node)
+			{
+				var NodeToDelete:Node = (ComponentToDelete as Node);
+				if (NodeToDelete.wire)
+				{
+					NodeToDelete.disconnect(NodeToDelete.wire);
+					propagate(NodeToDelete, NodeToDelete.wire, false);
+				}
+			}
+			else if (ComponentToDelete is Wire)
+			{
+				var WireToDelete:Wire = (ComponentToDelete as Wire);
+				if (WireToDelete.a)
+				{
+					WireToDelete.disconnect(WireToDelete.a);
+					propagate(WireToDelete, WireToDelete.a, false);
+				}
+				if (WireToDelete.b)
+				{
+					WireToDelete.disconnect(WireToDelete.b);
+					propagate(WireToDelete, WireToDelete.b, false);
+				}
+			}
+			
 		}
 	}
 }

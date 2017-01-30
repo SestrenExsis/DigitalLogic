@@ -16,6 +16,11 @@ package circuits
 			_device = AttachedDevice;
 		}
 		
+		public function get wire():Wire
+		{
+			return _wire;
+		}
+		
 		override public function get open():Boolean
 		{
 			var Open:Boolean = true;
@@ -34,6 +39,19 @@ package circuits
 				_wire = (ConnectorToConnect as Wire);
 			
 			ConnectorToConnect.connect(this);
+		}
+		
+		override public function disconnect(ConnectorToDisconnect:Connector):void
+		{
+			var Reflexive:Boolean = false;
+			if (ConnectorToDisconnect === _wire)
+			{
+				Reflexive = true;
+				_wire = null;
+			}
+			
+			if (Reflexive)
+				ConnectorToDisconnect.disconnect(this);
 		}
 		
 		override public function propagate(Powered:Boolean, Propagator:DigitalComponent):DigitalComponent

@@ -152,11 +152,27 @@ package entities
 			return FrameRect;
 		}
 		
+		public function get neighbors():Vector.<Entity>
+		{
+			return _neighbors;
+		}
+		
 		public function addNeighbor(NeighboringEntity:Entity):void
 		{
 			if (_neighbors.indexOf(NeighboringEntity) == -1)
 				_neighbors.push(NeighboringEntity);
+			
 			_dirty = true;
+		}
+		
+		public function removeNeighbor(NeighboringEntity:Entity):void
+		{
+			var IndexOfNeighbor:int = _neighbors.indexOf(NeighboringEntity);
+			if (IndexOfNeighbor >= 0)
+			{
+				_neighbors.splice(IndexOfNeighbor, 1);
+				_dirty = true;
+			}
 		}
 		
 		protected function getNeighborString():String

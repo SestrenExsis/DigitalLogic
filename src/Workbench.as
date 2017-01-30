@@ -167,11 +167,8 @@ package
 					}
 					else if (WireEntity)
 					{
-						if ((WireEntity.component as Wire).open)
-						{
-							_currentEntity = WireEntity;
-							_latestEntity = WireEntity;
-						}
+						_currentEntity = WireEntity;
+						_latestEntity = WireEntity;
 					}
 				}
 			}
@@ -304,6 +301,27 @@ package
 				(KeyCode == Keyboard.RIGHT) ? shiftGrid(1, 0) : shiftGrid(-1, 0);
 			if (KeyCode == Keyboard.DOWN || KeyCode == Keyboard.UP)
 				(KeyCode == Keyboard.UP) ? shiftGrid(0, -1) : shiftGrid(0, 1);
+			
+			if (KeyCode == Keyboard.D)
+			{
+				if (_latestEntity)
+				{
+					var ComponentToDelete:DigitalComponent = _latestEntity.component;
+					if (ComponentToDelete)
+					{
+						_board.deleteComponent(ComponentToDelete);
+						while (_latestEntity.neighbors.length > 0)
+						{
+							var Neighbor:Entity = _latestEntity.neighbors.pop();
+							Neighbor.removeNeighbor(_latestEntity);
+							if (ComponentToDelete is Device)
+								_grid.deleteEntity(Neighbor);
+						}
+					}
+					_grid.deleteEntity(_latestEntity);
+					_latestEntity = null;
+				}
+			}
 		}
 		
 		private function shiftGrid(AmountX:int, AmountY:int):void
@@ -390,6 +408,7 @@ package
 				InputNode.weight = InputWeight;
 				var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, InputNode);
 				NodeInEntity.addNeighbor(NewEntity);
+				NewEntity.addNeighbor(NodeInEntity);
 				_grid.addEntity(NodeInEntity, GridX + InputOffsetX, GridY + InputOffsetY);
 			}
 			for each (var OutputName:String in NewTruthTable.outputNames)
@@ -399,6 +418,7 @@ package
 				var OutputOffsetY:uint = OutputOffsets["y"];
 				var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput(OutputName));
 				NodeOutEntity.addNeighbor(NewEntity);
+				NewEntity.addNeighbor(NodeOutEntity);
 				_grid.addEntity(NodeOutEntity, GridX + OutputOffsetX, GridY + OutputOffsetY);
 			}
 			

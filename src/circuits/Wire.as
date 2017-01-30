@@ -14,6 +14,16 @@ package circuits
 			connect(Input);
 		}
 		
+		public function get a():Connector
+		{
+			return _a;
+		}
+		
+		public function get b():Connector
+		{
+			return _b;
+		}
+		
 		override public function get open():Boolean
 		{
 			var Open:Boolean = true;
@@ -37,6 +47,24 @@ package circuits
 				_a = ConnectorToConnect;
 			
 			ConnectorToConnect.connect(this);
+		}
+		
+		override public function disconnect(ConnectorToDisconnect:Connector):void
+		{
+			var Reflexive:Boolean = false;
+			if (ConnectorToDisconnect === _a)
+			{
+				Reflexive = true;
+				_a = null;
+			}
+			else if (ConnectorToDisconnect === _b)
+			{
+				Reflexive = true;
+				_b = null;
+			}
+			
+			if (Reflexive)
+				ConnectorToDisconnect.disconnect(this);
 		}
 		
 		override public function propagate(Powered:Boolean, Propagator:DigitalComponent):DigitalComponent

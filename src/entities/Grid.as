@@ -50,6 +50,15 @@ package entities
 			//return true;
 		}
 		
+		public function deleteEntity(EntityToDelete:Entity):void
+		{
+			var IndexOfEntity:int = _entities.indexOf(EntityToDelete);
+			if (IndexOfEntity == -1)
+				throw new Error("Entity to delete not found on Grid.");
+			
+			_entities.splice(IndexOfEntity, 1);
+		}
+		
 		public function sortEntities():void
 		{
 			_entities.sort(sortEntitiesByDrawingLayer);
