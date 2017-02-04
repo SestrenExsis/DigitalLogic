@@ -58,30 +58,9 @@ package circuits
 				}
 				var Outputs:Object = _truthTable.getOutputs(_search, _currentState);
 				return Outputs;
-				
-				for (OutputKey in Outputs)
-				{
-					if (_outputs.hasOwnProperty(OutputKey))
-						(_outputs[OutputKey] as Node).propagate(Outputs[OutputKey], this);
-				}
 			}
 			else
-			{
-				if (_inputCount == 1)
-					throw new Error("If this never throws, delete it."); //Powered = _inputs["x"].powered;
-				else
-					Powered = false; // _invertOutput;
-			}
-			
-			if (_outputCount > 0 && _inputCount == 0 && !_truthTable)
-			{
-				throw new Error("If this never throws, delete it.");
-				
-				for (OutputKey in _outputs)
-				{
-					(_outputs[OutputKey] as Node).propagate(Powered, this);
-				}
-			}
+				Powered = false;
 			
 			return null;
 		}

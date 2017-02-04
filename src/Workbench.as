@@ -49,7 +49,7 @@ package
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
-			_clock = addEntity("Switch", 7, 15);
+			_clock = addEntity("Switch", 10, 15);
 			_gridVisible = new Rectangle(0, 0, 20, 20);
 		}
 		
@@ -460,7 +460,9 @@ package
 			var DisplayBCD:Entity = addEntity("BCD Display", GridX + 4, GridY + 20);
 			var Display7Seg:Entity = addEntity("7-segment Display", GridX + 8, GridY + 20);
 			var FourBitSwitch:Entity = addEntity("4-bit Switch", GridX + 3, GridY + 8);
+			var AndGate3:Entity = addEntity("3-Input AND Gate", GridX + 6, GridY + 13);
 			var NandGate3:Entity = addEntity("3-Input NAND Gate", GridX + 3, GridY + 13);
+			var Multiplexer4to1:Entity = addEntity("4-to-1 Multiplexer", GridX + 13, GridY + 13);
 			var NandGate:Entity = addEntity("NAND Gate", GridX + 3, GridY + 17);
 			
 			_grid.sortEntities();

@@ -19,6 +19,13 @@
                     "width" : 8,
                     "height" : 8
                 },
+                "Device Tile - Top Left - 1x2" :
+                {
+                    "x" : 64,
+                    "y" : 32,
+                    "width" : 8,
+                    "height" : 16
+                },
                 "Device Tile - Top Left - 1x3" :
                 {
                     "x" : 64,
@@ -39,6 +46,13 @@
                     "y" : 32,
                     "width" : 8,
                     "height" : 8
+                },
+                "Device Tile - Top Right - 1x2" :
+                {
+                    "x" : 88,
+                    "y" : 32,
+                    "width" : 8,
+                    "height" : 16
                 },
                 "Device Tile - Top Right - 1x3" :
                 {
@@ -306,12 +320,26 @@
                     "width" : 16,
                     "height" : 16
                 },
+                "Device - 3-Input AND Gate" :
+                {
+                    "x" : 121,
+                    "y" : 33,
+                    "width" : 14,
+                    "height" : 22
+                },
                 "Device - 3-Input NAND Gate" :
                 {
-                    "x" : 104,
-                    "y" : 32,
-                    "width" : 16,
-                    "height" : 24
+                    "x" : 137,
+                    "y" : 33,
+                    "width" : 14,
+                    "height" : 22
+                },
+                "Device - 4-to-1 Multiplexer" :
+                {
+                    "x" : 153,
+                    "y" : 41,
+                    "width" : 14,
+                    "height" : 30
                 },
                 "Device - OR Gate" :
                 {
@@ -329,14 +357,14 @@
                 },
                 "Device - Splitter - Off" :
                 {
-                    "x" : 120,
+                    "x" : 96,
                     "y" : 32,
                     "width" : 8,
                     "height" : 8
                 },
                 "Device - Splitter - On" :
                 {
-                    "x" : 120,
+                    "x" : 96,
                     "y" : 40,
                     "width" : 8,
                     "height" : 8
@@ -897,6 +925,108 @@
                 }
             }
         },
+        "3-Input AND Gate" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 3,
+            "inputs" :
+            {
+                "x" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "y" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                },
+                "z" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 4
+                }
+            },
+            "outputs" :
+            {
+                "a" :
+                {
+                    "x" : 2,
+                    "y" : 1,
+                    "outputValues" :
+                        [0, 0, 0, 0, 0, 0, 0, 1]
+                }
+            },
+            "frames" :
+            {
+                "background - top left" :
+                {
+                    "frameKey" : "Device Tile - Top Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - top right" :
+                {
+                    "frameKey" : "Device Tile - Top Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center left" :
+                {
+                    "frameKey" : "Device Tile - Center Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 8,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center right" :
+                {
+                    "frameKey" : "Device Tile - Center Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 8,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom left" :
+                {
+                    "frameKey" : "Device Tile - Bottom Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom right" :
+                {
+                    "frameKey" : "Device Tile - Bottom Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - icon" :
+                {
+                    "frameKey" : "Device - 3-Input AND Gate",
+                    "xOffset" : 1,
+                    "yOffset" : 1,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            }
+        },
         "3-Input NAND Gate" :
         {
             "widthInTiles" : 2,
@@ -934,14 +1064,212 @@
             },
             "frames" :
             {
-                "default" :
+                "background - top left" :
                 {
-                    "frameKey" : "Device - 3-Input NAND Gate",
+                    "frameKey" : "Device Tile - Top Left - 1x1",
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
                         [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - top right" :
+                {
+                    "frameKey" : "Device Tile - Top Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center left" :
+                {
+                    "frameKey" : "Device Tile - Center Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 8,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center right" :
+                {
+                    "frameKey" : "Device Tile - Center Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 8,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom left" :
+                {
+                    "frameKey" : "Device Tile - Bottom Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom right" :
+                {
+                    "frameKey" : "Device Tile - Bottom Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - icon" :
+                {
+                    "frameKey" : "Device - 3-Input NAND Gate",
+                    "xOffset" : 1,
+                    "yOffset" : 1,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            }
+        },
+        "4-to-1 Multiplexer" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 4,
+            "inputs" :
+            {
+                "d0" :
+                {
+                    "x" : -1,
+                    "y" : 0,
+                    "weight" : 1
+                },
+                "d1" :
+                {
+                    "x" : -1,
+                    "y" : 1,
+                    "weight" : 2
+                },
+                "d2" :
+                {
+                    "x" : -1,
+                    "y" : 2,
+                    "weight" : 4
+                },
+                "d3" :
+                {
+                    "x" : -1,
+                    "y" : 3,
+                    "weight" : 8
+                },
+                "a" :
+                {
+                    "x" : 0,
+                    "y" : 4,
+                    "weight" : 16
+                },
+                "b" :
+                {
+                    "x" : 1,
+                    "y" : 4,
+                    "weight" : 32
+                }
+            },
+            "outputs" :
+            {
+                "y" :
+                {
+                    "x" : 2,
+                    "y" : 0,
+                    "outputValues" :
+                        [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+                         0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1,
+                         0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1,
+                         0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1]
+                }
+            },
+            "frames" :
+            {
+                "background - top left" :
+                {
+                    "frameKey" : "Device Tile - Top Left - 1x2",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - top right" :
+                {
+                    "frameKey" : "Device Tile - Top Right - 1x2",
+                    "xOffset" : 8,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center left" :
+                {
+                    "frameKey" : "Device Tile - Center Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - center right" :
+                {
+                    "frameKey" : "Device Tile - Center Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 16,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom left" :
+                {
+                    "frameKey" : "Device Tile - Bottom Left - 1x1",
+                    "xOffset" : 0,
+                    "yOffset" : 24,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - bottom right" :
+                {
+                    "frameKey" : "Device Tile - Bottom Right - 1x1",
+                    "xOffset" : 8,
+                    "yOffset" : 24,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                },
+                "background - icon" :
+                {
+                    "frameKey" : "Device - 4-to-1 Multiplexer",
+                    "xOffset" : 1,
+                    "yOffset" : 1,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                 }
             }
         },
