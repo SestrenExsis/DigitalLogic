@@ -1,6 +1,7 @@
 package
 {
 	import entities.Entity;
+	import entities.Frame;
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -36,7 +37,7 @@ package
 			_spriteSheet = GameData.getSpriteSheet(GameData.SPRITES);
 			
 			var BackgroundTile:Entity = new Entity(_spriteSheet, null, 2, 2);
-			BackgroundTile.setFrameKey("Background");
+			BackgroundTile.addFrame(new Frame("Background", 0, 0, 0, [1]));
 			_workbench = new Workbench(BackgroundTile, 40, 30);
 			_workbench.addToolkit(1, 2);
 			//_workbench.testBasicCircuit(10, 5);

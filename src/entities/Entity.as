@@ -17,7 +17,14 @@ package entities
 	public class Entity implements IGameEntity
 	{
 		private var _spriteSheet:SpriteSheet;
+		private var _widthInTiles:uint;
+		private var _heightInTiles:uint;
+		
+		public var gridX:int = 0;
+		public var gridY:int = 0;
+		
 		private var _topLeft:Point;
+		private var _destPoint:Point;
 		private var _currentFrameKey:String;
 		private var _drawingLayer:int = 0;
 		
@@ -27,18 +34,13 @@ package entities
 		private var _component:DigitalComponent;
 		private var _dirty:Boolean = true;
 		
-		private var _widthInTiles:uint;
-		private var _heightInTiles:uint;
-		
-		public var gridX:int = 0;
-		public var gridY:int = 0;
-		
 		private var _frames:Vector.<Frame>;
 		
 		public function Entity(SpriteSheetA:SpriteSheet, Component:DigitalComponent = null, WidthInTiles:uint = 1, HeightInTiles:uint = 1)
 		{
 			_spriteSheet = SpriteSheetA;
 			_topLeft = new Point();
+			_destPoint = new Point();
 			_neighbors = new Vector.<Entity>();
 			_component = Component;
 			_widthInTiles = WidthInTiles;
@@ -82,7 +84,7 @@ package entities
 			return NewEntity;
 		}
 		
-		private function addFrame(FrameToAdd:Frame):void
+		public function addFrame(FrameToAdd:Frame):void
 		{
 			_frames.push(FrameToAdd);
 		}
@@ -122,6 +124,16 @@ package entities
 			return _drawingLayer;
 		}
 		
+		public function set x(Value:Number):void
+		{
+			_topLeft.x = Value;
+		}
+		
+		public function set y(Value:Number):void
+		{
+			_topLeft.y = Value;
+		}
+		
 		public function get widthInTiles():uint
 		{
 			return _widthInTiles;
@@ -141,15 +153,6 @@ package entities
 		{
 			_drawRepeatX = X;
 			_drawRepeatY = Y;
-		}
-		
-		/**
-		 * A getter function that accesses the frame rectangle through the Entity's sprite sheet.
-		 */
-		public function get frameRect():Rectangle
-		{
-			var FrameRect:Rectangle = _spriteSheet.getFrame(_currentFrameKey);
-			return FrameRect;
 		}
 		
 		public function get neighbors():Vector.<Entity>
@@ -175,115 +178,66 @@ package entities
 			}
 		}
 		
-		protected function getNeighborString():String
+		protected function getNeighborValue():uint
 		{
 			var Left:int = gridX;
 			var Right:int = Left + widthInTiles - 1;
 			var Top:int = gridY;
 			var Bottom:int = Top + heightInTiles - 1;
-			var NeighborString:String = "";
+			var NeighborValue:uint = 0;
 			for each (var Neighbor:Entity in _neighbors)
 			{
 				var NeighborComponent:DigitalComponent = Neighbor.component;
 				if (NeighborComponent is Node)
-					NeighborString += Neighbor.getNeighborString();
+					NeighborValue += Neighbor.getNeighborValue();
 				
 				var NeighborLeft:int = Neighbor.gridX;
 				var NeighborRight:int = NeighborLeft + Neighbor.widthInTiles - 1;
 				var NeighborTop:int = Neighbor.gridY;
 				var NeighborBottom:int = NeighborTop + Neighbor.heightInTiles - 1;
 				
-				if (NeighborTop > Bottom)
-					NeighborString += "South";
-				else if (NeighborBottom < Top)
-					NeighborString += "North";
+				if (NeighborBottom < Top)
+					NeighborValue += 1; // North
 				else if (NeighborLeft > Right)
-					NeighborString += "East";
+					NeighborValue += 2; // East
+				else if (NeighborTop > Bottom)
+					NeighborValue += 4; // South
 				else if (NeighborRight < Left)
-					NeighborString += "West";
+					NeighborValue += 8; // West
 			}
 			
-			switch (NeighborString)
-			{
-				case "NorthSouth":
-				case "SouthNorth":
-					NeighborString = "Vertical";
-					break;
-				case "EastWest":
-				case "WestEast":
-					NeighborString = "Horizontal";
-					break;
-				case "NorthEast":
-				case "EastNorth":
-					NeighborString = "L Bend";
-					break;
-				case "NorthWest":
-				case "WestNorth":
-					NeighborString = "J Bend";
-					break;
-				case "SouthEast":
-				case "EastSouth":
-					NeighborString = "r Bend";
-					break;
-				case "SouthWest":
-				case "WestSouth":
-					NeighborString = "7 Bend";
-					break;
-			}
-			
-			return NeighborString;
+			return NeighborValue;
 		}
 		
-		private function update():void
-		{
-			var FrameKey:String = "Default";
-			if (_component)
-			{
-				FrameKey = _component.type;
-				switch (_component.type)
-				{
-					case DigitalComponent.CONNECTOR_WIRE:
-						var WireA:Wire = (_component as Wire);
-						FrameKey += ((WireA.powered) ? " - On" : " - Off");
-						var NeighborString:String = getNeighborString();
-						if (NeighborString != "")
-							FrameKey += " - " + NeighborString;
-						break;
-					case DigitalComponent.CONNECTOR_NODE:
-						NeighborString = getNeighborString();
-						if (NeighborString != "")
-							FrameKey += " - " + NeighborString;
-						break;
-					default:
-						FrameKey = "Default";
-						break;
-				}
-			}
-			setFrameKey(FrameKey);
-			_dirty = false;
-		}
-		
-		public function drawFramesOntoBuffer(Buffer:BitmapData):void
+		public function drawFramesOntoBuffer(Buffer:BitmapData, OffsetX:Number = 0, OffsetY:Number = 0):void
 		{
 			if (!_frames)
 				return;
 			
-			if (_component && (_component is Device))
+			var Index:uint = 0;
+			if (_component)
 			{
-				var DeviceA:Device = (_component as Device);
-				var Index:uint = DeviceA.currentState;
-				for (var InputNodeKey:String in DeviceA.inputs)
+				if (_component is Device)
 				{
-					var InputNode:Node = DeviceA.getInput(InputNodeKey);
-					var StateCount:uint = DeviceA.truthTable.stateCount;
-					Index += (InputNode.powered) ? StateCount * InputNode.weight : 0;
+					var DeviceA:Device = (_component as Device);
+					Index = DeviceA.currentState;
+					for (var InputNodeKey:String in DeviceA.inputs)
+					{
+						var InputNode:Node = DeviceA.getInput(InputNodeKey);
+						var StateCount:uint = DeviceA.truthTable.stateCount;
+						Index += (InputNode.powered) ? StateCount * InputNode.weight : 0;
+					}
+				}
+				else if (_component is Connector)
+				{
+					Index += getNeighborValue();
+					if ((_component is Wire) && ((_component as Wire).powered))
+						Index += 16;
 				}
 			}
 			
-			var TileWidth:uint = frameRect.width;
-			var TileHeight:uint = frameRect.height;
-			var InitialX:Number = gridX * TileWidth;
-			var InitialY:Number = gridY * TileHeight;
+			var InitialX:Number = _topLeft.x + OffsetX;
+			var InitialY:Number = _topLeft.y + OffsetY;
 			for (var i:uint = 0; i < _frames.length; i++)
 			{
 				var FrameToDraw:Frame = _frames[i];
@@ -293,42 +247,24 @@ package entities
 				var FrameRect:Rectangle = _spriteSheet.getFrame(FrameToDraw.frameKey);
 				var TileX:Number = InitialX + FrameToDraw.offset.x;
 				var TileY:Number = InitialY + FrameToDraw.offset.y;
-				_topLeft.setTo(TileX, TileY);
-				Buffer.copyPixels(_spriteSheet.bitmapData, FrameRect, _topLeft, null, null, true);
+				_destPoint.setTo(TileX, TileY);
+				Buffer.copyPixels(_spriteSheet.bitmapData, FrameRect, _destPoint, null, null, true);
 			}
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
 		{
-			if (component)
-			{
-				if ((component is Device) || (component is Connector))
-					_dirty = true;
-			}
-			if (_dirty)
-				update();
-			
 			if (_frames.length > 0)
 			{
-				drawFramesOntoBuffer(Buffer);
-				return;
-			}
-			
-			var FrameRect:Rectangle = frameRect;
-			var TileWidth:uint = FrameRect.width / _widthInTiles;
-			var TileHeight:uint = FrameRect.height / _heightInTiles;
-			var InitialX:Number = gridX * TileWidth;
-			var InitialY:Number = gridY * TileHeight;
-			var FrameWidth:Number = FrameRect.width;
-			var FrameHeight:Number = FrameRect.height;
-			for (var y:uint = 0; y < _drawRepeatY; y++)
-			{
-				for (var x:uint = 0; x < _drawRepeatX; x++)
+				for (var y:uint = 0; y < _drawRepeatY; y++)
 				{
-					var TileX:Number = InitialX + FrameWidth * x;
-					var TileY:Number = InitialY + FrameHeight * y;
-					_topLeft.setTo(TileX, TileY);
-					Buffer.copyPixels(_spriteSheet.bitmapData, FrameRect, _topLeft, null, null, true);
+					for (var x:uint = 0; x < _drawRepeatX; x++)
+					{
+						// TO DO: Get rid of these hard-coded values (the 16s)
+						var OffsetX:Number = 16 * x;
+						var OffsetY:Number = 16 * y;
+						drawFramesOntoBuffer(Buffer, OffsetX, OffsetY);
+					}
 				}
 			}
 		}

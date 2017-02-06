@@ -8,10 +8,14 @@ package entities
 	{
 		private var _widthInTiles:uint;
 		private var _heightInTiles:uint;
+		private var _gridWidth:Number;
+		private var _gridHeight:Number;
 		private var _entities:Vector.<Entity>;
 		
-		public function Grid(WidthInTiles:uint = 40, HeightInTiles:uint = 30)
+		public function Grid(GridWidth:Number = 8, GridHeight:Number = 8, WidthInTiles:uint = 40, HeightInTiles:uint = 30)
 		{
+			_gridWidth = GridWidth;
+			_gridHeight = GridHeight;
 			_widthInTiles = WidthInTiles;
 			_heightInTiles = HeightInTiles;
 			_entities = new Vector.<Entity>();
@@ -36,6 +40,14 @@ package entities
 			return SelectedEntities;
 		}
 		
+		public function setGridPositionOfEntity(EntityToPosition:Entity, GridX:int, GridY:int):void
+		{
+			EntityToPosition.gridX = GridX;
+			EntityToPosition.x = GridX * _gridWidth;
+			EntityToPosition.gridY = GridY;
+			EntityToPosition.y = GridY * _gridHeight;
+		}
+		
 		public function addEntity(EntityToAdd:Entity, GridX:uint, GridY:uint):void
 		{
 			//var Right:uint = GridX + EntityToAdd.widthInTiles - 1;
@@ -43,8 +55,7 @@ package entities
 			//if (Right >= _widthInTiles || Bottom >= _heightInTiles)
 			//	return false;
 			
-			EntityToAdd.gridX = GridX;
-			EntityToAdd.gridY = GridY;
+			setGridPositionOfEntity(EntityToAdd, GridX, GridY);
 			_entities.push(EntityToAdd);
 			
 			//return true;
@@ -72,6 +83,16 @@ package entities
 				return 1;
 			else
 				return 0;
+		}
+		
+		public function get gridWidth():Number
+		{
+			return _gridWidth;
+		}
+		
+		public function get gridHeight():Number
+		{
+			return _gridHeight;
 		}
 		
 		public function get widthInTiles():uint

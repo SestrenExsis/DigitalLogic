@@ -1,11 +1,6 @@
 package
 {
-	import circuits.Board;
-	import circuits.Connector;
-	import circuits.Device;
-	import circuits.DigitalComponent;
-	import circuits.Node;
-	import circuits.Wire;
+	import circuits.*;
 	
 	import entities.Entity;
 	import entities.Grid;
@@ -45,7 +40,8 @@ package
 			var DrawRepeatY:uint = GridHeightInTiles / TiledEntityHeightInTiles;
 			_baseEntity.setDrawRepeat(DrawRepeatX, DrawRepeatY);
 			
-			_grid = new Grid(GridWidthInTiles, GridHeightInTiles);
+			// TO DO: Get rid of these hard-coded values (the 8s)
+			_grid = new Grid(8, 8, GridWidthInTiles, GridHeightInTiles);
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
@@ -55,9 +51,8 @@ package
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point
 		{
-			var FrameRect:Rectangle = _baseEntity.frameRect;
-			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
-			var TileHeight:uint = FrameRect.width / _baseEntity.heightInTiles;
+			var TileWidth:Number = _grid.gridWidth;
+			var TileHeight:Number = _grid.gridHeight;
 			var GridX:int = Math.floor(X / TileWidth);
 			var GridY:int = Math.floor(Y / TileHeight);
 			
@@ -212,9 +207,8 @@ package
 			var CurrentY:int = _currentTouch.y;
 			_currentTouch.setTo(GridX, GridY);
 			
-			var FrameRect:Rectangle = _baseEntity.frameRect;
-			var TileWidth:uint = FrameRect.width / _baseEntity.widthInTiles;
-			var TileHeight:uint = FrameRect.width / _baseEntity.heightInTiles;
+			var TileWidth:Number = _grid.gridWidth;
+			var TileHeight:Number = _grid.gridHeight;
 			while ((Math.abs(GridX - CurrentX) + Math.abs(GridY - CurrentY)) > 1)
 			{
 				if (CurrentX < GridX)
@@ -344,8 +338,7 @@ package
 			var ShiftY:int = PreviousGridY - _gridVisible.y;
 			for each (var EntityToShift:Entity in _grid.entities)
 			{
-				EntityToShift.gridX += ShiftX;
-				EntityToShift.gridY += ShiftY;
+				_grid.setGridPositionOfEntity(EntityToShift, EntityToShift.gridX + ShiftX, EntityToShift.gridY + ShiftY);
 			}
 			trace(_gridVisible.toString());
 		}
@@ -377,8 +370,9 @@ package
 		private function addWire(GridX:uint, GridY:uint, EntityA:Entity = null, EntityB:Entity = null):Entity
 		{
 			trace("addWire(" + GridX + ", " + GridY + ", " + EntityA + ", " + EntityB + ")");
+			var EntityObject:Object = GameData.getEntityObject("Wire");
 			var NewWire:Wire = _board.addWire();
-			var WireEntity:Entity = new Entity(_baseEntity.spriteSheet, NewWire);
+			var WireEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, NewWire);
 			if (EntityA)
 				connect(WireEntity, EntityA);
 			if (EntityB)
@@ -398,6 +392,7 @@ package
 			var NewEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, NewDevice);
 			
 			_grid.addEntity(NewEntity, GridX, GridY);
+			var NodeEntityObject:Object = GameData.getEntityObject("Node");
 			for each (var InputName:String in NewTruthTable.inputNames)
 			{
 				var InputObj:Object = EntityObject["inputs"][InputName];
@@ -406,7 +401,7 @@ package
 				var InputWeight:uint = InputObj["weight"];
 				var InputNode:Node = NewDevice.getInput(InputName);
 				InputNode.weight = InputWeight;
-				var NodeInEntity:Entity = new Entity(_baseEntity.spriteSheet, InputNode);
+				var NodeInEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNode);
 				NodeInEntity.addNeighbor(NewEntity);
 				NewEntity.addNeighbor(NodeInEntity);
 				_grid.addEntity(NodeInEntity, GridX + InputOffsetX, GridY + InputOffsetY);
@@ -416,7 +411,8 @@ package
 				var OutputOffsets:Object = EntityObject["outputs"][OutputName];
 				var OutputOffsetX:uint = OutputOffsets["x"];
 				var OutputOffsetY:uint = OutputOffsets["y"];
-				var NodeOutEntity:Entity = new Entity(_baseEntity.spriteSheet, NewDevice.getOutput(OutputName));
+				var OutputNode:Node = NewDevice.getOutput(OutputName);
+				var NodeOutEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, OutputNode);
 				NodeOutEntity.addNeighbor(NewEntity);
 				NewEntity.addNeighbor(NodeOutEntity);
 				_grid.addEntity(NodeOutEntity, GridX + OutputOffsetX, GridY + OutputOffsetY);
