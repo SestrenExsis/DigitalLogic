@@ -12,110 +12,41 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Device Tile - Top Left - 1x1" :
+                "Font - Monospace 3x5 Dark" :
                 {
-                    "x" : 64,
+                    "x" : 24,
                     "y" : 32,
-                    "width" : 8,
-                    "height" : 8
+                    "width" : 104,
+                    "height" : 12,
+                    "glyphs" :
+                        ["default"," ","0","1","2","3","4","5","6","7","8","9","-","/","+",".",":",",","!","(",")","=","'","\"","_","?",
+                         "A"      ,"B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X" ,"Y","Z"],
+                    "widthInGlyphs" : 26,
+                    "heightInGlyphs" : 2
                 },
-                "Device Tile - Top Left - 1x2" :
+                "Font - Monospace 4x8 Medium" :
                 {
-                    "x" : 64,
+                    "x" : 40,
+                    "y" : 48,
+                    "width" : 44,
+                    "height" : 8,
+                    "glyphs" :
+                        ["0","1","2","3","4","5","6","7","8","9","."],
+                    "widthInGlyphs" : 11,
+                    "heightInGlyphs" : 1
+                },
+                "Device Tile" :
+                {
+                    "x" : 0,
                     "y" : 32,
-                    "width" : 8,
-                    "height" : 16
-                },
-                "Device Tile - Top Left - 1x3" :
-                {
-                    "x" : 64,
-                    "y" : 32,
-                    "width" : 8,
-                    "height" : 24
-                },
-                "Device Tile - Top Center- 1x1" :
-                {
-                    "x" : 72,
-                    "y" : 32,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Top Right - 1x1" :
-                {
-                    "x" : 88,
-                    "y" : 32,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Top Right - 1x2" :
-                {
-                    "x" : 88,
-                    "y" : 32,
-                    "width" : 8,
-                    "height" : 16
-                },
-                "Device Tile - Top Right - 1x3" :
-                {
-                    "x" : 88,
-                    "y" : 32,
-                    "width" : 8,
-                    "height" : 24
-                },
-                "Device Tile - Center Left - 1x1" :
-                {
-                    "x" : 64,
-                    "y" : 40,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Center - 1x1" :
-                {
-                    "x" : 72,
-                    "y" : 40,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Center Right - 1x1" :
-                {
-                    "x" : 88,
-                    "y" : 40,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Bottom Left - 1x1" :
-                {
-                    "x" : 64,
-                    "y" : 56,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Bottom Left - 1x3" :
-                {
-                    "x" : 64,
-                    "y" : 40,
-                    "width" : 8,
-                    "height" : 24
-                },
-                "Device Tile - Bottom Center - 1x1" :
-                {
-                    "x" : 72,
-                    "y" : 56,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Bottom Right - 1x1" :
-                {
-                    "x" : 88,
-                    "y" : 56,
-                    "width" : 8,
-                    "height" : 8
-                },
-                "Device Tile - Bottom Right - 1x3" :
-                {
-                    "x" : 88,
-                    "y" : 40,
-                    "width" : 8,
-                    "height" : 24
+                    "width" : 24,
+                    "height" : 24,
+                    "glyphs" :
+                        ["Top Left"   ,"Top Center"   ,"Top Right"   ,
+                         "Center Left","Center"       ,"Center Right",
+                         "Bottom Left","Bottom Center","Bottom Right"],
+                    "widthInGlyphs" : 3,
+                    "heightInGlyphs" : 3
                 },
                 "Default" :
                 {
@@ -127,28 +58,42 @@
                 "Tool - Pencil" :
                 {
                     "x" : 16,
-                    "y" : 64,
+                    "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
                 "Tool - Trash" :
                 {
                     "x" : 32,
-                    "y" : 64,
+                    "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
                 "Tool - Hand" :
                 {
                     "x" : 48,
-                    "y" : 64,
+                    "y" : 0,
                     "width" : 16,
                     "height" : 16
+                },
+                "Cursor - Up - Hand" :
+                {
+                    "x" : 48,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
+                },
+                "Cursor - Down - Hand" :
+                {
+                    "x" : 56,
+                    "y" : 16,
+                    "width" : 8,
+                    "height" : 8
                 },
                 "Tool - Stamp" :
                 {
                     "x" : 64,
-                    "y" : 64,
+                    "y" : 0,
                     "width" : 16,
                     "height" : 16
                 },
@@ -238,24 +183,17 @@
                 },
                 "Device - 3-Input AND Gate" :
                 {
-                    "x" : 121,
-                    "y" : 33,
+                    "x" : 137,
+                    "y" : 17,
                     "width" : 14,
                     "height" : 22
                 },
                 "Device - 3-Input NAND Gate" :
                 {
-                    "x" : 137,
-                    "y" : 33,
+                    "x" : 153,
+                    "y" : 17,
                     "width" : 14,
                     "height" : 22
-                },
-                "Device - 4-to-1 Multiplexer" :
-                {
-                    "x" : 153,
-                    "y" : 41,
-                    "width" : 14,
-                    "height" : 30
                 },
                 "Device - OR Gate" :
                 {
@@ -273,50 +211,36 @@
                 },
                 "Device - Splitter - Off" :
                 {
-                    "x" : 96,
-                    "y" : 32,
+                    "x" : 32,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 },
                 "Device - Splitter - On" :
                 {
-                    "x" : 96,
-                    "y" : 40,
+                    "x" : 40,
+                    "y" : 24,
                     "width" : 8,
                     "height" : 8
                 },
-                "Device - BCD to 7-segment Converter" :
+                "Device - 7-segment LCD Display" :
                 {
-                    "x" : 0,
-                    "y" : 32,
-                    "width" : 16,
-                    "height" : 56
-                },
-                "Device - 7-segment Display" :
-                {
-                    "x" : 16,
-                    "y" : 32,
-                    "width" : 16,
-                    "height" : 32
-                },
-                "Device - 7-segment Display - LCD Only" :
-                {
-                    "x" : 48,
-                    "y" : 32,
+                    "x" : 136,
+                    "y" : 40,
                     "width" : 14,
                     "height" : 25
                 },
                 "Device - 7-segment Horizontal Bar" :
                 {
-                    "x" : 36,
-                    "y" : 38,
+                    "x" : 155,
+                    "y" : 42,
                     "width" : 8,
                     "height" : 3
                 },
                 "Device - 7-segment Vertical Bar" :
                 {
-                    "x" : 34,
-                    "y" : 40,
+                    "x" : 153,
+                    "y" : 44,
                     "width" : 3,
                     "height" : 8
                 },
@@ -334,13 +258,6 @@
                     "width" : 16,
                     "height" : 16
                 },
-                "Device - Switch" :
-                {
-                    "x" : 88,
-                    "y" : 16,
-                    "width" : 16,
-                    "height" : 16
-                },
                 "Device - Switch - Off" :
                 {
                     "x" : 88,
@@ -354,20 +271,6 @@
                     "y" : 16,
                     "width" : 16,
                     "height" : 16
-                },
-                "Device - Half Adder" :
-                {
-                    "x" : 136,
-                    "y" : 16,
-                    "width" : 16,
-                    "height" : 16
-                },
-                "Device - Full Adder" :
-                {
-                    "x" : 152,
-                    "y" : 16,
-                    "width" : 16,
-                    "height" : 24
                 },
                 "Node - North" :
                 {
@@ -395,83 +298,6 @@
                     "x" : 24,
                     "y" : 24,
                     "width" : 8,
-                    "height" : 8
-                },
-                "Font - 0" :
-                {
-                    "x" : 32,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 1" :
-                {
-                    "x" : 36,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 2" :
-                {
-                    "x" : 40,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 3" :
-                {
-                    "x" : 44,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 4" :
-                {
-                    "x" : 48,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 5" :
-                {
-                    "x" : 52,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 6" :
-                {
-                    "x" : 56,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 7" :
-                {
-                    "x" : 60,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 8" :
-                {
-                    "x" : 64,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - 9" :
-                {
-                    "x" : 68,
-                    "y" : 24,
-                    "width" : 4,
-                    "height" : 8
-                },
-                "Font - ." :
-                {
-                    "x" : 72,
-                    "y" : 24,
-                    "width" : 1,
                     "height" : 8
                 }
             }
@@ -879,7 +705,7 @@
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1]
+                        [1]
                 }
             }
         },
@@ -966,7 +792,7 @@
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1008,7 +834,7 @@
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1049,68 +875,31 @@
             },
             "frames" :
             {
-                "background - top left" :
+                "background" :
                 {
-                    "frameKey" : "Device Tile - Top Left - 1x1",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 },
-                "background - top right" :
-                {
-                    "frameKey" : "Device Tile - Top Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 0,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center left" :
-                {
-                    "frameKey" : "Device Tile - Center Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 8,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center right" :
-                {
-                    "frameKey" : "Device Tile - Center Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 8,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom left" :
-                {
-                    "frameKey" : "Device Tile - Bottom Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom right" :
-                {
-                    "frameKey" : "Device Tile - Bottom Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - icon" :
+                "icon" :
                 {
                     "frameKey" : "Device - 3-Input AND Gate",
                     "xOffset" : 1,
                     "yOffset" : 1,
                     "layer" : 1,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1151,68 +940,31 @@
             },
             "frames" :
             {
-                "background - top left" :
+                "background" :
                 {
-                    "frameKey" : "Device Tile - Top Left - 1x1",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 },
-                "background - top right" :
-                {
-                    "frameKey" : "Device Tile - Top Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 0,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center left" :
-                {
-                    "frameKey" : "Device Tile - Center Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 8,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center right" :
-                {
-                    "frameKey" : "Device Tile - Center Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 8,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom left" :
-                {
-                    "frameKey" : "Device Tile - Bottom Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom right" :
-                {
-                    "frameKey" : "Device Tile - Bottom Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - icon" :
+                "icon" :
                 {
                     "frameKey" : "Device - 3-Input NAND Gate",
                     "xOffset" : 1,
                     "yOffset" : 1,
                     "layer" : 1,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1274,89 +1026,39 @@
             },
             "frames" :
             {
-                "background - top left" :
+                "background" :
                 {
-                    "frameKey" : "Device Tile - Top Left - 1x2",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 },
-                "background - top right" :
+                "font" :
                 {
-                    "frameKey" : "Device Tile - Top Right - 1x2",
-                    "xOffset" : 8,
-                    "yOffset" : 0,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center left" :
-                {
-                    "frameKey" : "Device Tile - Center Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center right" :
-                {
-                    "frameKey" : "Device Tile - Center Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 16,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom left" :
-                {
-                    "frameKey" : "Device Tile - Bottom Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 24,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom right" :
-                {
-                    "frameKey" : "Device Tile - Bottom Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 24,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - icon" :
-                {
-                    "frameKey" : "Device - 4-to-1 Multiplexer",
-                    "xOffset" : 1,
-                    "yOffset" : 1,
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["4", "-", "1"],
+                            ["M", "U", "X"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 2,
+                    "yOffset" : 11,
                     "layer" : 1,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1398,7 +1100,7 @@
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1440,7 +1142,7 @@
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
                 }
             }
         },
@@ -1482,14 +1184,37 @@
             },
             "frames" :
             {
-                "default" :
+                "background" :
                 {
-                    "frameKey" : "Device - Half Adder",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
+                },
+                "font - 1/2 ADD" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["1", "/", "2"],
+                            ["A", "D", "D"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 2,
+                    "yOffset" : 2,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
                 }
             }
         },
@@ -1537,14 +1262,38 @@
             },
             "frames" :
             {
-                "default" :
+                "background" :
                 {
-                    "frameKey" : "Device - Full Adder",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1]
+                        [1]
+                },
+                "font - FUL ADD" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["F", "U", "L"],
+                            ["A", "D", "D"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 2,
+                    "yOffset" : 7,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
                 }
             }
         },
@@ -1672,89 +1421,35 @@
             },
             "frames" :
             {
-                "background - top left" :
+                "background" :
                 {
-                    "frameKey" : "Device Tile - Top Left - 1x3",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 },
-                "background - top right" :
+                "lcd" :
                 {
-                    "frameKey" : "Device Tile - Top Right - 1x3",
-                    "xOffset" : 8,
-                    "yOffset" : 0,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center left" :
-                {
-                    "frameKey" : "Device Tile - Center Left - 1x1",
-                    "xOffset" : 0,
-                    "yOffset" : 24,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - center right" :
-                {
-                    "frameKey" : "Device Tile - Center Right - 1x1",
-                    "xOffset" : 8,
-                    "yOffset" : 24,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom left" :
-                {
-                    "frameKey" : "Device Tile - Bottom Left - 1x3",
-                    "xOffset" : 0,
-                    "yOffset" : 32,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - bottom right" :
-                {
-                    "frameKey" : "Device Tile - Bottom Right - 1x3",
-                    "xOffset" : 8,
-                    "yOffset" : 32,
-                    "layer" : 0,
-                    "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-                },
-                "background - lcd" :
-                {
-                    "frameKey" : "Device - 7-segment Display - LCD Only",
+                    "frameKey" : "Device - 7-segment LCD Display",
                     "xOffset" : 1,
                     "yOffset" : 15,
                     "layer" : 1,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
                 },
                 "a" :
                 {
@@ -1908,19 +1603,37 @@
             {
                 "background" :
                 {
-                    "frameKey" : "Device - 7-segment Display",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
+                },
+                "lcd" :
+                {
+                    "frameKey" : "Device - 7-segment LCD Display",
+                    "xOffset" : 1,
+                    "yOffset" : 4,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
                 },
                 "a" :
                 {
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 6,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
                 },
@@ -1929,7 +1642,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 11,
                     "yOffset" : 8,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0]
                 },
@@ -1938,7 +1651,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 11,
                     "yOffset" : 17,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
                 },
@@ -1947,7 +1660,7 @@
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 24,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0]
                 },
@@ -1956,7 +1669,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 2,
                     "yOffset" : 17,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
                 },
@@ -1965,7 +1678,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 2,
                     "yOffset" : 8,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1]
                 },
@@ -1974,7 +1687,7 @@
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 15,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
                 }
@@ -2020,19 +1733,37 @@
             {
                 "background" :
                 {
-                    "frameKey" : "Device - 7-segment Display",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
+                },
+                "lcd" :
+                {
+                    "frameKey" : "Device - 7-segment LCD Display",
+                    "xOffset" : 1,
+                    "yOffset" : 4,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
                 },
                 "a" :
                 {
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 6,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
                 },
@@ -2041,7 +1772,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 11,
                     "yOffset" : 8,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0]
                 },
@@ -2050,7 +1781,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 11,
                     "yOffset" : 17,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
                 },
@@ -2059,7 +1790,7 @@
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 24,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0]
                 },
@@ -2068,7 +1799,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 2,
                     "yOffset" : 17,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
                 },
@@ -2077,7 +1808,7 @@
                     "frameKey" : "Device - 7-segment Vertical Bar",
                     "xOffset" : 2,
                     "yOffset" : 8,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1]
                 },
@@ -2086,7 +1817,7 @@
                     "frameKey" : "Device - 7-segment Horizontal Bar",
                     "xOffset" : 4,
                     "yOffset" : 15,
-                    "layer" : 1,
+                    "layer" : 2,
                     "visibleValues" :
                         [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
                 }
@@ -2179,12 +1910,74 @@
             {
                 "background" :
                 {
-                    "frameKey" : "Device - BCD to 7-segment Converter",
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Center Left", "Center Right"],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
                     "xOffset" : 0,
                     "yOffset" : 0,
                     "layer" : 0,
                     "visibleValues" :
-                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                        [1]
+                },
+                "font - BCD" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["B"],
+                            ["C"],
+                            ["D"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 2,
+                    "yOffset" : 4,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
+                },
+                "font - TO" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["T", "O"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 4,
+                    "yOffset" : 22,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
+                },
+                "font - 7SEG" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["7"],
+                            ["S"],
+                            ["E"],
+                            ["G"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 11,
+                    "yOffset" : 28,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
                 }
             }
         }

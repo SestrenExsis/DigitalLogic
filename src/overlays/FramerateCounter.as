@@ -56,7 +56,7 @@ package overlays
 			for (var i:uint = 0; i < _displayValue.length; i++)
 			{
 				var DisplayChar:String = _displayValue.charAt(i);
-				var FrameRect:Rectangle = getFrameRect("Font - " + DisplayChar);
+				var FrameRect:Rectangle = getFrameRect("Font - Monospace 4x8 Medium - " + DisplayChar);
 				var FrameWidth:Number = FrameRect.width;
 				var FrameHeight:Number = FrameRect.height;
 				_topLeft.setTo(CurrentX, CurrentY);

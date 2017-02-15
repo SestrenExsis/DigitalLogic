@@ -46,7 +46,7 @@ package
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board();
 			_clock = addEntity("Switch", 10, 15);
-			_gridVisible = new Rectangle(0, 0, 20, 20);
+			_gridVisible = new Rectangle(0, 0, 40, 30);
 		}
 		
 		private function getGridCoordinate(X:Number, Y:Number, Units:String = "tiles"):Point

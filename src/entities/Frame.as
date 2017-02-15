@@ -18,7 +18,68 @@ package entities
 			_visibleValues = VisibleValues.concat();
 		}
 		
-		public static function convertObjectToFrame(ObjectToConvert:Object):Frame
+		public function clone():Frame
+		{
+			var NewFrame:Frame = new Frame(_frameKey, _offset.x, _offset.y, _layer, _visibleValues);
+			
+			return NewFrame;
+		}
+		
+		public static function convertObjectToFrames(ObjectToConvert:Object):Vector.<Frame>
+		{
+			var BaseFrame:Frame = convertObjectToFrame(ObjectToConvert);
+			
+			var Kerning:uint = 0;
+			if (ObjectToConvert.hasOwnProperty("kerning"))
+				Kerning = ObjectToConvert.kerning;
+			var LineHeight:uint = 0;
+			if (ObjectToConvert.hasOwnProperty("lineHeight"))
+				LineHeight = ObjectToConvert.lineHeight;
+			
+			var Frames:Vector.<Frame> = new Vector.<Frame>();
+			
+			if (ObjectToConvert.hasOwnProperty("glyphs"))
+			{
+				var Glyphs:Array = ObjectToConvert["glyphs"];
+				for (var i:uint = 0; i < Glyphs.length; i++)
+				{
+					var GlyphX:uint = 0;
+					var GlyphY:uint = 0;
+					var GlyphKey:String;
+					var NewFrame:Frame;
+					if (Glyphs[i] is Array)
+					{
+						GlyphY = i;
+						
+						for (var j:uint = 0; j < Glyphs[i].length; j++)
+						{
+							GlyphX = j;
+							GlyphKey = Glyphs[GlyphY][GlyphX];
+							NewFrame = BaseFrame.clone();
+							NewFrame._frameKey += " - " + GlyphKey;
+							NewFrame._offset.x += GlyphX * Kerning;
+							NewFrame._offset.y += GlyphY * LineHeight;
+							Frames.push(NewFrame);
+						}
+					}
+					else
+					{
+						GlyphX = i;
+						GlyphKey = Glyphs[GlyphX];
+						NewFrame = BaseFrame.clone();
+						NewFrame._frameKey += " - " + GlyphKey;
+						NewFrame._offset.x += GlyphX * Kerning;
+						Frames.push(NewFrame);
+					}
+				}
+			}
+			else
+				Frames.push(BaseFrame);
+			
+			return Frames;
+		}
+		
+		private static function convertObjectToFrame(ObjectToConvert:Object):Frame
 		{
 			var FrameKey:String = "Default";
 			var OffsetX:uint = 0;
@@ -57,7 +118,9 @@ package entities
 		
 		public function getVisibilityAtIndex(Index:uint):Boolean
 		{
-			var Visibility:Boolean = !(_visibleValues[Index] == 0)
+			var ModdedIndex:uint = Index % _visibleValues.length;
+			var VisibleValue:uint = _visibleValues[ModdedIndex];
+			var Visibility:Boolean = !(VisibleValue == 0)
 			return Visibility;
 		}
 	}

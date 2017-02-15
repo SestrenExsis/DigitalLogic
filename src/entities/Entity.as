@@ -75,8 +75,12 @@ package entities
 				for (var FrameKey:String in Frames)
 				{
 					var FrameObj:Object = Frames[FrameKey];
-					var NewFrame:Frame = Frame.convertObjectToFrame(FrameObj);
-					NewEntity.addFrame(NewFrame);
+					var NewFrames:Vector.<Frame> = Frame.convertObjectToFrames(FrameObj);
+					while (NewFrames.length > 0)
+					{
+						var NewFrame:Frame = NewFrames.pop();
+						NewEntity.addFrame(NewFrame);
+					}
 				}
 			}
 			NewEntity.sortFrames();
