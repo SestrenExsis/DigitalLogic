@@ -10,6 +10,7 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.ui.Mouse;
 	
 	import overlays.FramerateCounter;
 	
@@ -22,6 +23,7 @@ package
 		private var _buffer:Bitmap;
 		private var _workbench:Workbench;
 		private var _framerateCounter:FramerateCounter;
+		private var _currentTool:Entity;
 		
 		public function DigitalLogic()
 		{
@@ -49,6 +51,12 @@ package
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			
+			_currentTool = new Entity(BackgroundTile.spriteSheet);
+			_currentTool.addFrame(new Frame("Cursor - Up - Hand", 0, 0, 0, [1, 0]));
+			_currentTool.addFrame(new Frame("Cursor - Down - Hand", 0, 0, 0, [0, 1]));
+			
+			Mouse.hide();
 		}
 		
 		private function getMouseX():Number
@@ -73,6 +81,10 @@ package
 			_buffer.bitmapData.fillRect(_buffer.bitmapData.rect, 0xff000000);
 			_workbench.drawOntoBuffer(_buffer.bitmapData);
 			
+			_currentTool.x = getMouseX() - 1;
+			_currentTool.y = getMouseY() - 1;
+			_currentTool.drawOntoBuffer(_buffer.bitmapData);
+
 			_framerateCounter.update();
 			_framerateCounter.drawOntoBuffer(_buffer.bitmapData);
 		}
@@ -80,11 +92,13 @@ package
 		private function onMouseDown(e:MouseEvent):void 
 		{
 			_workbench.onTouch(getMouseX(), getMouseY());
+			_currentTool.indexOffset = 1;
 		}
 		
 		private function onMouseUp(e:MouseEvent):void 
 		{
 			_workbench.onRelease(getMouseX(), getMouseY());
+			_currentTool.indexOffset = 0;
 		}
 		
 		private function onMouseMove(e:MouseEvent):void 

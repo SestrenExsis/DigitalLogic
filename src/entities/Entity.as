@@ -22,6 +22,7 @@ package entities
 		
 		public var gridX:int = 0;
 		public var gridY:int = 0;
+		public var indexOffset:uint = 0;
 		
 		private var _topLeft:Point;
 		private var _destPoint:Point;
@@ -218,7 +219,7 @@ package entities
 			if (!_frames)
 				return;
 			
-			var Index:uint = 0;
+			var Index:uint = indexOffset;
 			if (_component)
 			{
 				if (_component is Device)
