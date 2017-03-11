@@ -466,20 +466,27 @@ package
 		
 		public function testBasicCircuit(GridX:uint, GridY:uint):void
 		{
+			var EntityObject:Object = GameData.getEntityObject("Board - 1x1");
+			var TestBoard:Board = _board.addTestBoard();
+			var BoardEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, TestBoard);
+			_grid.addEntity(BoardEntity, GridX + 3, GridY);
+			
+			var NodeEntityObject:Object = GameData.getEntityObject("Node");
+			
+			var InputNode:Node = TestBoard.getInput("x");
+			var NodeInEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNode);
+			NodeInEntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeInEntity);
+			_grid.addEntity(NodeInEntity, GridX + 2, GridY + 0);
+			
+			var OutputNode:Node = TestBoard.getOutput("a");
+			var NodeOutEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, OutputNode);
+			NodeOutEntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeOutEntity);
+			_grid.addEntity(NodeOutEntity, GridX + 4, GridY + 0);
+			
 			addEntity("Switch", GridX, GridY);
-			addEntity("Switch", GridX, GridY + 3);
-			addEntity("Switch", GridX, GridY + 5);
-			addEntity("Splitter", GridX + 3, GridY + 5);
-			addEntity("Splitter", GridX + 5, GridY + 3);
-			addEntity("XOR Gate", GridX + 7, GridY + 3);
-			addEntity("AND Gate", GridX + 7, GridY + 5);
-			addEntity("Splitter", GridX + 10, GridY + 3);
-			addEntity("Splitter", GridX + 11, GridY);
-			addEntity("XOR Gate", GridX + 13, GridY);
-			addEntity("AND Gate", GridX + 13, GridY + 2);
-			addEntity("OR Gate", GridX + 16, GridY + 2);
-			addEntity("Lamp", GridX + 19, GridY + 2);
-			addEntity("Lamp", GridX + 19, GridY);
+			addEntity("Lamp", GridX + 5, GridY);
 		}
 	}
 }

@@ -52,6 +52,7 @@ package entities
 				switch (_component.type)
 				{
 					case DigitalComponent.DEVICE:
+					case DigitalComponent.BOARD:
 						_drawingLayer = 1;
 						break;
 					default:

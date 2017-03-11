@@ -99,43 +99,43 @@
                 },
                 "Wire - Center - Off" :
                 {
-                    "x" : 16,
-                    "y" : 80,
+                    "x" : 24,
+                    "y" : 48,
                     "width" : 4,
                     "height" : 4
                 },
                 "Wire - Horizontal - Off" :
                 {
-                    "x" : 21,
-                    "y" : 80,
+                    "x" : 29,
+                    "y" : 48,
                     "width" : 3,
                     "height" : 4
                 },
                 "Wire - Vertical - Off" :
                 {
-                    "x" : 16,
-                    "y" : 85,
+                    "x" : 24,
+                    "y" : 53,
                     "width" : 4,
                     "height" : 3
                 },
                 "Wire - Center - On" :
                 {
-                    "x" : 24,
-                    "y" : 80,
+                    "x" : 32,
+                    "y" : 48,
                     "width" : 4,
                     "height" : 4
                 },
                 "Wire - Horizontal - On" :
                 {
-                    "x" : 29,
-                    "y" : 80,
+                    "x" : 37,
+                    "y" : 48,
                     "width" : 3,
                     "height" : 4
                 },
                 "Wire - Vertical - On" :
                 {
-                    "x" : 24,
-                    "y" : 85,
+                    "x" : 32,
+                    "y" : 53,
                     "width" : 4,
                     "height" : 3
                 },
@@ -473,6 +473,22 @@
                     "layer" : 1,
                     "visibleValues" :
                         [1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+                }
+            }
+        },
+        "Board - 1x1" :
+        {
+            "widthInTiles" : 1,
+            "heightInTiles" : 1,
+            "frames" :
+            {
+                "default" :
+                {
+                    "frameKey" : "Default",
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" : [1]
                 }
             }
         },

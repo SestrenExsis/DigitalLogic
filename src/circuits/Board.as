@@ -2,17 +2,60 @@ package circuits
 {
 	import truthTables.TruthTable;
 	
-	public class Board
+	public class Board extends DigitalComponent
 	{
 		private var _components:Vector.<DigitalComponent>;
 		private var _devices:Vector.<Device>;
 		private var _devicesInTick:Vector.<Device>;
 		
-		public function Board()
+		private var _parent:Board;
+		private var _children:Vector.<Board>;
+		private var _inputs:Object;
+		private var _outputs:Object;
+		
+		public function Board(Parent:Board = null)
 		{
+			_type = DigitalComponent.BOARD;
+			_parent = Parent;
 			_components = new Vector.<DigitalComponent>();
 			_devices = new Vector.<Device>();
 			_devicesInTick = new Vector.<Device>();
+			
+			_children = new Vector.<Board>();
+			_inputs = new Object();
+			_outputs = new Object();
+		}
+		
+		public function getInput(InputName:String):Node
+		{
+			if (_inputs.hasOwnProperty(InputName))
+				return _inputs[InputName];
+			else
+				return null;
+		}
+		
+		public function exposeInput(InputName:String, InputNode:Node):void
+		{
+			if (_inputs.hasOwnProperty(InputName))
+				throw new Error("Board already has an input with name: " + InputName);
+			
+			_inputs[InputName] = InputNode;
+		}
+		
+		public function getOutput(OutputName:String):Node
+		{
+			if (_outputs.hasOwnProperty(OutputName))
+				return _outputs[OutputName];
+			else
+				return null;
+		}
+		
+		public function exposeOutput(OutputName:String, OutputNode:Node):void
+		{
+			if (_outputs.hasOwnProperty(OutputName))
+				throw new Error("Board already has an output with name: " + OutputName);
+			
+			_outputs[OutputName] = OutputNode;
 		}
 		
 		public function reset():void
@@ -112,6 +155,14 @@ package circuits
 			return NewDevice;
 		}
 		
+		public function addBoard():Board
+		{
+			var NewBoard:Board = new Board(this);
+			_children.push(NewBoard);
+			
+			return NewBoard;
+		}
+		
 		public function deleteComponent(ComponentToDelete:DigitalComponent):void
 		{
 			var IndexOfComponent:int = _components.indexOf(ComponentToDelete);
@@ -161,7 +212,41 @@ package circuits
 					propagate(WireToDelete, WireToDelete.b, false);
 				}
 			}
+		}
+		
+		public function addTestBoard():Board
+		{
+			// Add NOT Gate - NAND Logic
+			var BoardA:Board = addBoard();
 			
+			// Create truth tables
+			var NANDStr:String = "NAND Gate";
+			var NANDObj:Object = GameData.getEntityObject(NANDStr);
+			var NANDTab:TruthTable = TruthTable.convertObjectToTruthTable(NANDStr, NANDObj);
+			
+			var SplitterStr:String = "Splitter";
+			var SplitterObj:Object = GameData.getEntityObject(SplitterStr);
+			var SplitterTab:TruthTable = TruthTable.convertObjectToTruthTable(SplitterStr, SplitterObj);
+			
+			var Nand3GateA:Device = BoardA.addDevice(NANDTab);
+			_devices.push(Nand3GateA);
+			var SplitterA:Device = BoardA.addDevice(SplitterTab);
+			_devices.push(SplitterA);
+			
+			var GateNodeX:Node = Nand3GateA.getInput("x");
+			var GateNodeY:Node = Nand3GateA.getInput("y");
+			var GateNodeA:Node = Nand3GateA.getOutput("a");
+			
+			var SplitterNodeX:Node = SplitterA.getInput("x");
+			var SplitterNodeB:Node = SplitterA.getOutput("b");
+			var SplitterNodeC:Node = SplitterA.getOutput("c");
+			
+			BoardA.addWire(SplitterNodeB, GateNodeX);
+			BoardA.addWire(SplitterNodeC, GateNodeY);
+			BoardA.exposeInput("x", SplitterNodeX);
+			BoardA.exposeOutput("a", GateNodeA);
+			
+			return BoardA;
 		}
 	}
 }

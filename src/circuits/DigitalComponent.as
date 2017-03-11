@@ -2,6 +2,7 @@ package circuits
 {
 	public class DigitalComponent
 	{
+		public static const BOARD:String = "Board";
 		public static const DEVICE:String = "Device";
 		public static const CONNECTOR_WIRE:String = "Wire";
 		public static const CONNECTOR_NODE:String = "Node";
