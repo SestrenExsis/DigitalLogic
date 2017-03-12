@@ -1996,6 +1996,130 @@
                         [1]
                 }
             }
+        },
+        "S-R Flip Flop" :
+        {
+            "widthInTiles" : 2,
+            "heightInTiles" : 2,
+            "inputs" :
+            {
+                "s" :
+                {
+                    "x" : -1,
+                    "y" : 0
+                },
+                "r" :
+                {
+                    "x" : -1,
+                    "y" : 1
+                }
+            },
+            "outputs" :
+            {
+                "q" :
+                {
+                    "x" : 2,
+                    "y" : 0
+                },
+                "!q" :
+                {
+                    "x" : 2,
+                    "y" : 1
+                }
+            },
+            "devices" :
+            [
+                "NAND Gate",
+                "NAND Gate",
+                "Splitter",
+                "Splitter"
+            ],
+            "connections" :
+            [
+                {
+                    "left_device_index" : -1,
+                    "left_node" : "s",
+                    "right_device_index" : 0,
+                    "right_node" : "x"
+                },
+                {
+                    "left_device_index" : -1,
+                    "left_node" : "r",
+                    "right_device_index" : 1,
+                    "right_node" : "y"
+                },
+                {
+                    "left_device_index" : -1,
+                    "left_node" : "q",
+                    "right_device_index" : 2,
+                    "right_node" : "b"
+                },
+                {
+                    "left_device_index" : -1,
+                    "left_node" : "!q",
+                    "right_device_index" : 3,
+                    "right_node" : "b"
+                },
+                {
+                    "left_device_index" : 0,
+                    "left_node" : "y",
+                    "right_device_index" : 3,
+                    "right_node" : "a"
+                },
+                {
+                    "left_device_index" : 0,
+                    "left_node" : "a",
+                    "right_device_index" : 2,
+                    "right_node" : "x"
+                },
+                {
+                    "left_device_index" : 1,
+                    "left_node" : "x",
+                    "right_device_index" : 2,
+                    "right_node" : "c"
+                },
+                {
+                    "left_device_index" : 1,
+                    "left_node" : "a",
+                    "right_device_index" : 3,
+                    "right_node" : "x"
+                }
+            ],
+            "frames" :
+            {
+                "background" :
+                {
+                    "frameKey" : "Device Tile",
+                    "glyphs" :
+                        [
+                            ["Top Left"   , "Top Right"   ],
+                            ["Bottom Left", "Bottom Right"]
+                        ],
+                    "kerning" : 8,
+                    "lineHeight" : 8,
+                    "xOffset" : 0,
+                    "yOffset" : 0,
+                    "layer" : 0,
+                    "visibleValues" :
+                        [1]
+                },
+                "font - S-R FLP" :
+                {
+                    "frameKey" : "Font - Monospace 3x5 Dark",
+                    "glyphs" :
+                        [
+                            ["S", "-", "R"],
+                            ["F", "L", "P"]
+                        ],
+                    "kerning" : 4,
+                    "lineHeight" : 6,
+                    "xOffset" : 2,
+                    "yOffset" : 2,
+                    "layer" : 1,
+                    "visibleValues" :
+                        [1]
+                }
+            }
         }
     }
 }

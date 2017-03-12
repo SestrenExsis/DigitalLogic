@@ -383,6 +383,105 @@ package
 			return WireEntity;
 		}
 		
+		private function addBoardEntity(EntityKey:String, GridX:uint, GridY:uint):Entity
+		{
+			trace("addBoardEntity(" + EntityKey + ", " + GridX + ", " + GridY + ")");
+			var EntityObject:Object = GameData.getEntityObject(EntityKey);
+			
+			if (EntityObject.hasOwnProperty("devices") && EntityObject.hasOwnProperty("connections"))
+			{
+				var NewBoard:Board = _board.addBoard();
+				var Devices:Array = EntityObject.devices;
+				for (var i:uint = 0; i < Devices.length; i++)
+				{
+					var ChildEntityKey:String = Devices[i];
+					var ChildEntityObject:Object = GameData.getEntityObject(ChildEntityKey);
+					var NewTruthTable:TruthTable = TruthTable.convertObjectToTruthTable(ChildEntityKey, ChildEntityObject);
+					NewBoard.addDevice(NewTruthTable);
+				}
+				
+				var Connections:Array = EntityObject.connections;
+				for (var j:uint = 0; j < Connections.length; j++)
+				{
+					var Connection:Object = Connections[j];
+					if (Connection.hasOwnProperty("left_device_index") &&
+						Connection.hasOwnProperty("left_node") &&
+						Connection.hasOwnProperty("right_device_index") &&
+						Connection.hasOwnProperty("right_node"))
+					{
+						var LeftNode:Node;
+						var RightNode:Node;
+						if (Connection.left_device_index == -1)
+						{
+							var RightDevice:Device = NewBoard.getDeviceByIndex(Connection.right_device_index);
+							RightNode = RightDevice.getInput(Connection.right_node);
+							if (!RightNode)
+								RightNode = RightDevice.getOutput(Connection.right_node);
+							
+							if (EntityObject.inputs.hasOwnProperty(Connection.left_node))
+								NewBoard.exposeInput(Connection.left_node, RightNode);
+							else
+								NewBoard.exposeOutput(Connection.left_node, RightNode);
+						}
+						else if (Connection.right_device_index == -1)
+						{
+							var LeftDevice:Device = NewBoard.getDeviceByIndex(Connection.left_device_index);
+							LeftNode = LeftDevice.getInput(Connection.left_node);
+							if (!LeftNode)
+								LeftNode = LeftDevice.getOutput(Connection.left_node);
+							
+							RightNode = NewBoard.getInput(Connection.right_node);
+							if (EntityObject.inputs.hasOwnProperty(Connection.right_node))
+								NewBoard.exposeInput(Connection.right_node, LeftNode);
+							else
+								NewBoard.exposeOutput(Connection.right_node, LeftNode);
+						}
+						else
+						{
+							LeftDevice = NewBoard.getDeviceByIndex(Connection.left_device_index);
+							LeftNode = LeftDevice.getInput(Connection.left_node);
+							if (!LeftNode)
+								LeftNode = LeftDevice.getOutput(Connection.left_node);
+							
+							RightDevice = NewBoard.getDeviceByIndex(Connection.right_device_index);
+							RightNode = RightDevice.getInput(Connection.right_node);
+							if (!RightNode)
+								RightNode = RightDevice.getOutput(Connection.right_node);
+							NewBoard.addWire(LeftNode, RightNode);
+						}
+					}
+				}
+			}
+			
+			var NewEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, NewBoard);
+			_grid.addEntity(NewEntity, GridX, GridY);
+			var NodeEntityObject:Object = GameData.getEntityObject("Node");
+			for (var InputKey:String in EntityObject.inputs)
+			{
+				var InputObj:Object = EntityObject["inputs"][InputKey];
+				var InputOffsetX:uint = InputObj["x"];
+				var InputOffsetY:uint = InputObj["y"];
+				var InputNode:Node = NewBoard.getInput(InputKey);
+				var NodeInEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNode);
+				NodeInEntity.addNeighbor(NewEntity);
+				NewEntity.addNeighbor(NodeInEntity);
+				_grid.addEntity(NodeInEntity, GridX + InputOffsetX, GridY + InputOffsetY);
+			}
+			for (var OutputKey:String in EntityObject.outputs)
+			{
+				var OutputOffsets:Object = EntityObject["outputs"][OutputKey];
+				var OutputOffsetX:uint = OutputOffsets["x"];
+				var OutputOffsetY:uint = OutputOffsets["y"];
+				var OutputNode:Node = NewBoard.getOutput(OutputKey);
+				var NodeOutEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, OutputNode);
+				NodeOutEntity.addNeighbor(NewEntity);
+				NewEntity.addNeighbor(NodeOutEntity);
+				_grid.addEntity(NodeOutEntity, GridX + OutputOffsetX, GridY + OutputOffsetY);
+			}
+			
+			return NewEntity;
+		}
+		
 		private function addEntity(EntityKey:String, GridX:uint, GridY:uint):Entity
 		{
 			trace("addEntity(" + EntityKey + ", " + GridX + ", " + GridY + ")");
@@ -398,9 +497,12 @@ package
 				var InputObj:Object = EntityObject["inputs"][InputName];
 				var InputOffsetX:uint = InputObj["x"];
 				var InputOffsetY:uint = InputObj["y"];
-				var InputWeight:uint = InputObj["weight"];
 				var InputNode:Node = NewDevice.getInput(InputName);
-				InputNode.weight = InputWeight;
+				if (InputObj.hasOwnProperty("weight"))
+				{
+					var InputWeight:uint = InputObj["weight"];
+					InputNode.weight = InputWeight;
+				}
 				var NodeInEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNode);
 				NodeInEntity.addNeighbor(NewEntity);
 				NewEntity.addNeighbor(NodeInEntity);
@@ -461,6 +563,8 @@ package
 			var Multiplexer4to1:Entity = addEntity("4-to-1 Multiplexer", GridX + 13, GridY + 13);
 			var NandGate:Entity = addEntity("NAND Gate", GridX + 3, GridY + 17);
 			
+			var SRFlipFlop:Entity = addBoardEntity("S-R Flip Flop", GridX + 20, GridY + 15);
+			
 			_grid.sortEntities();
 		}
 		
@@ -487,6 +591,40 @@ package
 			
 			addEntity("Switch", GridX, GridY);
 			addEntity("Lamp", GridX + 5, GridY);
+		}
+		
+		public function testSRFlipFlop(GridX:uint, GridY:uint):void
+		{
+			var EntityObject:Object = GameData.getEntityObject("S-R Flip Flop");
+			var TestBoard:Board = _board.addSRFlipFlopBoard();
+			var BoardEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, TestBoard);
+			_grid.addEntity(BoardEntity, GridX + 3, GridY);
+			
+			var NodeEntityObject:Object = GameData.getEntityObject("Node");
+			
+			var InputNodeS:Node = TestBoard.getInput("s");
+			var NodeInSEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNodeS);
+			NodeInSEntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeInSEntity);
+			_grid.addEntity(NodeInSEntity, GridX + 2, GridY + 0);
+			
+			var InputNodeR:Node = TestBoard.getInput("r");
+			var NodeInREntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, InputNodeR);
+			NodeInREntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeInREntity);
+			_grid.addEntity(NodeInREntity, GridX + 2, GridY + 1);
+			
+			var OutputNodeQ:Node = TestBoard.getOutput("q");
+			var NodeOutQEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, OutputNodeQ);
+			NodeOutQEntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeOutQEntity);
+			_grid.addEntity(NodeOutQEntity, GridX + 5, GridY + 0);
+			
+			var OutputNodeNotQ:Node = TestBoard.getOutput("!q");
+			var NodeOutNotQEntity:Entity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, NodeEntityObject, OutputNodeNotQ);
+			NodeOutNotQEntity.addNeighbor(BoardEntity);
+			BoardEntity.addNeighbor(NodeOutNotQEntity);
+			_grid.addEntity(NodeOutNotQEntity, GridX + 5, GridY + 1);
 		}
 	}
 }
