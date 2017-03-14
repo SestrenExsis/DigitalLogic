@@ -42,8 +42,6 @@ package
 			BackgroundTile.addFrame(new Frame("Background", 0, 0, 0, [1]));
 			_workbench = new Workbench(BackgroundTile, 40, 30);
 			_workbench.addToolkit(1, 2);
-			_workbench.testBasicCircuit(10, 5);
-			_workbench.testSRFlipFlop(10, 10);
 			
 			_framerateCounter = new FramerateCounter(_spriteSheet);
 			

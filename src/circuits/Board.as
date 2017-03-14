@@ -1,11 +1,12 @@
 package circuits
 {
 	import truthTables.TruthTable;
+	import interfaces.IComponentGroup;
 	
-	public class Board extends DigitalComponent
+	public class Board extends DigitalComponent implements IComponentGroup
 	{
 		private var _components:Vector.<DigitalComponent>;
-		private var _devices:Vector.<Device>;
+		private var _devices:Vector.<IComponentGroup>;
 		private var _devicesInTick:Vector.<Device>;
 		
 		private var _parent:Board;
@@ -18,7 +19,7 @@ package circuits
 			_type = DigitalComponent.BOARD;
 			_parent = Parent;
 			_components = new Vector.<DigitalComponent>();
-			_devices = new Vector.<Device>();
+			_devices = new Vector.<IComponentGroup>();
 			_devicesInTick = new Vector.<Device>();
 			
 			_children = new Vector.<Board>();
@@ -26,7 +27,87 @@ package circuits
 			_outputs = new Object();
 		}
 		
-		public function getDeviceByIndex(Index:uint):Device
+		public function convertObjectToBoard(ObjectToConvert:Object):Board
+		{
+			if (!ObjectToConvert.hasOwnProperty("devices") || 
+				!ObjectToConvert.hasOwnProperty("connections"))
+				return null;
+				
+			var NewBoard:Board = addBoard();
+			var Devices:Array = ObjectToConvert.devices;
+			for (var i:uint = 0; i < Devices.length; i++)
+			{
+				var ChildEntityKey:String = Devices[i];
+				var ChildEntityObject:Object = GameData.getEntityObject(ChildEntityKey);
+				if (ChildEntityObject.hasOwnProperty("devices") && 
+					ChildEntityObject.hasOwnProperty("connections"))
+				{
+					var ChildBoard:Board = convertObjectToBoard(ChildEntityObject);
+					NewBoard.addBoard(ChildBoard);
+				}
+				else
+				{
+					var DeviceTable:TruthTable = TruthTable.convertObjectToTruthTable(ChildEntityKey, ChildEntityObject);
+					NewBoard.addDevice(DeviceTable);
+				}
+			}
+			
+			var Connections:Array = ObjectToConvert.connections;
+			for (var j:uint = 0; j < Connections.length; j++)
+			{
+				var Connection:Object = Connections[j];
+				if (Connection.hasOwnProperty("left_device_index") &&
+					Connection.hasOwnProperty("left_node") &&
+					Connection.hasOwnProperty("right_device_index") &&
+					Connection.hasOwnProperty("right_node"))
+				{
+					var LeftNode:Node;
+					var RightNode:Node;
+					if (Connection.left_device_index == -1)
+					{
+						var RightDevice:IComponentGroup = NewBoard.getDeviceByIndex(Connection.right_device_index);
+						RightNode = RightDevice.getInput(Connection.right_node);
+						if (!RightNode)
+							RightNode = RightDevice.getOutput(Connection.right_node);
+						
+						if (ObjectToConvert.inputs.hasOwnProperty(Connection.left_node))
+							NewBoard.exposeInput(Connection.left_node, RightNode);
+						else
+							NewBoard.exposeOutput(Connection.left_node, RightNode);
+					}
+					else if (Connection.right_device_index == -1)
+					{
+						var LeftDevice:IComponentGroup = NewBoard.getDeviceByIndex(Connection.left_device_index);
+						LeftNode = LeftDevice.getInput(Connection.left_node);
+						if (!LeftNode)
+							LeftNode = LeftDevice.getOutput(Connection.left_node);
+						
+						RightNode = NewBoard.getInput(Connection.right_node);
+						if (ObjectToConvert.inputs.hasOwnProperty(Connection.right_node))
+							NewBoard.exposeInput(Connection.right_node, LeftNode);
+						else
+							NewBoard.exposeOutput(Connection.right_node, LeftNode);
+					}
+					else
+					{
+						LeftDevice = NewBoard.getDeviceByIndex(Connection.left_device_index);
+						LeftNode = LeftDevice.getInput(Connection.left_node);
+						if (!LeftNode)
+							LeftNode = LeftDevice.getOutput(Connection.left_node);
+						
+						RightDevice = NewBoard.getDeviceByIndex(Connection.right_device_index);
+						RightNode = RightDevice.getInput(Connection.right_node);
+						if (!RightNode)
+							RightNode = RightDevice.getOutput(Connection.right_node);
+						NewBoard.addWire(LeftNode, RightNode);
+					}
+				}
+			}
+			
+			return NewBoard;
+		}
+		
+		public function getDeviceByIndex(Index:uint):IComponentGroup
 		{
 			return _devices[Index];
 		}
@@ -76,11 +157,15 @@ package circuits
 		
 		public function prime():void
 		{
-			for each (var CurrentDevice:Device in _devices)
+			for each (var CurrentGroup:IComponentGroup in _devices)
 			{
-				var EdgeTriggered:Boolean = CurrentDevice.edgeTriggered();
-				if (EdgeTriggered)
-					_devicesInTick.push(CurrentDevice);
+				if (CurrentGroup is Device)
+				{
+					var CurrentDevice:Device = (CurrentGroup as Device);
+					var EdgeTriggered:Boolean = CurrentDevice.edgeTriggered();
+					if (EdgeTriggered)
+						_devicesInTick.push(CurrentDevice);
+				}
 			}
 		}
 		
@@ -160,9 +245,16 @@ package circuits
 			return NewDevice;
 		}
 		
-		public function addBoard():Board
+		public function addBoard(BoardToAdd:Board = null):Board
 		{
-			var NewBoard:Board = new Board(this);
+			var NewBoard:Board;
+			if (BoardToAdd)
+				NewBoard = BoardToAdd;
+			else
+				NewBoard = new Board(this);
+			
+			_components.push(NewBoard);
+			_devices.push(NewBoard);
 			_children.push(NewBoard);
 			
 			return NewBoard;
@@ -217,86 +309,6 @@ package circuits
 					propagate(WireToDelete, WireToDelete.b, false);
 				}
 			}
-		}
-		
-		public function addTestBoard():Board
-		{
-			// Add NOT Gate - NAND Logic
-			var BoardA:Board = addBoard();
-			
-			// Create truth tables
-			var NANDStr:String = "NAND Gate";
-			var NANDObj:Object = GameData.getEntityObject(NANDStr);
-			var NANDTab:TruthTable = TruthTable.convertObjectToTruthTable(NANDStr, NANDObj);
-			
-			var SplitterStr:String = "Splitter";
-			var SplitterObj:Object = GameData.getEntityObject(SplitterStr);
-			var SplitterTab:TruthTable = TruthTable.convertObjectToTruthTable(SplitterStr, SplitterObj);
-			
-			var NandGateA:Device = BoardA.addDevice(NANDTab);
-			var SplitterA:Device = BoardA.addDevice(SplitterTab);
-			
-			var GateNodeX:Node = NandGateA.getInput("x");
-			var GateNodeY:Node = NandGateA.getInput("y");
-			var GateNodeA:Node = NandGateA.getOutput("a");
-			
-			var SplitterNodeX:Node = SplitterA.getInput("x");
-			var SplitterNodeB:Node = SplitterA.getOutput("b");
-			var SplitterNodeC:Node = SplitterA.getOutput("c");
-			
-			BoardA.addWire(SplitterNodeB, GateNodeX);
-			BoardA.addWire(SplitterNodeC, GateNodeY);
-			BoardA.exposeInput("x", SplitterNodeX);
-			BoardA.exposeOutput("a", GateNodeA);
-			
-			return BoardA;
-		}
-		
-		public function addSRFlipFlopBoard():Board
-		{
-			// Add NOT Gate - NAND Logic
-			var BoardA:Board = addBoard();
-			
-			// Create truth tables
-			var NANDStr:String = "NAND Gate";
-			var NANDObj:Object = GameData.getEntityObject(NANDStr);
-			var NANDTab:TruthTable = TruthTable.convertObjectToTruthTable(NANDStr, NANDObj);
-			
-			var SplitterStr:String = "Splitter";
-			var SplitterObj:Object = GameData.getEntityObject(SplitterStr);
-			var SplitterTab:TruthTable = TruthTable.convertObjectToTruthTable(SplitterStr, SplitterObj);
-			
-			var NandGateA:Device = BoardA.addDevice(NANDTab);
-			var NandGateB:Device = BoardA.addDevice(NANDTab);
-			var SplitterA:Device = BoardA.addDevice(SplitterTab);
-			var SplitterB:Device = BoardA.addDevice(SplitterTab);
-			
-			var NandGateAInputNodeX:Node = NandGateA.getInput("x");
-			var NandGateAInputNodeY:Node = NandGateA.getInput("y");
-			var NandGateAOutputNodeA:Node = NandGateA.getOutput("a");
-			
-			var NandGateBInputNodeX:Node = NandGateB.getInput("x");
-			var NandGateBInputNodeY:Node = NandGateB.getInput("y");
-			var NandGateBOutputNodeA:Node = NandGateB.getOutput("a");
-			
-			var SplitterAInputNodeX:Node = SplitterA.getInput("x");
-			var SplitterAOutputNodeB:Node = SplitterA.getOutput("b");
-			var SplitterAOutputNodeC:Node = SplitterA.getOutput("c");
-			
-			var SplitterBInputNodeX:Node = SplitterB.getInput("x");
-			var SplitterBOutputNodeB:Node = SplitterB.getOutput("b");
-			var SplitterBOutputNodeA:Node = SplitterB.getOutput("a");
-			
-			BoardA.addWire(NandGateAInputNodeY, SplitterBOutputNodeA);
-			BoardA.addWire(NandGateAOutputNodeA, SplitterAInputNodeX);
-			BoardA.addWire(NandGateBInputNodeX, SplitterAOutputNodeC);
-			BoardA.addWire(NandGateBOutputNodeA, SplitterBInputNodeX);
-			BoardA.exposeInput("s", NandGateAInputNodeX);
-			BoardA.exposeInput("r", NandGateBInputNodeY);
-			BoardA.exposeOutput("q", SplitterAOutputNodeB);
-			BoardA.exposeOutput("!q", SplitterBOutputNodeB);
-			
-			return BoardA;
 		}
 	}
 }

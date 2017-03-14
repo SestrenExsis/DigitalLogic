@@ -1,11 +1,12 @@
 package circuits
 {
 	import truthTables.TruthTable;
+	import interfaces.IComponentGroup;
 
 	/**
 	 * The basic component that functions as constants, gates, display outputs, etc.
 	 */
-	public class Device extends DigitalComponent
+	public class Device extends DigitalComponent implements IComponentGroup
 	{
 		private var _inputs:Object;
 		private var _outputs:Object;
