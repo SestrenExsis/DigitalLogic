@@ -2,7 +2,7 @@ package interfaces
 {
 	import circuits.Node;
 	
-	public interface IComponentGroup
+	public interface INodeInputOutput
 	{
 		function getInput(InputKey:String):Node;
 		

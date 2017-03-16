@@ -1,39 +1,39 @@
 package circuits
 {
-	import truthTables.TruthTable;
-	import interfaces.IComponentGroup;
+	import interfaces.INodeInputOutput;
 	
-	public class Board extends DigitalComponent implements IComponentGroup
+	import truthTables.TruthTable;
+	
+	public class Board extends DigitalComponent implements INodeInputOutput
 	{
+		private var _name:String;
 		private var _components:Vector.<DigitalComponent>;
-		private var _devices:Vector.<IComponentGroup>;
+		private var _devices:Vector.<INodeInputOutput>;
 		private var _devicesInTick:Vector.<Device>;
 		
-		private var _parent:Board;
-		private var _children:Vector.<Board>;
 		private var _inputs:Object;
 		private var _outputs:Object;
 		
-		public function Board(Parent:Board = null)
+		public function Board(Name:String = "Default", Parent:Board = null)
 		{
+			_name = Name;
 			_type = DigitalComponent.BOARD;
-			_parent = Parent;
 			_components = new Vector.<DigitalComponent>();
-			_devices = new Vector.<IComponentGroup>();
+			_devices = new Vector.<INodeInputOutput>();
 			_devicesInTick = new Vector.<Device>();
 			
-			_children = new Vector.<Board>();
 			_inputs = new Object();
 			_outputs = new Object();
 		}
 		
-		public function convertObjectToBoard(ObjectToConvert:Object):Board
+		public function convertObjectToBoard(Name:String, ObjectToConvert:Object):Board
 		{
 			if (!ObjectToConvert.hasOwnProperty("devices") || 
 				!ObjectToConvert.hasOwnProperty("connections"))
 				return null;
 				
 			var NewBoard:Board = addBoard();
+			NewBoard._name = Name;
 			var Devices:Array = ObjectToConvert.devices;
 			for (var i:uint = 0; i < Devices.length; i++)
 			{
@@ -42,7 +42,7 @@ package circuits
 				if (ChildEntityObject.hasOwnProperty("devices") && 
 					ChildEntityObject.hasOwnProperty("connections"))
 				{
-					var ChildBoard:Board = convertObjectToBoard(ChildEntityObject);
+					var ChildBoard:Board = convertObjectToBoard(ChildEntityKey, ChildEntityObject);
 					NewBoard.addBoard(ChildBoard);
 				}
 				else
@@ -65,7 +65,7 @@ package circuits
 					var RightNode:Node;
 					if (Connection.left_device_index == -1)
 					{
-						var RightDevice:IComponentGroup = NewBoard.getDeviceByIndex(Connection.right_device_index);
+						var RightDevice:INodeInputOutput = NewBoard.getDeviceByIndex(Connection.right_device_index);
 						RightNode = RightDevice.getInput(Connection.right_node);
 						if (!RightNode)
 							RightNode = RightDevice.getOutput(Connection.right_node);
@@ -77,7 +77,7 @@ package circuits
 					}
 					else if (Connection.right_device_index == -1)
 					{
-						var LeftDevice:IComponentGroup = NewBoard.getDeviceByIndex(Connection.left_device_index);
+						var LeftDevice:INodeInputOutput = NewBoard.getDeviceByIndex(Connection.left_device_index);
 						LeftNode = LeftDevice.getInput(Connection.left_node);
 						if (!LeftNode)
 							LeftNode = LeftDevice.getOutput(Connection.left_node);
@@ -107,7 +107,12 @@ package circuits
 			return NewBoard;
 		}
 		
-		public function getDeviceByIndex(Index:uint):IComponentGroup
+		public function get name():String
+		{
+			return _name;
+		}
+		
+		public function getDeviceByIndex(Index:uint):INodeInputOutput
 		{
 			return _devices[Index];
 		}
@@ -157,7 +162,7 @@ package circuits
 		
 		public function prime():void
 		{
-			for each (var CurrentGroup:IComponentGroup in _devices)
+			for each (var CurrentGroup:INodeInputOutput in _devices)
 			{
 				if (CurrentGroup is Device)
 				{
@@ -226,6 +231,7 @@ package circuits
 		 */
 		public function addDevice(TruthTableA:TruthTable):Device
 		{
+			trace("addDevice(" + TruthTableA + ")");
 			var NewDevice:Device = new Device(DigitalComponent.DEVICE);
 			for each (var InputName:String in TruthTableA.inputNames)
 			{
@@ -242,32 +248,58 @@ package circuits
 			_devices.push(NewDevice);
 			NewDevice.setTruthTable(TruthTableA);
 			
+			trace("C: " + _components.length + "\nD: " + _devices.length);
 			return NewDevice;
 		}
 		
 		public function addBoard(BoardToAdd:Board = null):Board
 		{
+			trace("addBoard(" + BoardToAdd + ")");
 			var NewBoard:Board;
 			if (BoardToAdd)
 				NewBoard = BoardToAdd;
 			else
-				NewBoard = new Board(this);
+				NewBoard = new Board("Default", this);
 			
 			_components.push(NewBoard);
 			_devices.push(NewBoard);
-			_children.push(NewBoard);
 			
+			trace("C: " + _components.length + "\nD: " + _devices.length);
 			return NewBoard;
 		}
 		
 		public function deleteComponent(ComponentToDelete:DigitalComponent):void
 		{
+			trace("deleteComponent(" + ComponentToDelete + ")");
 			var IndexOfComponent:int = _components.indexOf(ComponentToDelete);
 			if (IndexOfComponent == -1)
 				throw new Error("Component to delete not found on Board.");
 			
 			_components.splice(IndexOfComponent, 1);
-			if (ComponentToDelete is Device)
+			if (ComponentToDelete is Board)
+			{
+				var BoardToDelete:Board = (ComponentToDelete as Board);
+				var IndexOfBoard:int = _devices.indexOf(BoardToDelete);
+				if (IndexOfBoard == -1)
+					throw new Error("Component deleted, but Board to delete not found on Board.");
+				
+				_devices.splice(IndexOfBoard, 1);
+				for (var InputKey:String in BoardToDelete._inputs)
+				{
+					var InputNode:Node = BoardToDelete._inputs[InputKey];
+					BoardToDelete.deleteComponent(InputNode);
+				}
+				for (var OutputKey:String in BoardToDelete._outputs)
+				{
+					var OutputNode:Node = BoardToDelete._outputs[OutputKey];
+					BoardToDelete.deleteComponent(OutputNode);
+				}
+				while (BoardToDelete._components.length > 0)
+				{
+					BoardToDelete._components.pop();
+				}
+			}
+			else if (ComponentToDelete is Device)
 			{
 				var DeviceToDelete:Device = (ComponentToDelete as Device);
 				var IndexOfDevice:int = _devices.indexOf(DeviceToDelete);
@@ -275,14 +307,14 @@ package circuits
 					throw new Error("Component deleted, but Device to delete not found on Board.");
 				
 				_devices.splice(IndexOfDevice, 1);
-				for (var InputKey:String in DeviceToDelete.inputs)
+				for (InputKey in DeviceToDelete.inputs)
 				{
-					var InputNode:Node = DeviceToDelete.inputs[InputKey];
+					InputNode = DeviceToDelete.inputs[InputKey];
 					deleteComponent(InputNode);
 				}
-				for (var OutputKey:String in DeviceToDelete.outputs)
+				for (OutputKey in DeviceToDelete.outputs)
 				{
-					var OutputNode:Node = DeviceToDelete.outputs[OutputKey];
+					OutputNode = DeviceToDelete.outputs[OutputKey];
 					deleteComponent(OutputNode);
 				}
 			}
@@ -309,6 +341,7 @@ package circuits
 					propagate(WireToDelete, WireToDelete.b, false);
 				}
 			}
+			trace("C: " + _components.length + "\nD: " + _devices.length);
 		}
 	}
 }

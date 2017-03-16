@@ -12,6 +12,7 @@ package
 	import flash.ui.Keyboard;
 	
 	import interfaces.IGameEntity;
+	import interfaces.INodeInputOutput;
 	
 	import truthTables.TruthTable;
 	
@@ -44,7 +45,7 @@ package
 			_grid = new Grid(8, 8, GridWidthInTiles, GridHeightInTiles);
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
-			_board = new Board();
+			_board = new Board("Default");
 			_clock = addEntity("Switch", 10, 15);
 			_gridVisible = new Rectangle(0, 0, 40, 30);
 		}
@@ -127,6 +128,8 @@ package
 						}
 						else if (ComponentAtPoint is Device)
 							DeviceEntity = EntityAtPoint;
+						else if (ComponentAtPoint is Board)
+							DeviceEntity = EntityAtPoint;
 					}
 				}
 				if (DeviceEntity)
@@ -176,6 +179,11 @@ package
 						var LatestDevice:Device = LatestComponent as Device;
 						if (LatestDevice.truthTable)
 							NewEntity = addEntity(LatestDevice.truthTable.name, GridX, GridY);
+					}
+					else if (LatestComponent is Board)
+					{
+						var LatestBoard:Board = LatestComponent as Board;
+						NewEntity = addEntity(LatestBoard.name, GridX, GridY);
 					}
 					else
 					{
@@ -308,7 +316,7 @@ package
 						{
 							var Neighbor:Entity = _latestEntity.neighbors.pop();
 							Neighbor.removeNeighbor(_latestEntity);
-							if (ComponentToDelete is Device)
+							if (ComponentToDelete is INodeInputOutput)
 								_grid.deleteEntity(Neighbor);
 						}
 					}
@@ -394,7 +402,7 @@ package
 			
 			if (IsBoard)
 			{
-				var NewBoard:Board = _board.convertObjectToBoard(EntityObject);
+				var NewBoard:Board = _board.convertObjectToBoard(EntityKey, EntityObject);
 				NewEntity = Entity.convertObjectToEntity(_baseEntity.spriteSheet, EntityObject, NewBoard);
 			}
 			else

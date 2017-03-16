@@ -1,12 +1,12 @@
 package circuits
 {
 	import truthTables.TruthTable;
-	import interfaces.IComponentGroup;
+	import interfaces.INodeInputOutput;
 
 	/**
 	 * The basic component that functions as constants, gates, display outputs, etc.
 	 */
-	public class Device extends DigitalComponent implements IComponentGroup
+	public class Device extends DigitalComponent implements INodeInputOutput
 	{
 		private var _inputs:Object;
 		private var _outputs:Object;
