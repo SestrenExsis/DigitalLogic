@@ -3,6 +3,7 @@ package
 	import circuits.*;
 	
 	import entities.Entity;
+	import entities.Frame;
 	import entities.Grid;
 	
 	import flash.display.BitmapData;
@@ -28,13 +29,18 @@ package
 		private var _mouseDown:Boolean = false;
 		private var _clock:Entity;
 		private var _currentTime:uint = 0;
-		private var _offInterval:uint = 8;
-		private var _onInterval:uint = 8;
+		private var _offInterval:uint = 64;
+		private var _onInterval:uint = 64;
 		private var _gridVisible:Rectangle;
 		
-		public function Workbench(BaseEntity:Entity, GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
+		public function Workbench(GridWidthInTiles:uint = 40, GridHeightInTiles:uint = 30)
 		{
-			_baseEntity = BaseEntity;
+			GameData.init();
+			var SpriteSheetA:SpriteSheet = GameData.getSpriteSheet(GameData.SPRITES);
+			var BackgroundTile:Entity = new Entity(SpriteSheetA, null, 2, 2);
+			BackgroundTile.addFrame(new Frame("Background", 0, 0, 0, [1]));
+			_baseEntity = BackgroundTile;
+			
 			var TiledEntityWidthInTiles:uint = _baseEntity.widthInTiles;
 			var TiledEntityHeightInTiles:uint = _baseEntity.heightInTiles;
 			var DrawRepeatX:uint = GridWidthInTiles / TiledEntityWidthInTiles;
@@ -46,7 +52,7 @@ package
 			_tempPoint = new Point();
 			_currentTouch = new Point(-1.0, -1.0);
 			_board = new Board("Default");
-			_clock = addEntity("Switch", 10, 15);
+			//_clock = addEntity("Switch", 10, 15);
 			_gridVisible = new Rectangle(0, 0, 40, 30);
 		}
 		
@@ -324,6 +330,8 @@ package
 					_latestEntity = null;
 				}
 			}
+			if (KeyCode == Keyboard.S)
+				SaveData.saveGrid(_grid);
 		}
 		
 		private function shiftGrid(AmountX:int, AmountY:int):void
@@ -356,6 +364,7 @@ package
 			_board.prime();
 			_board.tick();
 			_currentTime++;
+			/*
 			if (_currentTime == _offInterval)
 				(_clock.component as Device).nextState();
 			if (_currentTime >= _offInterval + _onInterval)
@@ -363,6 +372,7 @@ package
 				(_clock.component as Device).nextState();
 				_currentTime = 0;
 			}
+			*/
 		}
 		
 		public function drawOntoBuffer(Buffer:BitmapData):void
@@ -393,7 +403,7 @@ package
 		
 		private function addEntity(EntityKey:String, GridX:uint, GridY:uint):Entity
 		{
-			trace("addBoardEntity(" + EntityKey + ", " + GridX + ", " + GridY + ")");
+			trace("addEntity(\"" + EntityKey + "\", " + GridX + ", " + GridY + ")");
 			var EntityObject:Object = GameData.getEntityObject(EntityKey);
 			var IsBoard:Boolean = EntityObject.hasOwnProperty("devices") && 
 				EntityObject.hasOwnProperty("connections");
@@ -456,6 +466,91 @@ package
 			ConnectorEntity.setDirty();
 		}
 		
+		private function connectByIndex(WireIndex:uint, ConnectorIndex:uint, NodeName:String = ""):void
+		{
+			trace("connectByIndex(" + WireIndex + ", " + ConnectorIndex + ")");
+			var WireEntity:Entity = _grid.getEntityByIndex(WireIndex);
+			var ConnectorEntity:Entity = _grid.getEntityByIndex(ConnectorIndex);
+			if (NodeName == "")
+				connect(WireEntity, ConnectorEntity);
+			else
+			{
+				// TO DO: Connect wires to nodes
+			}
+		}
+		
+		public function loadGridString(GridString:String):void
+		{
+			// The index map is for mapping component IDs to entity indexes
+			var IndexMap:Object = new Object();
+			var GridObj:Object = JSON.parse(GridString);
+			if (GridObj.hasOwnProperty("devices"))
+			{
+				var Devices:Array = GridObj.devices;
+				for (var d:uint = 0; d < Devices.length; d++)
+				{
+					var CurrentDevice:Object = Devices[d];
+					if (CurrentDevice.hasOwnProperty("x") &&
+						CurrentDevice.hasOwnProperty("y") &&
+						CurrentDevice.hasOwnProperty("device") &&
+						CurrentDevice.hasOwnProperty("component_id"))
+					{
+						var X:uint = CurrentDevice.x;
+						var Y:uint = CurrentDevice.y;
+						var ComponentID:uint = CurrentDevice.component_id;
+						var DeviceName:String = CurrentDevice.device;
+						var DeviceEntity:Entity = addEntity(DeviceName, X, Y);
+						IndexMap[ComponentID] = _grid.getIndexOfEntity(DeviceEntity);
+					}
+					else
+						throw new Error("Invalid device object");
+				}
+			}
+			if (GridObj.hasOwnProperty("wires"))
+			{
+				var Wires:Array = GridObj.wires;
+				for (var w:uint = 0; w < Wires.length; w++)
+				{
+					var CurrentWire:Object = Wires[w];
+					if (CurrentWire.hasOwnProperty("x") &&
+						CurrentWire.hasOwnProperty("y") &&
+						CurrentWire.hasOwnProperty("component_id"))
+					{
+						X = CurrentWire.x;
+						Y = CurrentWire.y;
+						ComponentID = CurrentWire.component_id;
+						var WireEntity:Entity = addWire(X, Y);
+						IndexMap[ComponentID] = _grid.getIndexOfEntity(WireEntity);
+					}
+					else
+						throw new Error("Invalid wire object");
+				}
+			}
+			if (GridObj.hasOwnProperty("connections"))
+			{
+				var Connections:Array = GridObj.connections;
+				for (var c:uint = 0; c < Connections.length; c++)
+				{
+					var CurrentConnection:Object = Connections[c];
+					if (CurrentConnection.hasOwnProperty("left_component_id") &&
+						CurrentConnection.hasOwnProperty("right_component_id"))
+					{
+						var LeftComponentID:uint = CurrentConnection.left_component_id;
+						var LeftEntityIndex:uint = IndexMap[LeftComponentID];
+						var RightComponentID:uint = CurrentConnection.right_component_id;
+						var RightEntityIndex:uint = IndexMap[RightComponentID];
+						var RightNode:String = "";
+						if (CurrentConnection.hasOwnProperty("right_node"))
+							RightNode = CurrentConnection.right_node;
+						connectByIndex(LeftEntityIndex, RightEntityIndex, RightNode);
+					}
+					else
+						throw new Error("Invalid connection object");
+				}
+			}
+			var DebugStr:String = "";
+		}
+		
 		public function addToolkit(GridX:uint, GridY:uint):void
 		{
 			var ConstantOff:Entity = addEntity("Constant - Off", GridX, GridY);
@@ -482,13 +577,33 @@ package
 			
 			var SRLatch:Entity = addEntity("S-R Latch", GridX + 20, GridY + 15);
 			var JKFlipFlop:Entity = addEntity("J-K Flip Flop", GridX + 25, GridY + 20);
-			
 			_grid.sortEntities();
 		}
 		
 		public function testBasicCircuit(GridX:uint, GridY:uint):void
 		{
+			// Place all entities, not counting nodes
+			var FirstEntity:Entity = addEntity("Switch", GridX + 0, GridY + 0); // a:1
+			addEntity("Switch", GridX + 0, GridY + 2); // a:3
+			addEntity("AND Gate", GridX + 3, GridY + 1); // x:6, y:5, a:7
+			addEntity("Lamp", GridX + 6, GridY + 1); // x:9, a:10
 			
+			addWire(GridX + 2, GridY + 0); // 11
+			addWire(GridX + 2, GridY + 1); // 12
+			addWire(GridX + 2, GridY + 2); // 13
+			addWire(GridX + 5, GridY + 1); // 14
+			
+			// Connect all entities
+			var FirstIndex:uint = _grid.getIndexOfEntity(FirstEntity);
+			connectByIndex(FirstIndex + 11, FirstIndex + 1);
+			connectByIndex(FirstIndex + 11, FirstIndex + 12);
+			connectByIndex(FirstIndex + 12, FirstIndex + 6);
+			connectByIndex(FirstIndex + 13, FirstIndex + 3);
+			connectByIndex(FirstIndex + 13, FirstIndex + 5);
+			connectByIndex(FirstIndex + 14, FirstIndex + 7);
+			connectByIndex(FirstIndex + 14, FirstIndex + 9);
+			
+			var SaveData:String = _grid.saveData;
 		}
 	}
 }

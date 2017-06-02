@@ -28,6 +28,27 @@ package entities
 			_entities = new Vector.<Entity>();
 		}
 		
+		public function getIndexOfEntity(EntityToFind:Entity):int
+		{
+			for (var i:uint = 0; i < _entities.length; i++)
+			{
+				var CurrentEntity:Entity = _entities[i];
+				if (CurrentEntity === EntityToFind)
+					return i;
+			}
+			
+			return -1;
+		}
+		
+		public function getEntityByIndex(Index:uint):Entity
+		{
+			if (Index >= _entities.length)
+				return null;
+			
+			var EntityToReturn:Entity = _entities[Index];
+			return EntityToReturn;
+		}
+		
 		public function selectEntities(SelectLeft:uint, SelectTop:uint, Width:uint = 1, Height:uint = 1):Vector.<Entity>
 		{
 			var SelectRight:uint = SelectLeft + Width - 1;

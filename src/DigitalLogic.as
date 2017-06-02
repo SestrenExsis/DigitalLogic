@@ -40,8 +40,16 @@ package
 			
 			var BackgroundTile:Entity = new Entity(_spriteSheet, null, 2, 2);
 			BackgroundTile.addFrame(new Frame("Background", 0, 0, 0, [1]));
-			_workbench = new Workbench(BackgroundTile, 40, 30);
-			_workbench.addToolkit(1, 2);
+			
+			_workbench = new Workbench(40, 30);
+			var GridString:String = SaveData.getGridString();
+			if (GridString)
+				_workbench.loadGridString(GridString);
+			else
+			{
+				_workbench.addToolkit(1, 2);
+				//_workbench.testBasicCircuit(17, 4);
+			}
 			
 			_framerateCounter = new FramerateCounter(_spriteSheet);
 			
