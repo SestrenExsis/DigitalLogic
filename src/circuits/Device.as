@@ -133,7 +133,7 @@ package circuits
 			if (_inputs.hasOwnProperty(Name))
 				throw new Error("Device already has an input with name: " + Name);
 			
-			var Input:Node = new Node(this);
+			var Input:Node = new Node(this, Name);
 			_inputCount++;
 			_inputs[Name] = Input;
 			_search[Name] = false;
@@ -146,7 +146,7 @@ package circuits
 			if (_outputs.hasOwnProperty(Name))
 				throw new Error("Device already has an output with name: " + Name);
 			
-			var Output:Node = new Node(this);
+			var Output:Node = new Node(this, Name);
 			_outputCount++;
 			_outputs[Name] = Output;
 			

@@ -7,18 +7,30 @@ package circuits
 	{
 		private var _wire:Wire;
 		private var _device:Device;
+		private var _name:String;
 		
 		public var weight:uint = 1;
 		
-		public function Node(AttachedDevice:Device)
+		public function Node(AttachedDevice:Device, Name:String)
 		{
 			_type = CONNECTOR_NODE;
 			_device = AttachedDevice;
+			_name = Name;
 		}
 		
 		public function get wire():Wire
 		{
 			return _wire;
+		}
+		
+		public function get device():Device
+		{
+			return _device;
+		}
+		
+		public function get name():String
+		{
+			return _name;
 		}
 		
 		override public function get open():Boolean

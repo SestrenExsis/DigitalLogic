@@ -1,5 +1,12 @@
 package entities
 {
+	import circuits.Board;
+	import circuits.Connector;
+	import circuits.Device;
+	import circuits.DigitalComponent;
+	import circuits.Node;
+	import circuits.Wire;
+	
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -108,6 +115,99 @@ package entities
 		public function get entities():Vector.<Entity>
 		{
 			return _entities;
+		}
+		
+		public function get saveData():String
+		{
+			var SaveData:Object = new Object();
+			var Devices:Object = new Array();
+			var Wires:Object = new Array();
+			var WiresToCheck:Vector.<Wire> = new Vector.<Wire>();
+			var Connections:Object = new Array();
+			for each (var CurrentEntity:Entity in _entities)
+			{
+				var CurrentComponent:DigitalComponent = CurrentEntity.component;
+				var NewComponentObj:Object = new Object();
+				NewComponentObj.component_id = CurrentComponent.componentID;
+				NewComponentObj.x = CurrentEntity.gridX;
+				NewComponentObj.y = CurrentEntity.gridY;
+				if (CurrentComponent is Wire)
+				{
+					WiresToCheck.push(CurrentComponent as Wire);
+					Wires.push(NewComponentObj);
+				}
+				else if (CurrentComponent is Board)
+				{
+					NewComponentObj.device = (CurrentComponent as Board).name;
+					Devices.push(NewComponentObj);
+				}
+				else if (CurrentComponent is Device)
+				{
+					NewComponentObj.device = (CurrentComponent as Device).truthTable.name;
+					Devices.push(NewComponentObj);
+				}
+			}
+			SaveData.devices = Devices;
+			SaveData.wires = Wires;
+			
+			var ConnectionsChecked:Vector.<uint> = new Vector.<uint>();
+			for each (var CurrentWire:Wire in WiresToCheck)
+			{
+				if (CurrentWire.a)
+				{
+					var CurrentConnectorA:Connector = CurrentWire.a;
+					if (ConnectionsChecked.indexOf(CurrentConnectorA.componentID) < 0)
+					{
+						
+						if (CurrentConnectorA is Node)
+						{
+							var CurrentNodeA:Node = CurrentConnectorA as Node;
+							var CurrentDeviceA:Device = CurrentNodeA.device;
+							var NewConnectionObjA:Object = new Object();
+							NewConnectionObjA.left_component_id = CurrentWire.componentID;
+							NewConnectionObjA.right_component_id = CurrentDeviceA.componentID;
+							NewConnectionObjA.right_node = CurrentNodeA.name;
+							Connections.push(NewConnectionObjA);
+						}
+						else if (CurrentConnectorA is Wire)
+						{
+							NewConnectionObjA = new Object();
+							NewConnectionObjA.left_component_id = CurrentWire.componentID;
+							NewConnectionObjA.right_component_id = CurrentWire.a.componentID;
+							Connections.push(NewConnectionObjA);
+						}
+					}
+				}
+				if (CurrentWire.b)
+				{
+					var CurrentConnectorB:Connector = CurrentWire.b;
+					if (ConnectionsChecked.indexOf(CurrentConnectorB.componentID) < 0)
+					{
+						if (CurrentConnectorB is Node)
+						{
+							var CurrentNodeB:Node = CurrentConnectorB as Node;
+							var CurrentDeviceB:Device = CurrentNodeB.device;
+							var NewConnectionObjB:Object = new Object();
+							NewConnectionObjB.left_component_id = CurrentWire.componentID;
+							NewConnectionObjB.right_component_id = CurrentDeviceB.componentID;
+							NewConnectionObjB.right_node = CurrentNodeB.name;
+							Connections.push(NewConnectionObjB);
+						}
+						else if (CurrentConnectorB is Wire)
+						{
+							NewConnectionObjB = new Object();
+							NewConnectionObjB.left_component_id = CurrentWire.componentID;
+							NewConnectionObjB.right_component_id = CurrentWire.b.componentID;
+							Connections.push(NewConnectionObjB);
+						}
+					}
+				}
+				ConnectionsChecked.push(CurrentWire.componentID);
+			}
+			SaveData.connections = Connections;
+			
+			var SaveDataStr:String = JSON.stringify(SaveData);
+			return SaveDataStr;
 		}
 	}
 }
