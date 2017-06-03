@@ -468,14 +468,25 @@ package
 		
 		private function connectByIndex(WireIndex:uint, ConnectorIndex:uint, NodeName:String = ""):void
 		{
-			trace("connectByIndex(" + WireIndex + ", " + ConnectorIndex + ")");
+			trace("connectByIndex(" + WireIndex + ", " + ConnectorIndex + ", " + NodeName + ")");
 			var WireEntity:Entity = _grid.getEntityByIndex(WireIndex);
 			var ConnectorEntity:Entity = _grid.getEntityByIndex(ConnectorIndex);
 			if (NodeName == "")
 				connect(WireEntity, ConnectorEntity);
-			else
+			else if (ConnectorEntity.component is Device)
 			{
-				// TO DO: Connect wires to nodes
+				var CurrentDevice:Device = ConnectorEntity.component as Device;
+				var CurrentNode:Node = CurrentDevice.getInput(NodeName);
+				if (!CurrentNode)
+					CurrentNode = CurrentDevice.getOutput(NodeName);
+				var NodeEntity:Entity;
+				for each (var CurrentEntity:Entity in _grid.entities)
+				{
+					if (CurrentEntity.component === CurrentNode)
+						break;
+				}
+				if (CurrentEntity)
+					connect(WireEntity, CurrentEntity);
 			}
 		}
 		
